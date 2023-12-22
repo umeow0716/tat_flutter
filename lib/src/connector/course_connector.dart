@@ -115,11 +115,11 @@ class CourseConnector {
       if (studentSemesterDetails.isEmpty) {
         throw RangeError("[TAT] course_connector.dart: studentSemesterDetails list is empty");
       }
-      if (studentSemesterDetails.length < 3) {
-        throw RangeError("[TAT] course_connector.dart: studentSemesterDetails list has range less than 3");
+      if (studentSemesterDetails.length < 2) {
+        throw RangeError("[TAT] course_connector.dart: studentSemesterDetails list has range less than 2\nstudentSemesterDetails: " + studentSemesterDetails.toString());
       }
-      semester.year = studentSemesterDetails[1];
-      semester.semester = studentSemesterDetails[2];
+      semester.year = studentSemesterDetails[0];
+      semester.semester = studentSemesterDetails[1];
 
       courseExtraInfo.courseSemester = semester;
 
