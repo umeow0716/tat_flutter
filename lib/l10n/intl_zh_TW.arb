@@ -256,5 +256,7 @@
   "androidPrivateBrowseGuideTitle": "關於隱私瀏覽",
   "androidPrivateBrowseGuideSubTitle": "開啟隱私瀏覽，安全更有保障",
   "kClass": "班級",
-  "kDepartment": "系所"
+  "kDepartment": "系所",
+  "getCourseStudentList": "取得同學名單中...",
+  "getCourseStudentListError": "名單取得失敗"
 }

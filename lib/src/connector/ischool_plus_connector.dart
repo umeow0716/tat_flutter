@@ -6,15 +6,19 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter_app/debug/log/log.dart';
+import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/src/connector/core/connector.dart';
 import 'package:flutter_app/src/model/ischoolplus/course_file_json.dart';
 import 'package:flutter_app/src/model/ischoolplus/ischool_plus_announcement_json.dart';
 import 'package:flutter_app/src/util/html_utils.dart';
 import 'package:html/dom.dart' as html;
 import 'package:html/parser.dart' as html;
+import 'package:flutter_app/src/model/course/course_class_json.dart';
 
 import 'core/connector_parameter.dart';
 import 'ntut_connector.dart';
+
+import 'dart:developer' as developer;
 
 enum ISchoolPlusConnectorStatus { loginSuccess, loginFail, unknownError }
 
@@ -33,6 +37,8 @@ class ISchoolPlusConnector {
   //static final String _iSchoolPlusIndexUrl = _iSchoolPlusUrl + "mooc/index.php";
   static const String _getCourseName = "${_iSchoolPlusUrl}learn/mooc_sysbar.php";
   static const _ssoLoginUrl = "${NTUTConnector.host}ssoIndex.do";
+  
+  static const String _getStudentList = "${_iSchoolPlusUrl}learn/communication/stud_list.php";
 
   /// The Authorization Step of ISchool (2023-10-21)
   /// 1. GET https://app.ntut.edu.tw/ssoIndex.do
@@ -525,6 +531,54 @@ class ISchoolPlusConnector {
     } catch (e, stack) {
       Log.eWithStack(e, stack);
       return false;
+    }
+  }
+
+  static Future<List<ClassmateJson>> getCourseStudentList(String courseId) async {
+    ConnectorParameter parameter;
+    html.Document tagNode;
+    html.Element node;
+    List<html.Element> nodes;
+    String response;
+    List<ClassmateJson> result = new List<ClassmateJson>();
+    try {
+      if (!await _selectCourse(courseId)) {
+        developer.log('select failed!');
+        return null;
+      }
+
+      parameter = ConnectorParameter(_getStudentList);
+      response = await Connector.getDataByGet(parameter);
+      tagNode = html.parse(response);
+      nodes = tagNode.querySelectorAll('span[title="帳號 "]').toList();
+      
+      for(int i = 0 ; i < nodes.length ; i++) {
+        html.Element data = nodes[i].parentNode;
+        html.Element informationCard = data.parentNode;
+
+        if(data.children.length != 2) continue; //過濾具有其他身分的成員 (ex. 課程老師)
+
+        String studentName = data.querySelector('span[title="姓名 "]').innerHtml;
+        String studentId = data.querySelector('span[title="帳號 "]').innerHtml;
+        String email = informationCard.querySelector('a').innerHtml;
+
+        if(studentId == 'istudyoaa') continue; //過濾掉校務人士 如有多身分考慮枚舉或過濾Email
+
+        ClassmateJson student = ClassmateJson(
+          studentName: studentName, 
+          studentId: studentId, 
+          email: email
+        );
+        result.add(student);
+      }
+
+      result.sort((a, b) => a.studentId.compareTo(b.studentId));
+
+      return result.length != 0 ? result : null;
+    } catch (e, stack) {
+      developer.log('error!\n' + e.toString());
+      Log.eWithStack(e, stack);
+      return null;
     }
   }
 }

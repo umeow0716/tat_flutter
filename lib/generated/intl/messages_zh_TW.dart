@@ -278,6 +278,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "videoMayLoadFailedWarningMsg": MessageLookupByLibrary.simpleMessage("影片載入時間視當下網路環境而定\n若載入時間過長，請嘗試退出後再試一次"),
         "warning": MessageLookupByLibrary.simpleMessage("警告"),
         "willRestart": MessageLookupByLibrary.simpleMessage("將自動重啟並套用語言"),
-        "zuvioAutoRollCallFeatureReleaseNotice": MessageLookupByLibrary.simpleMessage("Zuvio (自動)點名提醒的功能即將上線\n敬請期待！")
+        "zuvioAutoRollCallFeatureReleaseNotice": MessageLookupByLibrary.simpleMessage("Zuvio (自動)點名提醒的功能即將上線\n敬請期待！"),
+        "getCourseStudentList": MessageLookupByLibrary.simpleMessage("取得同學名單中..."),
+        "getCourseStudentListError": MessageLookupByLibrary.simpleMessage("取得同學名單失敗")
       };
 }

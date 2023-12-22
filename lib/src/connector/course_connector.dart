@@ -11,6 +11,7 @@ import 'package:flutter_app/src/model/course/course_score_json.dart';
 import 'package:flutter_app/src/model/coursetable/course_table_json.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
+import 'package:flutter_app/src/connector/ischool_plus_connector.dart';
 
 enum CourseConnectorStatus { loginSuccess, loginFail, unknownError }
 
@@ -156,6 +157,8 @@ class CourseConnector {
       courseExtra.withdrawNumber = "w?";
 
       courseExtraInfo.course = courseExtra;
+
+      courseExtraInfo.classmate = await ISchoolPlusConnector.getCourseStudentList(courseId);
       return courseExtraInfo;
     } catch (e, stack) {
       Log.eWithStack(e.toString(), stack);

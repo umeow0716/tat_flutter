@@ -13,6 +13,8 @@ import 'package:flutter_app/ui/other/route_utils.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:get/get.dart';
 import 'package:sprintf/sprintf.dart';
+import 'package:flutter_app/src/task/iplus/iplus_course_student_list.dart';
+import 'package:flutter_app/src/model/course/course_class_json.dart';
 
 class CourseInfoPage extends StatefulWidget {
   final CourseInfoJson courseInfo;
@@ -66,6 +68,12 @@ class _CourseInfoPageState extends State<CourseInfoPage> with AutomaticKeepAlive
     if (await taskFlow.start()) {
       courseExtraInfo = task.result;
     }
+
+    final studentTask = IPlusCourseStudentList(courseId);
+    taskFlow.addTask(studentTask);
+    if(await taskFlow.start()) {
+      courseExtraInfo.classmate = studentTask.result;
+    }
     widget.courseInfo.extra = courseExtraInfo;
     courseData.add(_buildCourseInfo(sprintf("%s: %s", [R.current.courseId, courseMainInfo.course.id])));
     courseData.add(_buildCourseInfo(sprintf("%s: %s", [R.current.courseName, courseMainInfo.course.name])));
@@ -90,8 +98,49 @@ class _CourseInfoPageState extends State<CourseInfoPage> with AutomaticKeepAlive
     listItem.add(_buildInfoTitle(R.current.courseData));
     listItem.addAll(courseData);
 
+    for (int i = 0; i < courseExtraInfo.classmate.length; i++) {
+      listItem.add(
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 0),
+          child: _buildClassmateInfo(i, widget.courseInfo.extra.classmate[i]),
+        ),
+      );
+    }
+
     isLoading = false;
     setState(() {});
+  }
+
+  Widget _buildClassmateInfo(int index, ClassmateJson classmate) {
+    final color = (index % 2 == 1)
+      ? Theme.of(context).colorScheme.surface
+      : Theme.of(context).colorScheme.surfaceVariant.withAlpha(widget.courseInfoWithAlpha);
+    return Container(
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          const SizedBox(width: 4, height: 50),
+          Expanded(
+            child: Text(
+              classmate.studentId,
+              textAlign: TextAlign.center,
+            ),
+          ),
+          const SizedBox(width: 4, height: 50),
+          Expanded(
+            child: Text(
+              classmate.getName(),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override

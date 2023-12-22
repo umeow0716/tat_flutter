@@ -2,7 +2,6 @@
 // @dart=2.10
 import 'package:flutter_app/src/model/coursetable/course_table_json.dart';
 import 'package:flutter_app/src/model/json_init.dart';
-import 'package:flutter_app/src/util/language_util.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sprintf/sprintf.dart';
 
@@ -211,38 +210,40 @@ class SemesterJson {
 
 @JsonSerializable()
 class ClassmateJson {
-  String className; //電子一甲
-  String studentEnglishName;
+  //String className; //電子一甲
+  //String studentEnglishName;
   String studentName;
   String studentId;
-  String href;
-  bool isSelect; //是否撤選
+  String email;
+  //String href;
+  //bool isSelect; //是否撤選
 
-  ClassmateJson({this.className, this.studentEnglishName, this.studentName, this.studentId, this.isSelect, this.href}) {
-    className = JsonInit.stringInit(className);
-    studentEnglishName = JsonInit.stringInit(studentEnglishName);
+  ClassmateJson({/*this.className, this.studentEnglishName,*/ this.studentName, this.studentId, this.email/*, this.isSelect, this.href*/}) {
+    // className = JsonInit.stringInit(className);
+    // studentEnglishName = JsonInit.stringInit(studentEnglishName);
     studentName = JsonInit.stringInit(studentName);
     studentId = JsonInit.stringInit(studentId);
-    href = JsonInit.stringInit(href);
-    isSelect = isSelect ?? false;
+    email = JsonInit.stringInit(email);
+    // href = JsonInit.stringInit(href);
+    // isSelect = isSelect ?? false;
   }
 
   bool get isEmpty {
-    return className.isEmpty && studentEnglishName.isEmpty && studentName.isEmpty && studentId.isEmpty && href.isEmpty;
+    return studentName.isEmpty && studentId.isEmpty /* && href.isEmpty && className.isEmpty && studentEnglishName.isEmpty */;
   }
 
   @override
   String toString() {
     return sprintf(
-        "className           : %s \nstudentEnglishName  : %s \nstudentName         : %s \nstudentId           : %s \nhref                : %s \nisSelect            : %s \n",
-        [className, studentEnglishName, studentName, studentId, href, isSelect.toString()]);
+        "studentName         : %s \nstudentId           : %s \nemail                : %s",
+        [/*className, studentEnglishName,*/ studentName, studentId, email, /*href, isSelect.toString()*/]);
   }
 
   String getName() {
     String name;
-    if (LanguageUtil.getLangIndex() == LangEnum.en) {
-      name = studentEnglishName;
-    }
+    // if (LanguageUtil.getLangIndex() == LangEnum.en) {
+    //   name = studentEnglishName;
+    // }
     name = name ?? studentName;
     name = (name.contains(RegExp(r"\w"))) ? name : studentName;
     return name;

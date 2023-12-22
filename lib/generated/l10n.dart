@@ -2617,6 +2617,24 @@ class S {
       args: [],
     );
   }
+
+  String get getCourseStudentList {
+    return Intl.message(
+      'Getting student list...',
+      name: 'getCourseStudentList',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get getCourseStudentListError {
+    return Intl.message(
+      'Unable to get student list',
+      name: 'getCourseStudentListError',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

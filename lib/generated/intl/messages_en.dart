@@ -296,6 +296,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "warning": MessageLookupByLibrary.simpleMessage("Warning"),
         "willRestart": MessageLookupByLibrary.simpleMessage("Will restart automatically"),
         "zuvioAutoRollCallFeatureReleaseNotice":
-            MessageLookupByLibrary.simpleMessage("Zuvio\'s (auto) roll-call reminder is coming soon!")
+            MessageLookupByLibrary.simpleMessage("Zuvio\'s (auto) roll-call reminder is coming soon!"),
+        "getCourseStudentList": MessageLookupByLibrary.simpleMessage("Getting student list..."),
+        "getCourseStudentListError": MessageLookupByLibrary.simpleMessage("Unable to get student list")
       };
 }
