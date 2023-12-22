@@ -107,7 +107,7 @@ class CourseConnector {
       // e.g. "學號：110310144　　姓名：xxx　　班級：電機三甲　　　 112 學年度 第 1 學期　上課時間表"
       // so the RegExp is used to filter out only the number parts
       final titleString = nodes[0].text;
-      final RegExp studentSemesterDetailFilter = RegExp(r'\b\d+\b');
+      final RegExp studentSemesterDetailFilter = RegExp(r'\b[\dA-Z]+\b');
       final Iterable<RegExpMatch> studentSemesterDetailMatches = studentSemesterDetailFilter.allMatches(titleString);
       // "studentSemesterDetails" should consist of three numerical values
       // ex: [110310144, 112, 1]
@@ -115,11 +115,11 @@ class CourseConnector {
       if (studentSemesterDetails.isEmpty) {
         throw RangeError("[TAT] course_connector.dart: studentSemesterDetails list is empty");
       }
-      if (studentSemesterDetails.length < 2) {
-        throw RangeError("[TAT] course_connector.dart: studentSemesterDetails list has range less than 2\nstudentSemesterDetails: " + studentSemesterDetails.toString());
+      if (studentSemesterDetails.length < 3) {
+        throw RangeError("[TAT] course_connector.dart: studentSemesterDetails list has range less than 3");
       }
-      semester.year = studentSemesterDetails[0];
-      semester.semester = studentSemesterDetails[1];
+      semester.year = studentSemesterDetails[1];
+      semester.semester = studentSemesterDetails[2];
 
       courseExtraInfo.courseSemester = semester;
 
