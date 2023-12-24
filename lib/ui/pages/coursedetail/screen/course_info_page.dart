@@ -1,6 +1,7 @@
 // TODO: remove sdk version selector after migrating to null-safety.
 // @dart=2.10
 import 'dart:async';
+import 'dart:developer' as developer;
 
 import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:flutter/material.dart';
@@ -101,7 +102,7 @@ class _CourseInfoPageState extends State<CourseInfoPage> with AutomaticKeepAlive
     listItem.add(
       Padding(
         padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 0),
-        child: _buildClassmateInfo(1, '科系', '學號', '姓名', isHeader: true),
+        child: _buildClassmateInfo(1, R.current.Department, R.current.StudentId, R.current.Name, isHeader: true),
       ),
     );
 
@@ -110,7 +111,7 @@ class _CourseInfoPageState extends State<CourseInfoPage> with AutomaticKeepAlive
       listItem.add(
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 0),
-          child: _buildClassmateInfo(i, classmate.className, classmate.studentId, classmate.getName()),
+          child: _buildClassmateInfo(i, classmate.departmentName, classmate.studentId, classmate.getName()),
         ),
       );
     }
@@ -119,7 +120,7 @@ class _CourseInfoPageState extends State<CourseInfoPage> with AutomaticKeepAlive
     setState(() {});
   }
 
-  Widget _buildClassmateInfo(int index, String className, String studentId, String studentName, { bool isHeader = false }) {
+  Widget _buildClassmateInfo(int index, String departmentName, String studentId, String studentName, { bool isHeader = false }) {
     double height = isHeader ? 25 : 50;
 
     final color = (index % 2 == 1)
@@ -137,7 +138,7 @@ class _CourseInfoPageState extends State<CourseInfoPage> with AutomaticKeepAlive
           SizedBox(width: 4, height: height),
           Expanded(
             child: Text(
-              className,
+              departmentName,
               textAlign: TextAlign.center,
             ),
           ),

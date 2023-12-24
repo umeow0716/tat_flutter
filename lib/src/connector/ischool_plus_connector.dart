@@ -545,7 +545,6 @@ class ISchoolPlusConnector {
     List<ClassmateJson> result = new List<ClassmateJson>();
     try {
       if (!await _selectCourse(courseId)) {
-        developer.log('select failed!');
         return null;
       }
 

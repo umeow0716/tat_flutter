@@ -165,6 +165,7 @@ Map<String, dynamic> _$ClassmateJsonToJson(ClassmateJson instance) => <String, d
       // 'studentEnglishName': instance.studentEnglishName,
       'studentName': instance.studentName,
       'studentId': instance.studentId,
+      'departmentName': instance.departmentName,
       // 'href': instance.href,
       // 'isSelect': instance.isSelect,
     };

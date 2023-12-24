@@ -1,10 +1,13 @@
 // TODO: remove sdk version selector after migrating to null-safety.
 // @dart=2.10
+import 'dart:developer' as developer;
+
 import 'package:flutter_app/src/model/coursetable/course_table_json.dart';
 import 'package:flutter_app/src/model/json_init.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:flutter_app/src/util/language_util.dart';
+import 'package:flutter_app/src/r.dart';
 
 part 'course_class_json.g.dart';
 
@@ -211,7 +214,7 @@ class SemesterJson {
 
 @JsonSerializable()
 class ClassmateJson {
-  String className; //電子一甲
+  String departmentName; //電機系
   //String studentEnglishName;
   String studentName;
   String studentId;
@@ -502,7 +505,7 @@ class ClassmateJson {
   ];
 
   ClassmateJson({/*this.className, this.studentEnglishName,*/ this.studentName, this.studentId/*, this.isSelect, this.href*/}) {
-    // className = JsonInit.stringInit(className);
+    departmentName = JsonInit.stringInit(departmentName);
     // studentEnglishName = JsonInit.stringInit(studentEnglishName);
     studentName = JsonInit.stringInit(studentName);
     studentId = JsonInit.stringInit(studentId);
@@ -511,14 +514,15 @@ class ClassmateJson {
 
     for(int i = 0 ; i < studentIdData.length ; i++) {
       if(studentIdData[i]['code'] == studentId.substring(3, 5)) {
-        className = studentIdData[i][
+        developer.log(R.current.UnKnownName);
+        departmentName = studentIdData[i][
           LanguageUtil.getLangIndex() == LangEnum.zh ? 'tw' : 'en'
         ];
         break;
       }
 
       if(i == studentIdData.length - 1) {
-        className = "未知";
+        departmentName = R.current.UnKnownName;
       }
     }
   }
@@ -530,8 +534,8 @@ class ClassmateJson {
   @override
   String toString() {
     return sprintf(
-        "className         : %s \nstudentName         : %s \nstudentId           : %s",
-        [className, /*studentEnglishName,*/ studentName, studentId, /*href, isSelect.toString()*/]);
+        "departmentName         : %s \nstudentName         : %s \nstudentId           : %s",
+        [departmentName, /*studentEnglishName,*/ studentName, studentId, /*href, isSelect.toString()*/]);
   }
 
   String getName() {

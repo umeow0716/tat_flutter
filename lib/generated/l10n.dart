@@ -908,6 +908,42 @@ class S {
     );
   }
 
+  String get UnKnownName {
+    return Intl.message(
+      'UnKnown',
+      name: 'UnKnownName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get Department {
+    return Intl.message(
+      'Department',
+      name: "Department",
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get StudentId {
+    return Intl.message(
+      'Student Number',
+      name: "StudentId",
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get Name {
+    return Intl.message(
+      'Name',
+      name: "Name",
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Course`
   String get titleCourse {
     return Intl.message(

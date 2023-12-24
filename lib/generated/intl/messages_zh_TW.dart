@@ -280,6 +280,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "willRestart": MessageLookupByLibrary.simpleMessage("將自動重啟並套用語言"),
         "zuvioAutoRollCallFeatureReleaseNotice": MessageLookupByLibrary.simpleMessage("Zuvio (自動)點名提醒的功能即將上線\n敬請期待！"),
         "getCourseStudentList": MessageLookupByLibrary.simpleMessage("取得同學名單中..."),
-        "getCourseStudentListError": MessageLookupByLibrary.simpleMessage("取得同學名單失敗")
+        "getCourseStudentListError": MessageLookupByLibrary.simpleMessage("取得同學名單失敗"),
       };
 }

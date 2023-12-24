@@ -258,5 +258,9 @@
   "kClass": "班級",
   "kDepartment": "系所",
   "getCourseStudentList": "取得同學名單中...",
-  "getCourseStudentListError": "名單取得失敗"
+  "getCourseStudentListError": "名單取得失敗",
+  "UnKnownName": "未知",
+  "Department": "科系",
+  "StudentId": "學號",
+  "Name": "姓名"
 }

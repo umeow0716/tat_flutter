@@ -24,7 +24,6 @@ class CourseExtraInfoTask extends CourseSystemTask<CourseExtraInfoJson> {
       super.onEnd();
 
       if (value != null) {
-        developer.log(value.classmate.toString());
         result = value;
         return TaskStatus.success;
       } else {
