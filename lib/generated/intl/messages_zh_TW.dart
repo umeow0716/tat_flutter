@@ -281,5 +281,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "zuvioAutoRollCallFeatureReleaseNotice": MessageLookupByLibrary.simpleMessage("Zuvio (自動)點名提醒的功能即將上線\n敬請期待！"),
         "getCourseStudentList": MessageLookupByLibrary.simpleMessage("取得同學名單中..."),
         "getCourseStudentListError": MessageLookupByLibrary.simpleMessage("取得同學名單失敗"),
+        "StudentId": MessageLookupByLibrary.simpleMessage("學號"),
+        "Name": MessageLookupByLibrary.simpleMessage("姓名"),
       };
 }

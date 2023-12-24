@@ -917,19 +917,10 @@ class S {
     );
   }
 
-  String get Department {
-    return Intl.message(
-      'Department',
-      name: "Department",
-      desc: '',
-      args: [],
-    );
-  }
-
   String get StudentId {
     return Intl.message(
       'Student Number',
-      name: "StudentId",
+      name: 'StudentId',
       desc: '',
       args: [],
     );
@@ -938,7 +929,7 @@ class S {
   String get Name {
     return Intl.message(
       'Name',
-      name: "Name",
+      name: 'Name',
       desc: '',
       args: [],
     );

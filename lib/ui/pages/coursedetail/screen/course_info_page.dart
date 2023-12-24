@@ -102,7 +102,7 @@ class _CourseInfoPageState extends State<CourseInfoPage> with AutomaticKeepAlive
     listItem.add(
       Padding(
         padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 0),
-        child: _buildClassmateInfo(1, R.current.Department, R.current.StudentId, R.current.Name, isHeader: true),
+        child: _buildClassmateInfo(1, R.current.kDepartment, R.current.StudentId, R.current.Name, isHeader: true),
       ),
     );
 

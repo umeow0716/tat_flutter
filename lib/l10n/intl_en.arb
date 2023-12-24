@@ -260,7 +260,6 @@
   "getCourseStudentList": "Getting student list...",
   "getCourseStudentListError": "Unable get student list",
   "UnKnownName": "Unknown",
-  "Department": "Department",
   "StudentId": "Student Number",
   "Name": "Name"
 }
