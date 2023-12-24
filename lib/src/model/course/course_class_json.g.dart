@@ -155,7 +155,6 @@ ClassmateJson _$ClassmateJsonFromJson(Map<String, dynamic> json) {
     // studentEnglishName: json['studentEnglishName'] as String,
     studentName: json['studentName'] as String,
     studentId: json['studentId'] as String,
-    email: json['email'] as String,
     // isSelect: json['isSelect'] as bool,
     // href: json['href'] as String,
   );
@@ -166,7 +165,6 @@ Map<String, dynamic> _$ClassmateJsonToJson(ClassmateJson instance) => <String, d
       // 'studentEnglishName': instance.studentEnglishName,
       'studentName': instance.studentName,
       'studentId': instance.studentId,
-      'email': instance.email,
       // 'href': instance.href,
       // 'isSelect': instance.isSelect,
     };

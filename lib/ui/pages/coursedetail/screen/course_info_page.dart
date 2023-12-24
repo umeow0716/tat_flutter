@@ -98,11 +98,19 @@ class _CourseInfoPageState extends State<CourseInfoPage> with AutomaticKeepAlive
     listItem.add(_buildInfoTitle(R.current.courseData));
     listItem.addAll(courseData);
 
+    listItem.add(
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 0),
+        child: _buildClassmateInfo(1, '科系', '學號', '姓名', isHeader: true),
+      ),
+    );
+
     for (int i = 0; i < courseExtraInfo.classmate.length; i++) {
+      ClassmateJson classmate = widget.courseInfo.extra.classmate[i];
       listItem.add(
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 0),
-          child: _buildClassmateInfo(i, widget.courseInfo.extra.classmate[i]),
+          child: _buildClassmateInfo(i, classmate.className, classmate.studentId, classmate.getName()),
         ),
       );
     }
@@ -111,7 +119,9 @@ class _CourseInfoPageState extends State<CourseInfoPage> with AutomaticKeepAlive
     setState(() {});
   }
 
-  Widget _buildClassmateInfo(int index, ClassmateJson classmate) {
+  Widget _buildClassmateInfo(int index, String className, String studentId, String studentName, { bool isHeader = false }) {
+    double height = isHeader ? 25 : 50;
+
     final color = (index % 2 == 1)
       ? Theme.of(context).colorScheme.surface
       : Theme.of(context).colorScheme.surfaceVariant.withAlpha(widget.courseInfoWithAlpha);
@@ -124,17 +134,24 @@ class _CourseInfoPageState extends State<CourseInfoPage> with AutomaticKeepAlive
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-          const SizedBox(width: 4, height: 50),
+          SizedBox(width: 4, height: height),
           Expanded(
             child: Text(
-              classmate.studentId,
+              className,
               textAlign: TextAlign.center,
             ),
           ),
-          const SizedBox(width: 4, height: 50),
+          SizedBox(width: 4, height: height),
           Expanded(
             child: Text(
-              classmate.getName(),
+              studentId,
+              textAlign: TextAlign.center,
+            ),
+          ),
+          SizedBox(width: 4, height: height),
+          Expanded(
+            child: Text(
+              studentName,
               textAlign: TextAlign.center,
             ),
           ),

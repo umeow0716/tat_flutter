@@ -38,7 +38,7 @@ class ISchoolPlusConnector {
   static const String _getCourseName = "${_iSchoolPlusUrl}learn/mooc_sysbar.php";
   static const _ssoLoginUrl = "${NTUTConnector.host}ssoIndex.do";
   
-  static const String _getStudentList = "${_iSchoolPlusUrl}learn/communication/stud_list.php";
+  static const String _getStudentList = "${_iSchoolPlusUrl}learn/learn_ranking.php";
 
   /// The Authorization Step of ISchool (2023-10-21)
   /// 1. GET https://app.ntut.edu.tw/ssoIndex.do
@@ -538,6 +538,8 @@ class ISchoolPlusConnector {
     ConnectorParameter parameter;
     html.Document tagNode;
     html.Element node;
+    html.Element table;
+    List<html.Element> trList;
     List<html.Element> nodes;
     String response;
     List<ClassmateJson> result = new List<ClassmateJson>();
@@ -550,24 +552,23 @@ class ISchoolPlusConnector {
       parameter = ConnectorParameter(_getStudentList);
       response = await Connector.getDataByGet(parameter);
       tagNode = html.parse(response);
-      nodes = tagNode.querySelectorAll('span[title="帳號 "]').toList();
+      table = tagNode.querySelectorAll('table')[1];
+      nodes = table.querySelectorAll('tr');
       
       for(int i = 0 ; i < nodes.length ; i++) {
-        html.Element data = nodes[i].parentNode;
-        html.Element informationCard = data.parentNode;
+        node = nodes[i].querySelectorAll('td')[1];
 
-        if(data.children.length != 2) continue; //過濾具有其他身分的成員 (ex. 課程老師)
-
-        String studentName = data.querySelector('span[title="姓名 "]').innerHtml;
-        String studentId = data.querySelector('span[title="帳號 "]').innerHtml;
-        String email = informationCard.querySelector('a').innerHtml;
+        String information = node.querySelector('div').innerHtml;
+        int splitIndex = information.indexOf(' ');
+        
+        String studentId = information.substring(0, splitIndex);
+        String studentName = information.substring(splitIndex + 2, information.length-1);
 
         if(studentId == 'istudyoaa') continue; //過濾掉校務人士 如有多身分考慮枚舉或過濾Email
 
         ClassmateJson student = ClassmateJson(
           studentName: studentName, 
-          studentId: studentId, 
-          email: email
+          studentId: studentId
         );
         result.add(student);
       }
