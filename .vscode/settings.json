@@ -8,6 +8,5 @@
     "editor.wordWrap": "bounded",
     "editor.wordWrapColumn": 120,
     "editor.rulers": [120]
-  },
-  "java.configuration.updateBuildConfiguration": "disabled"
+  }
 }
