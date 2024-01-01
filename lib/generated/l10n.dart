@@ -908,30 +908,75 @@ class S {
     );
   }
 
-  String get UnKnownName {
+  String get unknownName {
     return Intl.message(
       'UnKnown',
-      name: 'UnKnownName',
+      name: 'unknownName',
       desc: '',
       args: [],
     );
   }
 
-  String get StudentId {
+  String get studentId {
     return Intl.message(
       'Student Number',
-      name: 'StudentId',
+      name: 'studentId',
       desc: '',
       args: [],
     );
   }
 
-  String get Name {
+  String get name {
     return Intl.message(
       'Name',
-      name: 'Name',
+      name: 'name',
       desc: '',
       args: [],
+    );
+  }
+
+  String get exportCourseTable {
+    return Intl.message(
+      'Export Course',
+      name: 'exportCourseTable',
+      desc: '',
+      args: []
+    );
+  }
+
+  String get share {
+    return Intl.message(
+      'share',
+      name: 'share',
+      desc: '',
+      args: []
+    );
+  }
+
+  String get confirm {
+    return Intl.message(
+      'confirm',
+      name: 'confirm',
+      desc: '',
+      args: []
+    );
+  }
+
+  String get exportSuccess {
+    return Intl.message(
+      'Export Success!',
+      name: "exportSuccess",
+      desc: '',
+      args: []
+    );
+  }
+
+  String get importCourseTable {
+    return Intl.message(
+      'Import CourseTable',
+      name: "importCourseTable",
+      desc: '',
+      args: []
     );
   }
 

@@ -1,5 +1,6 @@
 // TODO: remove sdk version selector after migrating to null-safety.
 // @dart=2.10
+import 'dart:developer' as developer;
 import 'dart:collection';
 
 import 'package:dio/dio.dart';
@@ -151,12 +152,11 @@ class CourseConnector {
         tagNode = parse(result);
         nodes = tagNode.getElementsByTagName("tr");
         courseExtra.category = nodes[1].getElementsByTagName("td")[6].text;
+        courseExtra.selectNumber = nodes[1].getElementsByTagName("td")[9].text;
+        courseExtra.withdrawNumber = nodes[1].getElementsByTagName("td")[10].text;
       } else {
         courseExtra.category = constCourseType[4];
       }
-
-      courseExtra.selectNumber = "s?";
-      courseExtra.withdrawNumber = "w?";
 
       courseExtraInfo.course = courseExtra;
 

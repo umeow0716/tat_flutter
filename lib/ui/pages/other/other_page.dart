@@ -1,5 +1,15 @@
 // TODO: remove sdk version selector after migrating to null-safety.
 // @dart=2.10
+import 'dart:convert';
+import 'dart:developer' as developer;
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter_app/src/model/course/course_class_json.dart';
+import 'package:flutter_app/src/model/coursetable/course_table_json.dart';
+import 'package:flutter_app/src/task/course/course_semester_task.dart';
+import 'package:flutter_app/src/task/course/course_table_task.dart';
+import 'package:flutter_app/ui/other/customs_multi_select_dialog.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
@@ -22,6 +32,7 @@ import 'package:flutter_app/ui/pages/logconsole/log_console.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:get/get.dart';
+import 'package:multi_select_flutter/util/multi_select_item.dart';
 
 enum OnListViewPress {
   setting,
@@ -32,6 +43,8 @@ enum OnListViewPress {
   login,
   subSystem,
   rollCallRemind,
+  exportCourseTable,
+  importCourseTable,
 }
 
 class OtherPage extends StatefulWidget {
@@ -56,6 +69,18 @@ class _OtherPageState extends State<OtherPage> {
       "color": Colors.lightBlue,
       "title": R.current.informationSystem,
       "onPress": OnListViewPress.subSystem
+    },
+    {
+      "icon": Icons.drive_file_move_outlined,
+      "color": Colors.orangeAccent,
+      "title": R.current.exportCourseTable,
+      "onPress": OnListViewPress.exportCourseTable,
+    },
+    {
+      "icon": Icons.file_open_outlined,
+      "color": Colors.deepOrangeAccent,
+      "title": R.current.importCourseTable,
+      "onPress": OnListViewPress.importCourseTable,
     },
     {
       "icon": Icons.access_alarm,
@@ -167,6 +192,123 @@ class _OtherPageState extends State<OtherPage> {
         }
 
         break;
+
+      case OnListViewPress.exportCourseTable:
+
+        const TextStyle textStyle = TextStyle(color: Color(0xFFE3E2E6), fontFamily: 'TATFont', fontWeight: FontWeight.w700);
+        const TextStyle itemStyle = TextStyle(color: Color(0xFFE3E2E6), fontFamily: 'TATFont', fontWeight: FontWeight.w400);
+
+        List<SemesterJson> semesterList = [];
+        String studentId = LocalStorage.instance.getUserData().account;
+        String studentName = LocalStorage.instance.getUserInfo().givenName;
+
+        Future<void> export(List<SemesterJson> values) async {
+          List<String> courseTableList = [];
+
+          for(final value in values) {
+            TaskFlow taskFlow = TaskFlow();
+            var task = CourseTableTask(studentId, values[0]);
+            taskFlow.addTask(task);
+            if (await taskFlow.start()) {
+              task.result.courseInfoMap.forEach((key, value) {
+                value.forEach((key, T) {
+                  T.main.course.scheduleHref = '';
+                });
+              });
+              courseTableList.add(const JsonEncoder().convert(task.result.toJson()));
+            }
+          }
+
+          String exportData = JsonEncoder().convert(courseTableList);
+
+          String path = await FileStore.findLocalPath();
+          String filename = '$studentId$studentName-TATCourseTable.json';
+          File file = File("$path/$filename");
+          
+          file.writeAsStringSync(exportData);
+
+          MsgDialog(MsgDialogParameter(
+            desc: filename,
+            title: R.current.exportSuccess,
+            removeCancelButton: true,
+            dialogType: DialogType.success,
+          )).show();
+        }
+
+        final taskFlow = TaskFlow();
+        final task = CourseSemesterTask(studentId);
+        taskFlow.addTask(task);
+        if (!await taskFlow.start()) break;
+        
+        semesterList = task.result.toList();
+        // ignore: use_build_context_synchronously
+        await showDialog(
+          context: context,
+          builder: (ctx) {
+            return  CustomMultiSelectDialog(
+              unselectedColor: Colors.white,
+              selectedColor: Colors.blueAccent,
+              title: Text(R.current.exportCourseTable, style: textStyle,),
+              checkColor: Colors.white,
+              cancelText: Text(R.current.cancel, style: textStyle,),
+              confirmText: Text(R.current.confirm, style: textStyle,),
+              itemsTextStyle: itemStyle,
+              selectedItemsTextStyle: itemStyle,
+              items: semesterList.map((d) => MultiSelectItem<SemesterJson>(d, '${d.year}-${d.semester}')).toList(),
+              initialValue: semesterList,
+              onConfirm: (values) async { await export(values); },
+            );
+          },
+        );
+
+        break;
+
+      case OnListViewPress.importCourseTable:
+        FilePickerResult result = await FilePicker.platform.pickFiles(
+          type: FileType.custom,
+          allowedExtensions: ['json'],
+        );
+
+        List<File> files = result.paths.map((path) => File(path)).toList();
+        List<CourseTableJson> courseTableList = [];
+        
+        for(final file in files) {
+          String data = await file.readAsString();
+          List<dynamic> strList = jsonDecode(data);
+
+          for(final str in strList) {
+            developer.log(str);
+            Map<String, dynamic> table = jsonDecode(str);
+            CourseTableJson courseTable = CourseTableJson.fromJson(table);
+            
+            if(courseTable.studentId == LocalStorage.instance.getAccount()) {
+              developer.log(courseTable.studentId);
+              await MsgDialog(MsgDialogParameter(
+                desc: "不能匯入自己的課表",
+                title: R.current.error,
+                dialogType: DialogType.error,
+                removeCancelButton: true,
+                okButtonText: R.current.sure,
+              )).show();
+
+              break;
+            }
+
+            courseTableList.add(courseTable);
+          }
+        }
+
+        for(int i = 0 ; i < courseTableList.length ; i++) {
+          final courseTable = courseTableList[i];
+          LocalStorage.instance.addCourseTable(courseTable);
+
+          if(i == courseTableList.length - 1) {
+            await LocalStorage.instance.saveCourseTableList();
+            widget.pageController.jumpToPage(0);
+          }
+        }
+        break;
+
       default:
         MyToast.show(R.current.noFunction);
         break;

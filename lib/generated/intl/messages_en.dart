@@ -299,7 +299,13 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Zuvio\'s (auto) roll-call reminder is coming soon!"),
         "getCourseStudentList": MessageLookupByLibrary.simpleMessage("Getting student list..."),
         "getCourseStudentListError": MessageLookupByLibrary.simpleMessage("Unable to get student list"),
-        "StudentId": MessageLookupByLibrary.simpleMessage("Student Number"),
-        "Name": MessageLookupByLibrary.simpleMessage("Name"),
+        "unknownName": MessageLookupByLibrary.simpleMessage("UnKnown"),
+        "studentId": MessageLookupByLibrary.simpleMessage("Student Number"),
+        "name": MessageLookupByLibrary.simpleMessage("Name"),
+        "exportCourseTable": MessageLookupByLibrary.simpleMessage("Export Course"),
+        "share": MessageLookupByLibrary.simpleMessage("share"),
+        "confirm": MessageLookupByLibrary.simpleMessage("confirm"),
+        "exportSuccess": MessageLookupByLibrary.simpleMessage("Export Success!"),
+        "importCourseTable": MessageLookupByLibrary.simpleMessage("Import CourseTable"),
       };
 }

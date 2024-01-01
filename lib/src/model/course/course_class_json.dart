@@ -514,7 +514,6 @@ class ClassmateJson {
 
     for(int i = 0 ; i < studentIdData.length ; i++) {
       if(studentIdData[i]['code'] == studentId.substring(3, 5)) {
-        developer.log(R.current.UnKnownName);
         departmentName = studentIdData[i][
           LanguageUtil.getLangIndex() == LangEnum.zh ? 'tw' : 'en'
         ];
@@ -522,7 +521,7 @@ class ClassmateJson {
       }
 
       if(i == studentIdData.length - 1) {
-        departmentName = R.current.UnKnownName;
+        departmentName = R.current.unknownName;
       }
     }
   }

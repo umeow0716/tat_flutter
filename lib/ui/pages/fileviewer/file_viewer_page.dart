@@ -9,6 +9,7 @@ import "package:flutter_feather_icons/flutter_feather_icons.dart";
 import 'package:get/get.dart';
 import 'package:path/path.dart' as path_lib;
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 import 'widgets/custom_alert.dart';
 import 'widgets/dir_item.dart';
@@ -246,6 +247,8 @@ class _FileViewerPageState extends State<FileViewerPage> with WidgetsBindingObse
                               if (v == 0) {
                                 renameDialog(context, file.path, "file");
                               } else if (v == 1) {
+                                await Share.shareXFiles([XFile(file.path)]);
+                              } else if (v == 2) {
                                 await File(file.path).delete().catchError((e) {
                                   if (e.toString().contains("Permission denied")) {
                                     MyToast.show(R.current.cannotWrite);
@@ -253,7 +256,7 @@ class _FileViewerPageState extends State<FileViewerPage> with WidgetsBindingObse
                                   return File(file.path);
                                 });
                                 getFiles();
-                              } else if (v == 2) {}
+                              }
                             },
                           ),
                         );

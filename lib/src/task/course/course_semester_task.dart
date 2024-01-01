@@ -1,9 +1,12 @@
 // ignore_for_file: import_of_legacy_library_into_null_safe
 
+import 'dart:developer' as developer;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_app/src/connector/course_connector.dart';
 import 'package:flutter_app/src/model/course/course_class_json.dart';
 import 'package:flutter_app/src/r.dart';
+import 'package:flutter_app/src/store/local_storage.dart';
 import 'package:get/get.dart';
 import 'package:numberpicker/numberpicker.dart';
 
@@ -25,7 +28,14 @@ class CourseSemesterTask extends CourseSystemTask<List<SemesterJson>> {
         value = await _selectSemesterDialog();
       } else {
         super.onStart(R.current.getCourseSemester);
-        value = await CourseConnector.getCourseSemester(id) as List<SemesterJson>?;
+        developer.log(LocalStorage.instance.getCourseTableList().toString());
+        if(id != LocalStorage.instance.getAccount()) {
+          List<SemesterJson> localSemesters = LocalStorage.instance.getCourseTableList()
+            .where((courseTable) => courseTable.studentId == id)
+            .map((courseTable) => courseTable.courseSemester)
+            .toList();
+          value = localSemesters;
+        } else value = await CourseConnector.getCourseSemester(id) as List<SemesterJson>?;
         super.onEnd();
       }
 

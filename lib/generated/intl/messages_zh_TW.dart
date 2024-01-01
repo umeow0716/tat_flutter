@@ -281,7 +281,13 @@ class MessageLookup extends MessageLookupByLibrary {
         "zuvioAutoRollCallFeatureReleaseNotice": MessageLookupByLibrary.simpleMessage("Zuvio (自動)點名提醒的功能即將上線\n敬請期待！"),
         "getCourseStudentList": MessageLookupByLibrary.simpleMessage("取得同學名單中..."),
         "getCourseStudentListError": MessageLookupByLibrary.simpleMessage("取得同學名單失敗"),
-        "StudentId": MessageLookupByLibrary.simpleMessage("學號"),
-        "Name": MessageLookupByLibrary.simpleMessage("姓名"),
+        "unknownName": MessageLookupByLibrary.simpleMessage("未知"),
+        "studentId": MessageLookupByLibrary.simpleMessage("學號"),
+        "name": MessageLookupByLibrary.simpleMessage("姓名"),
+        "exportCourseTable": MessageLookupByLibrary.simpleMessage("匯出課表"),
+        "share": MessageLookupByLibrary.simpleMessage("分享"),
+        "confirm": MessageLookupByLibrary.simpleMessage("確認"),
+        "exportSuccess": MessageLookupByLibrary.simpleMessage("匯出成功"),
+        "importCourseTable": MessageLookupByLibrary.simpleMessage("匯入課表"),
       };
 }

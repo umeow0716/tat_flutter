@@ -95,25 +95,30 @@ class _CourseInfoPageState extends State<CourseInfoPage> with AutomaticKeepAlive
       courseMainInfo.getClassroomHrefList(),
     ));
 
+    courseData.add(_buildCourseInfo(sprintf("%s: %s", [R.current.numberOfStudent, courseExtraInfo.course.selectNumber])));
+    courseData.add(_buildCourseInfo(sprintf("%s: %s", [R.current.numberOfWithdraw, courseExtraInfo.course.withdrawNumber])));
+
     listItem.removeRange(0, listItem.length);
     listItem.add(_buildInfoTitle(R.current.courseData));
     listItem.addAll(courseData);
 
-    listItem.add(
-      Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 0),
-        child: _buildClassmateInfo(1, R.current.kDepartment, R.current.StudentId, R.current.Name, isHeader: true),
-      ),
-    );
-
-    for (int i = 0; i < courseExtraInfo.classmate.length; i++) {
-      ClassmateJson classmate = widget.courseInfo.extra.classmate[i];
+    if(courseExtraInfo.classmate != null) {
       listItem.add(
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 0),
-          child: _buildClassmateInfo(i, classmate.departmentName, classmate.studentId, classmate.getName()),
+          child: _buildClassmateInfo(1, R.current.kDepartment, R.current.studentId, R.current.name, isHeader: true),
         ),
       );
+
+      for (int i = 0; i < courseExtraInfo.classmate.length; i++) {
+        ClassmateJson classmate = widget.courseInfo.extra.classmate[i];
+        listItem.add(
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 0),
+            child: _buildClassmateInfo(i, classmate.departmentName, classmate.studentId, classmate.getName()),
+          ),
+        );
+      }
     }
 
     isLoading = false;

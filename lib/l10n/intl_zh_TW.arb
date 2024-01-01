@@ -259,7 +259,12 @@
   "kDepartment": "系所",
   "getCourseStudentList": "取得同學名單中...",
   "getCourseStudentListError": "名單取得失敗",
-  "UnKnownName": "未知",
-  "StudentId": "學號",
-  "Name": "姓名"
+  "unknownName": "未知",
+  "studentId": "學號",
+  "name": "姓名",
+  "exportCourseTable": "匯出課表",
+  "share": "分享",
+  "confirm": "確認",
+  "exportSuccess": "匯出成功",
+  "importCourseTable": "匯入課表"
 }

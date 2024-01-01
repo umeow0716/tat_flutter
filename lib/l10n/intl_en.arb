@@ -259,7 +259,12 @@
   "kDepartment": "department",
   "getCourseStudentList": "Getting student list...",
   "getCourseStudentListError": "Unable get student list",
-  "UnKnownName": "Unknown",
-  "StudentId": "Student Number",
-  "Name": "Name"
+  "unknownName": "Unknown",
+  "studentId": "Student Number",
+  "name": "Name",
+  "exportCourseTable": "Export CourseTable",
+  "share": "share",
+  "confirm": "confirm",
+  "exportSuccess": "Export Success!",
+  "importCourseTable": "Import CourseTable"
 }

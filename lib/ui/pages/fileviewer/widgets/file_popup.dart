@@ -24,6 +24,12 @@ class FilePopup extends StatelessWidget {
           PopupMenuItem(
             value: 1,
             child: Text(
+              R.current.share,
+            ),
+          ),
+          PopupMenuItem(
+            value: 2,
+            child: Text(
               R.current.delete,
             ),
           ),

@@ -91,6 +91,9 @@ dependencies:
   uuid: ^4.1.0
   intl_utils: ^2.8.5
   flutter_native_splash: ^2.2.19 # restricted by path 1.8.2
+  multi_select_flutter: ^4.1.3
+  share_plus: ^6.3.4
+  file_picker: ^5.2.10
 
 
 dependency_overrides:
