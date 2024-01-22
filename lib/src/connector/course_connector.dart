@@ -748,18 +748,9 @@ class CourseConnector {
       };
       parameter = ConnectorParameter(_coutseInfoCNUrl);
       parameter.data = data;
-      
-      Future<String> getResponse() async {
-        try {
-          return await Connector.getDataByGet(parameter);
-        } on DioError catch (err) {
-          if (err.type == DioErrorType.connectTimeout) {
-            return await getResponse();
-          }
-        }
-      }
 
-      response = await getResponse();
+      response = await Connector.getDataByGet(parameter);
+
       tagNode = parse(response);
       courseNodes = tagNode.getElementsByTagName("td");
 
@@ -769,7 +760,11 @@ class CourseConnector {
       return result;
     } catch (e, stack) {
       Log.eWithStack(e.toString(), stack);
-      return null;
+      return {
+        'courseId': courseId,
+        'category': '?',
+        'openClass': 'Unknown'
+      };
     }
   }
 }
