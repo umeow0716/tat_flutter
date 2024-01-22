@@ -64,7 +64,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "checkIPlusNew": MessageLookupByLibrary.simpleMessage("檢查IPlus最新公告"),
         "checkIdentity": MessageLookupByLibrary.simpleMessage("確認身分"),
         "checkLogin": MessageLookupByLibrary.simpleMessage("檢查登入..."),
-        "checkVersion": MessageLookupByLibrary.simpleMessage("檢查新版本"),
+        "checkVersion": MessageLookupByLibrary.simpleMessage("This is umeow version!!!"),
         "checkingVersion": MessageLookupByLibrary.simpleMessage("檢查中..."),
         "classVideo": MessageLookupByLibrary.simpleMessage("上課錄影"),
         "classroom": MessageLookupByLibrary.simpleMessage("教室"),

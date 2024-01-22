@@ -14,12 +14,7 @@ class LanguageUtil {
   static Future<void> init(BuildContext context) async {
     final otherSetting = LocalStorage.instance.getOtherSetting();
     if (otherSetting.lang.isEmpty || !otherSetting.lang.contains("_")) {
-      try {
-        final locale = Localizations.localeOf(context);
-        load(locale);
-      } catch (e) {
-        e.printError();
-      }
+      setLangByIndex(LangEnum.zh);
     } else {
       load(string2Locale(otherSetting.lang));
     }

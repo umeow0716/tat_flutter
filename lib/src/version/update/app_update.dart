@@ -16,21 +16,6 @@ import 'package:version/version.dart';
 
 class AppUpdate {
   static Future<bool> checkUpdate({RemoteConfigVersionInfo? versionConfig}) async {
-    try {
-      versionConfig = versionConfig ?? await RemoteConfigUtil.getVersionConfig();
-
-      final packageInfo = await PackageInfo.fromPlatform();
-      final currentVersion = Version.parse(packageInfo.version);
-      final latestVersion = Version.parse(versionConfig.last.version);
-      final needUpdate = latestVersion > currentVersion;
-
-      if (needUpdate) {
-        _showUpdateDialog(versionConfig);
-        return true;
-      }
-    } catch (e) {
-      return false;
-    }
     return false;
   }
 
