@@ -28,7 +28,6 @@ class CourseSemesterTask extends CourseSystemTask<List<SemesterJson>> {
         value = await _selectSemesterDialog();
       } else {
         super.onStart(R.current.getCourseSemester);
-        developer.log(LocalStorage.instance.getCourseTableList().toString());
         if(id != LocalStorage.instance.getAccount()) {
           List<SemesterJson> localSemesters = LocalStorage.instance.getCourseTableList()
             .where((courseTable) => courseTable.studentId == id)

@@ -277,12 +277,10 @@ class _OtherPageState extends State<OtherPage> {
           List<dynamic> strList = jsonDecode(data);
 
           for(final str in strList) {
-            developer.log(str);
             Map<String, dynamic> table = jsonDecode(str);
             CourseTableJson courseTable = CourseTableJson.fromJson(table);
             
             if(courseTable.studentId == LocalStorage.instance.getAccount()) {
-              developer.log(courseTable.studentId);
               await MsgDialog(MsgDialogParameter(
                 desc: "不能匯入自己的課表",
                 title: R.current.error,

@@ -24,6 +24,10 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:sprintf/sprintf.dart';
 
+import 'dart:developer' as developer;
+
+import '../../../src/task/course/course_category_info_task.dart';
+
 class ScoreViewerPage extends StatefulWidget {
   const ScoreViewerPage({super.key});
 
@@ -176,7 +180,7 @@ class _ScoreViewerPageState extends State<ScoreViewerPage> with TickerProviderSt
         final courseInfo = courseInfoList[i];
         final courseId = courseInfo.courseId;
         if (courseInfo.category.isEmpty) {
-          final task = CourseExtraInfoTask(courseId);
+          final task = CourseCategoryInfoTask(courseId);
           task.openLoadingDialog = false;
           if (courseId.isNotEmpty) {
             taskFlow.addTask(task);
@@ -187,24 +191,27 @@ class _ScoreViewerPageState extends State<ScoreViewerPage> with TickerProviderSt
       total = taskFlow.length;
       int rate = 0;
 
-      taskFlow.callback = (task) {
+      taskFlow.callback = (task) async {
         rate++;
         progressRateDialog.update(nowProgress: rate / total, progressString: sprintf("%d/%d", [rate, total]));
-        final extraInfo = task.result;
-        final courseScoreInfo = courseScoreCredit.getCourseByCourseId(extraInfo.course.id);
-        courseScoreInfo.category = extraInfo.course.category;
-        courseScoreInfo.openClass = extraInfo.course.openClass.replaceAll("\n", " ");
+        final categoryInfo = task.result;
+        final courseScoreInfo = courseScoreCredit.getCourseByCourseId(categoryInfo['courseId']);
+        courseScoreInfo.category = categoryInfo['category'];
+        courseScoreInfo.openClass = categoryInfo['openClass'].replaceAll("\n", " ");
+
+        if (rate == total) {
+          await LocalStorage.instance.setSemesterCourseScore(courseScoreList);
+          progressRateDialog.hide();
+          
+          _buildTabBar();
+          setState(() => _isLoading = false);
+        }
       };
 
-      await taskFlow.start();
-      await LocalStorage.instance.setSemesterCourseScore(courseScoreList);
-      progressRateDialog.hide();
+      taskFlow.start_withoutasync();
     } else {
       MyToast.show(R.current.searchCreditIsNullWarning);
     }
-
-    _buildTabBar();
-    setState(() => _isLoading = false);
   }
 
   void _onSelectFinish(GraduationInformationJson? value) {

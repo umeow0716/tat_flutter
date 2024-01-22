@@ -83,4 +83,14 @@ class TaskFlow {
     Log.d(log);
     return success;
   }
+
+  Future<bool> start_withoutasync() async {
+    while (_queue.isNotEmpty) {
+      final task = _queue.first;
+      final status = task.execute().then((_) => callback?.call(task));
+      _queue.removeAt(0);
+    }
+
+    return true;
+  }
 }

@@ -31,6 +31,7 @@ class CourseConnector {
   static const String _postTeacherCourseCNUrl = "${_courseCNHost}Teach.jsp";
   static const String _postCourseENUrl = "${_courseENHost}Select.jsp";
   static const String _creditUrl = "${_courseCNHost}Cprog.jsp";
+  static const String _coutseInfoCNUrl = "${_courseCNHost}ShowSyllabus.jsp";
 
   static Future<CourseConnectorStatus> login() async {
     String result;
@@ -727,6 +728,46 @@ class CourseConnector {
         Log.d("not find $select");
       }
       return graduationInformation;
+    } catch (e, stack) {
+      Log.eWithStack(e.toString(), stack);
+      return null;
+    }
+  }
+
+  static Future<Map<String, String>> getCourseCategoryInfo(String courseId) async {
+    try {
+      Map<String, String> result = <String, String>{
+        'courseId': courseId
+      };
+      ConnectorParameter parameter;
+      String response;
+      Document tagNode;
+      Element node;
+      List<Element> courseNodes, nodes, classExtraInfoNodes;
+      Map<String, String> data = {
+        "snum": courseId,
+      };
+      parameter = ConnectorParameter(_coutseInfoCNUrl);
+      parameter.data = data;
+      
+      Future<String> getResponse() async {
+        try {
+          return await Connector.getDataByGet(parameter);
+        } on DioError catch (err) {
+          if (err.type == DioErrorType.connectTimeout) {
+            return await getResponse();
+          }
+        }
+      }
+
+      response = await getResponse();
+      tagNode = parse(response);
+      courseNodes = tagNode.getElementsByTagName("td");
+
+      result['category'] = courseNodes[6].innerHtml;
+      result['openClass'] = courseNodes[8].innerHtml;
+
+      return result;
     } catch (e, stack) {
       Log.eWithStack(e.toString(), stack);
       return null;
