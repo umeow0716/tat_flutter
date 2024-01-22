@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="club.ntut.npc.tat">
+    package="umeow.ntut.npc.tat">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -21,7 +21,7 @@
         android:name="${applicationName}"
         android:usesCleartextTraffic="true"
         android:requestLegacyExternalStorage="true"
-        android:label="TAT">
+        android:label="TAT umeow">
 
         <activity
             android:name=".MainActivity"
@@ -55,7 +55,7 @@
             android:exported="true"
             tools:replace="android:exported">
             <intent-filter>
-                <action android:name="club.ntut.npc.tat.weight.onclick" />
+                <action android:name="umeow.ntut.npc.tat.weight.onclick" />
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
             <meta-data

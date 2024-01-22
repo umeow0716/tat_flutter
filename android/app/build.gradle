@@ -35,7 +35,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "club.ntut.npc.tat"
+    namespace = "umeow.ntut.npc.tat"
     ndkVersion "25.1.8937393"
     compileSdkVersion 33
 
@@ -50,7 +50,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "club.ntut.npc.tat"
+        applicationId "umeow.ntut.npc.tat"
         minSdkVersion 23
         targetSdkVersion 33
         versionCode flutterVersionCode.toInteger()

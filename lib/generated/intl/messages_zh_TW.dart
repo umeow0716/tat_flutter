@@ -46,7 +46,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "androidPrivateBrowseGuideTitle": MessageLookupByLibrary.simpleMessage("關於隱私瀏覽"),
         "announcement": MessageLookupByLibrary.simpleMessage("公告"),
         "appWillClose": MessageLookupByLibrary.simpleMessage("即將關閉應用程式"),
-        "app_name": MessageLookupByLibrary.simpleMessage("TAT-北科生活"),
+        "app_name": MessageLookupByLibrary.simpleMessage("TAT-北科生活 umeow version"),
         "areYouSureToDownload": MessageLookupByLibrary.simpleMessage("確定要下載檔案嗎"),
         "authCodeFail": MessageLookupByLibrary.simpleMessage("驗證碼錯誤"),
         "autoAppCheck": MessageLookupByLibrary.simpleMessage("自動檢查更新"),

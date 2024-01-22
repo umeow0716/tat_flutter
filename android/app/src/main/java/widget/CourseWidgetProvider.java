@@ -20,14 +20,14 @@ import android.widget.RemoteViews;
 
 import java.util.Arrays;
 
-import club.ntut.npc.tat.MainActivity;
-import club.ntut.npc.tat.R;
+import umeow.ntut.npc.tat.MainActivity;
+import umeow.ntut.npc.tat.R;
 import io.flutter.Log;
 
 
 public class CourseWidgetProvider extends AppWidgetProvider {
     public static final String TAG = "CourseWidgetProvider";
-    public static final String ACTION_ONCLICK = "club.ntut.npc.tat.coursetable.widget.onclick";
+    public static final String ACTION_ONCLICK = "umeow.ntut.npc.tat.coursetable.widget.onclick";
 
     @SuppressLint("UnsafeProtectedBroadcastReceiver")
     @Override
