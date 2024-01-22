@@ -18,8 +18,6 @@ import 'package:flutter_app/src/model/course/course_class_json.dart';
 import 'core/connector_parameter.dart';
 import 'ntut_connector.dart';
 
-import 'dart:developer' as developer;
-
 enum ISchoolPlusConnectorStatus { loginSuccess, loginFail, unknownError }
 
 enum IPlusReturnStatus { success, fail, noPermission }
@@ -576,7 +574,6 @@ class ISchoolPlusConnector {
 
       return result.length != 0 ? result : null;
     } catch (e, stack) {
-      developer.log('error!\n' + e.toString());
       Log.eWithStack(e, stack);
       return null;
     }

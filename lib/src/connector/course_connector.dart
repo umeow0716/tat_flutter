@@ -1,6 +1,5 @@
 // TODO: remove sdk version selector after migrating to null-safety.
 // @dart=2.10
-import 'dart:developer' as developer;
 import 'dart:collection';
 
 import 'package:dio/dio.dart';

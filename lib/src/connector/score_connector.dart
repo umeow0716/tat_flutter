@@ -139,60 +139,64 @@ class ScoreConnector {
         }
       }
 
-      parameter = ConnectorParameter(_scoreRankUrl);
-      parameter.data = data;
-      parameter.charsetName = "big5";
-      result = await Connector.getDataByGet(parameter);
-      tagNode = parse(result);
-      final rankNodes = tagNode
-          .getElementsByTagName("tbody")
-          .first
-          .getElementsByTagName("tr")
-          .reversed
-          .where((row) => row.getElementsByTagName("td").length >= 7)
-          .toList(growable: false);
-      for (int i = 0; i < (rankNodes.length / 3).floor(); i++) {
-        SemesterJson semester = SemesterJson();
-        String semesterString = rankNodes[i * 3 + 2].getElementsByTagName("td")[0].innerHtml.split("<br>").first;
-        semester.year = semesterString.split(" ")[0];
-        semester.semester = semesterString.split(" ").reversed.toList()[0];
-        //取得學期成績排名
-        RankJson rankNow = RankJson();
-        RankItemJson rankItemCourse = RankItemJson();
-        RankItemJson rankItemDepartment = RankItemJson();
-        rankNow.course = rankItemCourse;
-        rankNow.department = rankItemDepartment;
-        rankItemCourse.rank = double.parse(rankNodes[i * 3 + 2].getElementsByTagName("td")[2].text);
-        rankItemCourse.total = double.parse(rankNodes[i * 3 + 2].getElementsByTagName("td")[3].text);
-        rankItemCourse.percentage =
-            double.parse(rankNodes[i * 3 + 2].getElementsByTagName("td")[4].text.replaceAll(RegExp(r"[%|\s]"), ""));
-        rankItemDepartment.rank = double.parse(rankNodes[i * 3].getElementsByTagName("td")[1].text);
-        rankItemDepartment.total = double.parse(rankNodes[i * 3].getElementsByTagName("td")[2].text);
-        rankItemDepartment.percentage =
-            double.parse(rankNodes[i * 3].getElementsByTagName("td")[3].text.replaceAll(RegExp(r"[%|\s]"), ""));
+      try {
+          parameter = ConnectorParameter(_scoreRankUrl);
+          parameter.data = data;
+          parameter.charsetName = "big5";
+          result = await Connector.getDataByGet(parameter);
+          tagNode = parse(result);
+          final rankNodes = tagNode
+              .getElementsByTagName("tbody")
+              .first
+              .getElementsByTagName("tr")
+              .reversed
+              .where((row) => row.getElementsByTagName("td").length >= 7)
+              .toList(growable: false);
+          for (int i = 0; i < (rankNodes.length / 3).floor(); i++) {
+            SemesterJson semester = SemesterJson();
+            String semesterString = rankNodes[i * 3 + 2].getElementsByTagName("td")[0].innerHtml.split("<br>").first;
+            semester.year = semesterString.split(" ")[0];
+            semester.semester = semesterString.split(" ").reversed.toList()[0];
+            //取得學期成績排名
+            RankJson rankNow = RankJson();
+            RankItemJson rankItemCourse = RankItemJson();
+            RankItemJson rankItemDepartment = RankItemJson();
+            rankNow.course = rankItemCourse;
+            rankNow.department = rankItemDepartment;
+            rankItemCourse.rank = double.parse(rankNodes[i * 3 + 2].getElementsByTagName("td")[2].text);
+            rankItemCourse.total = double.parse(rankNodes[i * 3 + 2].getElementsByTagName("td")[3].text);
+            rankItemCourse.percentage =
+                double.parse(rankNodes[i * 3 + 2].getElementsByTagName("td")[4].text.replaceAll(RegExp(r"[%|\s]"), ""));
+            rankItemDepartment.rank = double.parse(rankNodes[i * 3].getElementsByTagName("td")[1].text);
+            rankItemDepartment.total = double.parse(rankNodes[i * 3].getElementsByTagName("td")[2].text);
+            rankItemDepartment.percentage =
+                double.parse(rankNodes[i * 3].getElementsByTagName("td")[3].text.replaceAll(RegExp(r"[%|\s]"), ""));
 
-        //取得歷年成績排名
-        RankJson rankHistory = RankJson();
-        rankItemCourse = RankItemJson();
-        rankItemDepartment = RankItemJson();
-        rankHistory.course = rankItemCourse;
-        rankHistory.department = rankItemDepartment;
-        rankItemCourse.rank = double.parse(rankNodes[i * 3 + 2].getElementsByTagName("td")[5].text);
-        rankItemCourse.total = double.parse(rankNodes[i * 3 + 2].getElementsByTagName("td")[6].text);
-        rankItemCourse.percentage =
-            double.parse(rankNodes[i * 3 + 2].getElementsByTagName("td")[7].text.replaceAll("%", ""));
-        rankItemDepartment.rank = double.parse(rankNodes[i * 3].getElementsByTagName("td")[4].text);
-        rankItemDepartment.total = double.parse(rankNodes[i * 3].getElementsByTagName("td")[5].text);
-        rankItemDepartment.percentage =
-            double.parse(rankNodes[i * 3].getElementsByTagName("td")[6].text.replaceAll("%", ""));
+            //取得歷年成績排名
+            RankJson rankHistory = RankJson();
+            rankItemCourse = RankItemJson();
+            rankItemDepartment = RankItemJson();
+            rankHistory.course = rankItemCourse;
+            rankHistory.department = rankItemDepartment;
+            rankItemCourse.rank = double.parse(rankNodes[i * 3 + 2].getElementsByTagName("td")[5].text);
+            rankItemCourse.total = double.parse(rankNodes[i * 3 + 2].getElementsByTagName("td")[6].text);
+            rankItemCourse.percentage =
+                double.parse(rankNodes[i * 3 + 2].getElementsByTagName("td")[7].text.replaceAll("%", ""));
+            rankItemDepartment.rank = double.parse(rankNodes[i * 3].getElementsByTagName("td")[4].text);
+            rankItemDepartment.total = double.parse(rankNodes[i * 3].getElementsByTagName("td")[5].text);
+            rankItemDepartment.percentage =
+                double.parse(rankNodes[i * 3].getElementsByTagName("td")[6].text.replaceAll("%", ""));
 
-        for (SemesterCourseScoreJson score in courseScoreList) {
-          if (score.semester == semester) {
-            score.now = rankNow;
-            score.history = rankHistory;
-            break;
-          }
+            for (SemesterCourseScoreJson score in courseScoreList) {
+              if (score.semester == semester) {
+                score.now = rankNow;
+                score.history = rankHistory;
+                break;
+              }
+            }
         }
+      } catch(e, stack) {
+        Log.eWithStack(e.toString(), stack);
       }
       return courseScoreList;
     } catch (e, stack) {

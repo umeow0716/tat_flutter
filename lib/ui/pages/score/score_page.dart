@@ -24,8 +24,6 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:sprintf/sprintf.dart';
 
-import 'dart:developer' as developer;
-
 import '../../../src/task/course/course_category_info_task.dart';
 
 class ScoreViewerPage extends StatefulWidget {

@@ -7,8 +7,6 @@ import 'package:flutter_app/src/r.dart';
 import '../task.dart';
 import 'course_system_task.dart';
 
-import 'dart:developer' as developer;
-
 class CourseExtraInfoTask extends CourseSystemTask<CourseExtraInfoJson> {
   final String id;
 
