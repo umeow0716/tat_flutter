@@ -1,5 +1,4 @@
 // ignore_for_file: import_of_legacy_library_into_null_safe
-
 import 'package:flutter/material.dart';
 import 'package:flutter_app/debug/log/log.dart';
 import 'package:flutter_app/src/config/app_colors.dart';
@@ -7,7 +6,6 @@ import 'package:flutter_app/src/model/course/course_score_json.dart';
 import 'package:flutter_app/src/providers/app_provider.dart';
 import 'package:flutter_app/src/r.dart';
 import 'package:flutter_app/src/store/local_storage.dart';
-import 'package:flutter_app/src/task/course/course_extra_info_task.dart';
 import 'package:flutter_app/src/task/score/score_rank_task.dart';
 import 'package:flutter_app/src/task/task_flow.dart';
 import 'package:flutter_app/ui/other/app_expansion_tile.dart';
@@ -237,40 +235,40 @@ class _ScoreViewerPageState extends State<ScoreViewerPage> with TickerProviderSt
 
   @override
   Widget build(BuildContext context) => DefaultTabController(
-        length: tabLabelList.length,
-        child: Scaffold(
-          appBar: AppBar(
-            title: Text(R.current.searchScore),
-            actions: [
-              ScorePageAppBarActionButtons(
-                onRefreshPressed: _addScoreRankTask,
-                onCalculateCreditPressed: _addSearchCourseTypeTask,
-              ),
-            ],
-            bottom: TabBar(
-              controller: _tabController,
-              labelColor: AppColors.mainColor,
-              unselectedLabelColor: Colors.white,
-              indicatorSize: TabBarIndicatorSize.tab,
-              indicator: BoxDecoration(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(10),
-                  topRight: Radius.circular(10),
-                ),
-                color: Theme.of(context).colorScheme.onPrimary,
-              ),
-              isScrollable: true,
-              tabs: tabLabelList,
-              onTap: (int index) {
-                setState(() => _currentTabIndex = index);
-              },
+      length: tabLabelList.length,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(R.current.searchScore),
+          actions: [
+            ScorePageAppBarActionButtons(
+              onRefreshPressed: _addScoreRankTask,
+              onCalculateCreditPressed: _addSearchCourseTypeTask,
             ),
-          ),
-          body: SingleChildScrollView(
-            child: (_isLoading || tabChildList.isEmpty) ? const SizedBox.shrink() : tabChildList[_currentTabIndex],
+          ],
+          bottom: TabBar(
+            controller: _tabController,
+            labelColor: AppColors.mainColor,
+            unselectedLabelColor: Colors.white,
+            indicatorSize: TabBarIndicatorSize.tab,
+            indicator: BoxDecoration(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(10),
+                topRight: Radius.circular(10),
+              ),
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
+            isScrollable: true,
+            tabs: tabLabelList,
+            onTap: (int index) {
+              setState(() => _currentTabIndex = index);
+            },
           ),
         ),
-      );
+        body: SingleChildScrollView(
+          child: (_isLoading || tabChildList.isEmpty) ? const SizedBox.shrink() : tabChildList[_currentTabIndex],
+        ),
+      ),
+    );
 
   void _buildTabBar() {
     tabLabelList.clear();

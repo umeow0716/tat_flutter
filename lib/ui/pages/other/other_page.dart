@@ -16,18 +16,15 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/debug/log/log.dart';
 import 'package:flutter_app/src/config/app_config.dart';
-import 'package:flutter_app/src/config/app_link.dart';
 import 'package:flutter_app/src/connector/ntut_connector.dart';
 import 'package:flutter_app/src/file/file_store.dart';
 import 'package:flutter_app/src/r.dart';
 import 'package:flutter_app/src/store/local_storage.dart';
 import 'package:flutter_app/src/task/ntut/ntut_task.dart';
 import 'package:flutter_app/src/task/task_flow.dart';
-import 'package:flutter_app/src/version/update/app_update.dart';
 import 'package:flutter_app/ui/other/msg_dialog.dart';
 import 'package:flutter_app/ui/other/my_toast.dart';
 import 'package:flutter_app/ui/other/route_utils.dart';
-import 'package:flutter_app/ui/pages/logconsole/log_console.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:get/get.dart';
@@ -82,12 +79,6 @@ class _OtherPageState extends State<OtherPage> {
       "onPress": OnListViewPress.importCourseTable,
     },
     {
-      "icon": Icons.access_alarm,
-      "color": Colors.red,
-      "title": R.current.rollCallRemind,
-      "onPress": OnListViewPress.rollCallRemind,
-    },
-    {
       "icon": EvaIcons.downloadOutline,
       "color": Colors.yellow[700],
       "title": R.current.fileViewer,
@@ -107,12 +98,6 @@ class _OtherPageState extends State<OtherPage> {
         "title": R.current.login,
         "onPress": OnListViewPress.login,
       },
-    {
-      "icon": EvaIcons.messageSquareOutline,
-      "color": Colors.cyan,
-      "title": R.current.feedback,
-      "onPress": OnListViewPress.report
-    },
     {
       "icon": EvaIcons.infoOutline,
       "color": Colors.lightBlue,
@@ -159,15 +144,6 @@ class _OtherPageState extends State<OtherPage> {
         break;
       case OnListViewPress.setting:
         RouteUtils.toSettingPage(widget.pageController);
-        break;
-      case OnListViewPress.report:
-        final mainVersion = await AppUpdate.getAppVersion();
-        final link = AppLink.feedbackUrl(mainVersion, LogConsole.getLog());
-
-        RouteUtils.toWebViewPage(
-          initialUrl: link ?? AppLink.feedbackBaseUrl,
-          title: R.current.feedback,
-        );
         break;
       case OnListViewPress.rollCallRemind:
         // TODO(TU): update this log to the real feature log.
@@ -227,7 +203,7 @@ class _OtherPageState extends State<OtherPage> {
           file.writeAsStringSync(exportData);
 
           MsgDialog(MsgDialogParameter(
-            desc: filename,
+            desc: "$filename\n至 「下載項目」 查看",
             title: R.current.exportSuccess,
             removeCancelButton: true,
             dialogType: DialogType.success,
@@ -267,18 +243,18 @@ class _OtherPageState extends State<OtherPage> {
           type: FileType.custom,
           allowedExtensions: ['json'],
         );
-
-        List<File> files = result.paths.map((path) => File(path)).toList();
-        List<CourseTableJson> courseTableList = [];
-        
-        for(final file in files) {
+        if(result == null) break;
+        try{
+          File file = result.paths.map((path) => File(path)).toList().first;
+          List<CourseTableJson> courseTableList = [];
+          
           String data = await file.readAsString();
           List<dynamic> strList = jsonDecode(data);
 
           for(final str in strList) {
             Map<String, dynamic> table = jsonDecode(str);
             CourseTableJson courseTable = CourseTableJson.fromJson(table);
-            
+
             if(courseTable.studentId == LocalStorage.instance.getAccount()) {
               await MsgDialog(MsgDialogParameter(
                 desc: "不能匯入自己的課表",
@@ -293,16 +269,27 @@ class _OtherPageState extends State<OtherPage> {
 
             courseTableList.add(courseTable);
           }
-        }
 
-        for(int i = 0 ; i < courseTableList.length ; i++) {
-          final courseTable = courseTableList[i];
-          LocalStorage.instance.addCourseTable(courseTable);
+          for(int i = 0 ; i < courseTableList.length ; i++) {
+            final courseTable = courseTableList[i];
+            LocalStorage.instance.addCourseTable(courseTable);
 
-          if(i == courseTableList.length - 1) {
-            await LocalStorage.instance.saveCourseTableList();
-            widget.pageController.jumpToPage(0);
+            if(i == courseTableList.length - 1) {
+              await LocalStorage.instance.saveCourseTableList();
+              LocalStorage.instance.getCourseSetting().info = courseTableList[0];
+              widget.pageController.jumpToPage(0);
+              MyToast.show("匯入成功！");
+            }
           }
+        } catch(e, stack) {
+          Log.eWithStack(e, stack);
+          await MsgDialog(MsgDialogParameter(
+            desc: "匯入了錯誤的檔案",
+            title: R.current.error,
+            dialogType: DialogType.error,
+            removeCancelButton: true,
+            okButtonText: R.current.sure,
+          )).show();
         }
         break;
 

@@ -275,13 +275,29 @@ class _CourseTablePageState extends State<CourseTablePage> {
     if (like) {
       LocalStorage.instance.addCourseTable(courseTableData);
     } else {
-      LocalStorage.instance.removeCourseTable(courseTableData);
+      List<CourseTableJson> values = LocalStorage.instance.getCourseTableList();
+      for(int i = 0 ; i < values.length ; i++) {
+        if(values[i].studentId == courseTableData.studentId) {
+          values.removeAt(i);
+          i--;
+        }
+      }
+      _showCourseTable(values.where((value) => value.studentId == LocalStorage.instance.getAccount()).first);
+      MyToast.show("課表刪除成功！");
     }
     LocalStorage.instance.saveCourseTableList();
   }
 
   void _loadFavorite() async {
-    List<CourseTableJson> value = LocalStorage.instance.getCourseTableList();
+    List<CourseTableJson> values = LocalStorage.instance.getCourseTableList();
+    List<CourseTableJson> value = [];
+    List<String> studentIdList = [];
+    for(int i = 0 ; i < values.length ; i++) {
+      if (!studentIdList.contains(values[i].studentId)) {
+        value.add(values[i]);
+        studentIdList.add(values[i].studentId);
+      }
+    }
     if (value.isEmpty) {
       MyToast.show(R.current.noAnyFavorite);
       return;
@@ -318,20 +334,20 @@ class _CourseTablePageState extends State<CourseTablePage> {
                     ),
                     child: SizedBox(
                       height: 50,
-                      child: TextButton(
-                        child: Text(sprintf("%s %s %s-%s", [
-                          value[index].studentId,
-                          value[index].studentName,
-                          value[index].courseSemester.year,
-                          value[index].courseSemester.semester
-                        ])),
-                        onPressed: () {
-                          LocalStorage.instance.getCourseSetting().info = value[index]; //儲存課表
-                          LocalStorage.instance.saveCourseSetting();
-                          _showCourseTable(value[index]);
-                          LocalStorage.instance.clearSemesterJsonList(); //須清除已儲存學期
-                          Get.back();
-                        },
+                      child: Center(
+                        child: TextButton(
+                          child: Text(sprintf("%s %s", [
+                            value[index].studentId,
+                            value[index].studentName
+                          ])),
+                          onPressed: () {
+                            LocalStorage.instance.getCourseSetting().info = value[index]; //儲存課表
+                            LocalStorage.instance.saveCourseSetting();
+                            _showCourseTable(value[index]);
+                            LocalStorage.instance.clearSemesterJsonList(); //須清除已儲存學期
+                            Get.back();
+                          },
+                        )
                       ),
                     ),
                   );
@@ -382,19 +398,21 @@ class _CourseTablePageState extends State<CourseTablePage> {
                   ),
                 )
               : const SizedBox.shrink(),
-          Padding(
-            padding: const EdgeInsets.only(
-              right: 20,
-            ),
-            child: InkWell(
-              onTap: () => _getCourseTable(
-                semesterSetting: courseTableData?.courseSemester,
-                studentId: _studentIdControl.text,
-                refresh: true,
-              ),
-              child: const Icon(EvaIcons.refreshOutline),
-            ),
-          ),
+          (LocalStorage.instance.getAccount() == courseTableData?.studentId)
+              ? Padding(
+                  padding: const EdgeInsets.only(
+                  right: 20,
+                ),
+                child: InkWell(
+                  onTap: () => _getCourseTable(
+                    semesterSetting: courseTableData?.courseSemester,
+                    studentId: _studentIdControl.text,
+                    refresh: true,
+                  ),
+                  child: const Icon(EvaIcons.refreshOutline),
+                ),
+              )
+            : const SizedBox.shrink(),
           PopupMenuButton<int>(
             onSelected: (result) => setState(() => _onPopupMenuSelect(result)),
             itemBuilder: (context) => [

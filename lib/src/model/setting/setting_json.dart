@@ -92,7 +92,7 @@ class OtherSettingJson {
     lang = JsonInit.stringInit(lang);
     autoCheckAppUpdate = autoCheckAppUpdate ?? true;
     useExternalVideoPlayer = useExternalVideoPlayer ?? false;
-    checkIPlusNew = checkIPlusNew ?? true;
+    checkIPlusNew = checkIPlusNew ?? false;
   }
 
   bool get isEmpty {

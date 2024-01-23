@@ -68,7 +68,7 @@ class ScoreConnector {
     return String.fromCharCodes(newString);
   }
 
-  static Future<List<SemesterCourseScoreJson>> getScoreRankList() async {
+  static Future<List<SemesterCourseScoreJson>> getScoreRankList({bool isTry = false}) async {
     //取得排名與成績
     ConnectorParameter parameter;
     String result;
@@ -81,6 +81,7 @@ class ScoreConnector {
       parameter = ConnectorParameter(_scoreAllScoreUrl);
       parameter.data = data;
       result = await Connector.getDataByGet(parameter);
+      
       final List<String> evalQuestionnaireCheckTexts = ['教學評量', 'Course Evaluation Questionnaire'];
       if (evalQuestionnaireCheckTexts.any((text) => result.contains(text))) {
         throw const FormatException(
@@ -201,6 +202,11 @@ class ScoreConnector {
       return courseScoreList;
     } catch (e, stack) {
       Log.eWithStack(e.toString(), stack);
+      if(!isTry) {
+        await login();
+        return getScoreRankList(isTry: true);
+      }
+
       rethrow;
     }
   }
