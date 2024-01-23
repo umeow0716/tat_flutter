@@ -206,7 +206,7 @@ class _OtherPageState extends State<OtherPage> {
 
           for(final value in values) {
             TaskFlow taskFlow = TaskFlow();
-            var task = CourseTableTask(studentId, values[0]);
+            var task = CourseTableTask(studentId, value);
             taskFlow.addTask(task);
             if (await taskFlow.start()) {
               task.result.courseInfoMap.forEach((key, value) {

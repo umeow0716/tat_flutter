@@ -9,5 +9,5 @@
     "editor.wordWrapColumn": 120,
     "editor.rulers": [120]
   },
-  "java.configuration.updateBuildConfiguration": "interactive"
+  "java.configuration.updateBuildConfiguration": "automatic"
 }
