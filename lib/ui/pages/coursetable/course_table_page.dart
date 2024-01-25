@@ -283,7 +283,7 @@ class _CourseTablePageState extends State<CourseTablePage> {
         }
       }
       _showCourseTable(values.where((value) => value.studentId == LocalStorage.instance.getAccount()).first);
-      MyToast.show("課表刪除成功！");
+      MyToast.show(R.current.deleteCourseTableSuccess);
     }
     LocalStorage.instance.saveCourseTableList();
   }
