@@ -95,7 +95,6 @@ dependencies:
   share_plus: ^6.3.4
   file_picker: ^5.2.10
 
-
 dependency_overrides:
   intl: ^0.18.1
 
@@ -124,10 +123,7 @@ flutter:
           weight: 700
 
 flutter_intl:
-  # Because it will be repeatedly generated when it is turned on,
-  # it is very troublesome, so we temporarily turn it off.
-  # Run "flutter pub run intl_translation:extract_to_arb --output-dir=lib/l10n lib/l10n/intl_messages.dart" to generate it.
-  enabled: false
+  enabled: true
 
 flutter_icons:
   android: true

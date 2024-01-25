@@ -257,7 +257,7 @@ class _OtherPageState extends State<OtherPage> {
 
             if(courseTable.studentId == LocalStorage.instance.getAccount()) {
               await MsgDialog(MsgDialogParameter(
-                desc: "不能匯入自己的課表",
+                desc: R.current.importErrorSelf,
                 title: R.current.error,
                 dialogType: DialogType.error,
                 removeCancelButton: true,
@@ -278,13 +278,13 @@ class _OtherPageState extends State<OtherPage> {
               await LocalStorage.instance.saveCourseTableList();
               LocalStorage.instance.getCourseSetting().info = courseTableList[0];
               widget.pageController.jumpToPage(0);
-              MyToast.show("匯入成功！");
+              MyToast.show(R.current.importSuccess);
             }
           }
         } catch(e, stack) {
           Log.eWithStack(e, stack);
           await MsgDialog(MsgDialogParameter(
-            desc: "匯入了錯誤的檔案",
+            desc: R.current.importErrorWrongFile,
             title: R.current.error,
             dialogType: DialogType.error,
             removeCancelButton: true,

@@ -6,7 +6,6 @@ import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/src/model/setting/setting_json.dart';
 import 'package:flutter_app/src/r.dart';
 import 'package:flutter_app/src/store/local_storage.dart';
-import 'package:get/get_utils/get_utils.dart';
 
 enum LangEnum { en, zh }
 

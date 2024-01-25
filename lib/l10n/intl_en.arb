@@ -266,5 +266,9 @@
   "share": "share",
   "confirm": "confirm",
   "exportSuccess": "Export Success!",
-  "importCourseTable": "Import CourseTable"
+  "importCourseTable": "Import CourseTable",
+  "deleteCourseTableSuccess": "Delete CourseTable Success!",
+  "importSuccess": "Import Success!",
+  "importErrorSelf": "Couldn't import self CourseTable",
+  "importErrorWrongFile": "Import wrong file!",
 }

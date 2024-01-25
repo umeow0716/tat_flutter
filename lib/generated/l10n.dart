@@ -18,15 +18,17 @@ class S {
   static S? _current;
 
   static S get current {
-    assert(
-        _current != null, 'No instance of S was loaded. Try to initialize the S delegate before accessing S.current.');
+    assert(_current != null,
+        'No instance of S was loaded. Try to initialize the S delegate before accessing S.current.');
     return _current!;
   }
 
   static const AppLocalizationDelegate delegate = AppLocalizationDelegate();
 
   static Future<S> load(Locale locale) {
-    final name = (locale.countryCode?.isEmpty ?? false) ? locale.languageCode : locale.toString();
+    final name = (locale.countryCode?.isEmpty ?? false)
+        ? locale.languageCode
+        : locale.toString();
     final localeName = Intl.canonicalizedLocale(name);
     return initializeMessages(localeName).then((_) {
       Intl.defaultLocale = localeName;
@@ -905,78 +907,6 @@ class S {
       name: 'UnKnown',
       desc: '',
       args: [],
-    );
-  }
-
-  String get unknownName {
-    return Intl.message(
-      'UnKnown',
-      name: 'unknownName',
-      desc: '',
-      args: [],
-    );
-  }
-
-  String get studentId {
-    return Intl.message(
-      'Student Number',
-      name: 'studentId',
-      desc: '',
-      args: [],
-    );
-  }
-
-  String get name {
-    return Intl.message(
-      'Name',
-      name: 'name',
-      desc: '',
-      args: [],
-    );
-  }
-
-  String get exportCourseTable {
-    return Intl.message(
-      'Export Course',
-      name: 'exportCourseTable',
-      desc: '',
-      args: []
-    );
-  }
-
-  String get share {
-    return Intl.message(
-      'share',
-      name: 'share',
-      desc: '',
-      args: []
-    );
-  }
-
-  String get confirm {
-    return Intl.message(
-      'confirm',
-      name: 'confirm',
-      desc: '',
-      args: []
-    );
-  }
-
-  String get exportSuccess {
-    return Intl.message(
-      'Export Success!',
-      name: "exportSuccess",
-      desc: '',
-      args: []
-    );
-  }
-
-  String get importCourseTable {
-    return Intl.message(
-      'Import CourseTable',
-      name: "importCourseTable",
-      desc: '',
-      args: []
     );
   }
 
@@ -1880,10 +1810,10 @@ class S {
     );
   }
 
-  /// `Check version`
+  /// `This is umeow version!!!`
   String get checkVersion {
     return Intl.message(
-      'Check version',
+      'This is umeow version!!!',
       name: 'checkVersion',
       desc: '',
       args: [],
@@ -2690,6 +2620,7 @@ class S {
     );
   }
 
+  /// `Getting student list...`
   String get getCourseStudentList {
     return Intl.message(
       'Getting student list...',
@@ -2699,10 +2630,131 @@ class S {
     );
   }
 
+  /// `Unable get student list`
   String get getCourseStudentListError {
     return Intl.message(
-      'Unable to get student list',
+      'Unable get student list',
       name: 'getCourseStudentListError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unknown`
+  String get unknownName {
+    return Intl.message(
+      'Unknown',
+      name: 'unknownName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Student Number`
+  String get studentId {
+    return Intl.message(
+      'Student Number',
+      name: 'studentId',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Name`
+  String get name {
+    return Intl.message(
+      'Name',
+      name: 'name',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Export CourseTable`
+  String get exportCourseTable {
+    return Intl.message(
+      'Export CourseTable',
+      name: 'exportCourseTable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `share`
+  String get share {
+    return Intl.message(
+      'share',
+      name: 'share',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `confirm`
+  String get confirm {
+    return Intl.message(
+      'confirm',
+      name: 'confirm',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Export Success!`
+  String get exportSuccess {
+    return Intl.message(
+      'Export Success!',
+      name: 'exportSuccess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Import CourseTable`
+  String get importCourseTable {
+    return Intl.message(
+      'Import CourseTable',
+      name: 'importCourseTable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delete CourseTable Success!`
+  String get deleteCourseTableSuccess {
+    return Intl.message(
+      'Delete CourseTable Success!',
+      name: 'deleteCourseTableSuccess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Import Success!`
+  String get importSuccess {
+    return Intl.message(
+      'Import Success!',
+      name: 'importSuccess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Couldn't import self CourseTable`
+  String get importErrorSelf {
+    return Intl.message(
+      'Couldn\'t import self CourseTable',
+      name: 'importErrorSelf',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Import wrong file!`
+  String get importErrorWrongFile {
+    return Intl.message(
+      'Import wrong file!',
+      name: 'importErrorWrongFile',
       desc: '',
       args: [],
     );

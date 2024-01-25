@@ -266,5 +266,9 @@
   "share": "分享",
   "confirm": "確認",
   "exportSuccess": "匯出成功",
-  "importCourseTable": "匯入課表"
+  "importCourseTable": "匯入課表",
+  "deleteCourseTableSuccess": "刪除課表成功！",
+  "importSuccess": "匯入成功",
+  "importErrorSelf": "不能匯入自己的課表",
+  "importErrorWrongFile": "匯入了錯誤的檔案！",
 }

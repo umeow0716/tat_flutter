@@ -6,13 +6,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_app/src/config/app_link.dart';
 import 'package:flutter_app/src/model/remoteconfig/remote_config_version_info.dart';
 import 'package:flutter_app/src/r.dart';
-import 'package:flutter_app/src/util/remote_config_util.dart';
 import 'package:flutter_app/ui/other/my_toast.dart';
 import 'package:get/get.dart';
 import 'package:package_info/package_info.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:version/version.dart';
 
 class AppUpdate {
   static Future<bool> checkUpdate({RemoteConfigVersionInfo? versionConfig}) async {
