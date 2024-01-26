@@ -80,7 +80,10 @@ class _AboutPageState extends State<AboutPage> {
     switch (value) {
       case OnListViewPress.appUpdate:
         MyToast.show(R.current.checkingVersion);
-        MyToast.show('幽喵版本不提供檢查新版本 :D');
+        final result = await APPVersion.checkShouldUpdate();
+        if (!result) {
+          MyToast.show(R.current.isNewVersion);
+        }
         break;
       case OnListViewPress.contribution:
         RouteUtils.toContributorsPage();

@@ -13,6 +13,7 @@ import 'package:get/get_core/get_core.dart';
 import 'connector_parameter.dart';
 
 typedef SavePathCallback = String Function(Headers responseHeaders);
+typedef ProgressCallback = void Function(int count, int total);
 
 class DioConnector {
   static final Map<String, String> _headers = {
@@ -26,7 +27,7 @@ class DioConnector {
 
   static final dioOptions = BaseOptions(
     connectTimeout: 5000,
-    receiveTimeout: 10000,
+    receiveTimeout: 60000,
     sendTimeout: 5000,
     headers: _headers,
     responseType: ResponseType.json,
@@ -115,9 +116,10 @@ class DioConnector {
   Future<Response> getDataByGetResponse(ConnectorParameter parameter) async {
     final url = parameter.url;
     final data = parameter.data;
+    final onReceiveProgress = parameter.onReceiveProgress;
     _handleCharsetName(parameter.charsetName);
     _handleHeaders(parameter);
-    return await dio.get(url, queryParameters: data);
+    return await dio.get(url, queryParameters: data, onReceiveProgress: onReceiveProgress);
   }
 
   Future<Response> getDataByPostResponse(ConnectorParameter parameter) async {
@@ -147,7 +149,7 @@ class DioConnector {
   Future<void> download(
     String url,
     SavePathCallback savePath, {
-    required ProgressCallback progressCallback,
+    required ProgressCallback? progressCallback,
     required CancelToken cancelToken,
     required Map<String, dynamic> header,
   }) async {

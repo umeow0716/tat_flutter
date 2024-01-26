@@ -1810,10 +1810,10 @@ class S {
     );
   }
 
-  /// `This is umeow version!!!`
+  /// `Check version`
   String get checkVersion {
     return Intl.message(
-      'This is umeow version!!!',
+      'Check version',
       name: 'checkVersion',
       desc: '',
       args: [],

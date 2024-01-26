@@ -83,7 +83,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "checkIdentity": MessageLookupByLibrary.simpleMessage("Check identity"),
         "checkLogin": MessageLookupByLibrary.simpleMessage("Check login..."),
         "checkVersion":
-            MessageLookupByLibrary.simpleMessage("This is umeow version!!!"),
+            MessageLookupByLibrary.simpleMessage("Check version"),
         "checkingVersion":
             MessageLookupByLibrary.simpleMessage("Checking version..."),
         "classVideo": MessageLookupByLibrary.simpleMessage("class video"),

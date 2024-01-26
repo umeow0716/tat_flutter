@@ -1,3 +1,5 @@
+typedef ProgressCallback = void Function(int count, int total);
+
 const String presetCharsetName = 'utf-8';
 const String presetComputerUserAgent =
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.79 Safari/537.36";
@@ -10,6 +12,7 @@ class ConnectorParameter {
   String charsetName = presetCharsetName;
   String userAgent = presetComputerUserAgent;
   String? referer;
+  ProgressCallback? onReceiveProgress;
 
   ConnectorParameter(this.url);
 }
