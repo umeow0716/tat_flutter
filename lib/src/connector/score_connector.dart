@@ -146,8 +146,10 @@ class ScoreConnector {
           parameter.charsetName = "big5";
           result = await Connector.getDataByGet(parameter);
           tagNode = parse(result);
-          final rankNodes = tagNode
-              .getElementsByTagName("tbody")
+          final rankTBodys = tagNode
+              .getElementsByTagName("tbody");
+          if(rankTBodys.isEmpty) throw Exception('rankTBodys is empty');
+          final rankNodes = rankTBodys
               .first
               .getElementsByTagName("tr")
               .reversed
@@ -198,6 +200,12 @@ class ScoreConnector {
         }
       } catch(e, stack) {
         Log.eWithStack(e.toString(), stack);
+        if(!isTry) {
+          await login();
+          return getScoreRankList(isTry: true);
+        }
+
+        rethrow;
       }
       return courseScoreList;
     } catch (e, stack) {

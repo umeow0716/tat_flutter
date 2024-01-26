@@ -2759,6 +2759,16 @@ class S {
       args: [],
     );
   }
+
+  /// `ScreenShot`
+  String get screenshot {
+    return Intl.message(
+      'ScreenShot',
+      name: 'screenshot',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

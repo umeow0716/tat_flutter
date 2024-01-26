@@ -186,8 +186,10 @@ class _ScoreViewerPageState extends State<ScoreViewerPage> with TickerProviderSt
 
       total = taskFlow.length;
       int rate = 0;
+      bool done = false;
 
       taskFlow.callback = (task) async {
+        if(done) return;
         rate++;
         progressRateDialog.update(nowProgress: rate / total, progressString: sprintf("%d/%d", [rate, total]));
         final categoryInfo = task.result;
@@ -199,12 +201,18 @@ class _ScoreViewerPageState extends State<ScoreViewerPage> with TickerProviderSt
           await LocalStorage.instance.setSemesterCourseScore(courseScoreList);
           progressRateDialog.hide();
           
+          done = true;
           _buildTabBar();
           setState(() => _isLoading = false);
         }
       };
 
       taskFlow.start_withoutasync();
+      Future.delayed(const Duration(seconds: 5)).then((_) {
+        done = true;
+        _buildTabBar();
+        setState(() => _isLoading = false);
+      });
     } else {
       MyToast.show(R.current.searchCreditIsNullWarning);
     }

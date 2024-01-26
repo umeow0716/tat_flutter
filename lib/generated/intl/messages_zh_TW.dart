@@ -345,6 +345,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "warning": MessageLookupByLibrary.simpleMessage("警告"),
         "willRestart": MessageLookupByLibrary.simpleMessage("將自動重啟並套用語言"),
         "zuvioAutoRollCallFeatureReleaseNotice":
-            MessageLookupByLibrary.simpleMessage("Zuvio (自動)點名提醒的功能即將上線\n敬請期待！")
+            MessageLookupByLibrary.simpleMessage("Zuvio (自動)點名提醒的功能即將上線\n敬請期待！"),
       };
 }

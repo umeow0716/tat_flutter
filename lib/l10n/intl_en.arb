@@ -271,4 +271,5 @@
   "importSuccess": "Import Success!",
   "importErrorSelf": "Couldn't import self CourseTable",
   "importErrorWrongFile": "Import wrong file!",
+  "screenshot": "ScreenShot"
 }

@@ -277,6 +277,7 @@ class _OtherPageState extends State<OtherPage> {
             if(i == courseTableList.length - 1) {
               await LocalStorage.instance.saveCourseTableList();
               LocalStorage.instance.getCourseSetting().info = courseTableList[0];
+              LocalStorage.instance.getSemesterList().clear();
               widget.pageController.jumpToPage(0);
               MyToast.show(R.current.importSuccess);
             }
