@@ -211,7 +211,7 @@ class LocalStorage {
 
   void setOtherSetting(OtherSettingJson value) => _setting.other = value;
 
-  OtherSettingJson getOtherSetting() => _setting.other;
+  OtherSettingJson getOtherSetting() => _setting?.other;
 
   Future<void> _saveAnnouncementSetting() => _saveSetting();
 

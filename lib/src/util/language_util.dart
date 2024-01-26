@@ -71,6 +71,8 @@ class LanguageUtil {
 
   static LangEnum getLangIndex() {
     final otherSetting = LocalStorage.instance.getOtherSetting();
+    if(otherSetting == null) 
+      return LangEnum.zh;
     final index = getSupportLocale.indexOf(string2Locale(otherSetting.lang));
     switch (index) {
       case 0:
