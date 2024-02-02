@@ -68,7 +68,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "checkIPlusNew": MessageLookupByLibrary.simpleMessage("檢查IPlus最新公告"),
         "checkIdentity": MessageLookupByLibrary.simpleMessage("確認身分"),
         "checkLogin": MessageLookupByLibrary.simpleMessage("檢查登入..."),
-        "checkVersion":
+        "checkVersion": 
             MessageLookupByLibrary.simpleMessage("檢查新版本"),
         "checkingVersion": MessageLookupByLibrary.simpleMessage("檢查中..."),
         "classVideo": MessageLookupByLibrary.simpleMessage("上課錄影"),
@@ -178,6 +178,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "identifyLinks": MessageLookupByLibrary.simpleMessage("辨識連結"),
         "importCourseTable": MessageLookupByLibrary.simpleMessage("匯入課表"),
         "importErrorSelf": MessageLookupByLibrary.simpleMessage("不能匯入自己的課表"),
+        "importErrorWrongFile":
+            MessageLookupByLibrary.simpleMessage("匯入了錯誤的檔案！"),
         "importSuccess": MessageLookupByLibrary.simpleMessage("匯入成功"),
         "incorrectInformationEntered":
             MessageLookupByLibrary.simpleMessage("輸入的資訊有誤"),
