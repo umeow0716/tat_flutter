@@ -88,9 +88,20 @@ class _TATWebViewState extends State<TATWebView> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ), 
           title: Text(widget._title ?? ''),
         ),
-        body: SafeArea(
+        body: WillPopScope(
+          onWillPop: () async {
+            bool result = await _controller.canGoBack() as bool;
+            _controller.goBack();
+            return !result;
+          },
           child: Column(
             children: [
               _buildProgressBar(),

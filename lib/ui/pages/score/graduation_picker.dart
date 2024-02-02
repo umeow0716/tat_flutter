@@ -11,6 +11,8 @@ import 'package:flutter_app/src/task/course/course_year_task.dart';
 import 'package:flutter_app/src/task/task_flow.dart';
 import 'package:get/get.dart';
 
+import 'dart:developer' as developer;
+
 class GraduationPicker {
   GraduationPickerWidget _dialog;
   BuildContext _dismissingContext;
@@ -118,7 +120,43 @@ class _GraduationPickerWidget extends State<GraduationPickerWidget> {
         break;
       }
     }
-    await _getDivisionList();
+
+    developer.log(graduationInformation.selectDivision.toString());
+    if (_presetDepartment.isEmpty) {
+      await _getDefaultDepartment();
+    } else {
+      await selectPreset();
+    }
+
+    await _getCreditInfo();
+    setState(() {});
+  }
+
+  Future<void> _getDefaultDepartment() async {
+    bool found = false;
+    
+    await _getDivisionList(false);
+    for(final division in divisionList) {
+      await _getDepartmentList(false, division["code"]);
+      for(final department in departmentList) {
+        if(department["code"]["division"] == LocalStorage.instance.getAccount().substring(3, 6)) {
+          _selectedDivision = division;
+          _selectedDepartment = department;
+          found = true;
+          break;
+        }
+      }
+
+      if(found) break;
+    }
+    
+    if(!found) {
+      await _getDivisionList();
+      await _getDepartmentList();
+    }
+  }
+
+  Future<void> selectPreset() async {
     //利用北科行動助理預設學制與系所
     if (graduationInformation.selectDivision.isEmpty) {
       graduationInformation.selectDivision = _presetDepartment["division"];
@@ -133,7 +171,6 @@ class _GraduationPickerWidget extends State<GraduationPickerWidget> {
         break;
       }
     }
-    await _getDepartmentList();
     if (graduationInformation.selectDepartment.isEmpty) {
       graduationInformation.selectDepartment = _presetDepartment["department"];
     }
@@ -147,8 +184,6 @@ class _GraduationPickerWidget extends State<GraduationPickerWidget> {
         break;
       }
     }
-    await _getCreditInfo();
-    setState(() {});
   }
 
   Widget buildText(String title) {
@@ -206,26 +241,26 @@ class _GraduationPickerWidget extends State<GraduationPickerWidget> {
     setState(() {});
   }
 
-  Future<void> _getDivisionList() async {
+  Future<void> _getDivisionList([bool setSelect = true]) async {
     TaskFlow taskFlow = TaskFlow();
     String year = _selectedYear.split(" ")[1];
     var task = CourseDivisionTask(year);
     taskFlow.addTask(task);
     if (await taskFlow.start()) {
       divisionList = task.result;
-      _selectedDivision = divisionList.first;
+      if(setSelect) _selectedDivision = divisionList.first;
     }
     setState(() {});
   }
 
-  Future<void> _getDepartmentList() async {
+  Future<void> _getDepartmentList([bool setSelect = true, Map<String, String> code]) async {
     TaskFlow taskFlow = TaskFlow();
-    Map<String, String> code = _selectedDivision["code"];
+    code ??= _selectedDivision["code"];
     final task = CourseDepartmentTask(code);
     taskFlow.addTask(task);
     if (await taskFlow.start()) {
       departmentList = task.result;
-      _selectedDepartment = departmentList.first;
+      if(setSelect) _selectedDepartment = departmentList.first;
     }
     setState(() {});
   }
