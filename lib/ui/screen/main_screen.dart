@@ -1,5 +1,8 @@
 // ignore_for_file: import_of_legacy_library_into_null_safe
 
+import 'dart:isolate';
+import 'dart:ui';
+
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/debug/log/log.dart';
@@ -18,6 +21,7 @@ import 'package:flutter_app/ui/pages/coursetable/course_table_page.dart';
 import 'package:flutter_app/ui/pages/notification/notification_page.dart';
 import 'package:flutter_app/ui/pages/other/other_page.dart';
 import 'package:flutter_app/ui/pages/score/score_page.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:provider/provider.dart';
 
 class MainScreen extends StatefulWidget {
@@ -28,6 +32,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> with RouteAware {
+  ReceivePort _port = ReceivePort();
   final _pageController = PageController();
   int _currentIndex = 0;
   int _closeAppCount = 0;
@@ -37,6 +42,22 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
   void initState() {
     appInit();
     super.initState();
+
+    IsolateNameServer.registerPortWithName(_port.sendPort, 'downloader_send_port');
+    _port.listen((dynamic data) {
+      String id = data[0];
+      DownloadTaskStatus status = DownloadTaskStatus(data[1]);
+      int progress = data[2];
+      setState((){ });
+    });
+
+    FlutterDownloader.registerCallback(downloadCallback);
+  }
+
+  @pragma('vm:entry-point')
+  static void downloadCallback(String id, int status, int progress) {
+    final SendPort? send = IsolateNameServer.lookupPortByName('downloader_send_port');
+    send?.send([id, status, progress]);
   }
 
   @override
@@ -50,6 +71,7 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
 
   @override
   void dispose() {
+    IsolateNameServer.removePortNameMapping('downloader_send_port');
     AnalyticsUtils.observer.unsubscribe(this);
     super.dispose();
   }

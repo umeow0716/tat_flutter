@@ -1,10 +1,15 @@
 // ignore_for_file: import_of_legacy_library_into_null_safe
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:flutter_app/src/connector/core/dio_connector.dart';
 import 'package:flutter_app/ui/pages/webview/in_app_webview_callbacks.dart';
 import 'package:flutter_app/ui/pages/webview/web_view_button_bar.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
+import 'dart:developer' as developer;
 
 class TATWebView extends StatefulWidget {
   const TATWebView({
@@ -140,5 +145,24 @@ class _TATWebViewCore extends StatelessWidget {
         onWebViewCreated: _onWebViewCreated,
         onProgressChanged: _onProgressChanged,
         onReceivedServerTrustAuthRequest: _onReceivedTrustAuthReqCallBack,
-      );
+        onDownloadStartRequest: (controller, request) async {
+          developer.log(await controller.evaluateJavascript(source: 'document.cookie'));
+          await FlutterDownloader.enqueue(
+            url: request.url.toString(),
+            headers: {
+                HttpHeaders.connectionHeader: 'keep-alive',
+                HttpHeaders.cookieHeader: await controller.evaluateJavascript(source: 'document.cookie'),
+            },
+            savedDir: (await getExternalStorageDirectory())!.path,
+            showNotification: true, // show download progress in status bar (for Android)
+            openFileFromNotification: true, // click on notification to open downloaded file (for Android)
+            saveInPublicStorage: true
+          );
+        },
+        initialOptions: InAppWebViewGroupOptions(
+          crossPlatform: InAppWebViewOptions(
+            useOnDownloadStart: true,
+          )
+        )
+  );
 }
