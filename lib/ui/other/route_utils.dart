@@ -46,7 +46,7 @@ class RouteUtils {
     );
   }
 
-  static Future? toSubSystemPage(String title, String arg) {
+  static Future? toSubSystemPage(String? title, String? arg) {
     return Get.to(
       () => SubSystemPage(
         title: title,

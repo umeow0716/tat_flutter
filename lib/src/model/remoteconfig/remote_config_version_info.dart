@@ -1,5 +1,3 @@
-// TODO: remove sdk version selector after migrating to null-safety.
-// @dart=2.10
 import 'dart:io';
 
 import 'package:json_annotation/json_annotation.dart';
@@ -9,13 +7,13 @@ part 'remote_config_version_info.g.dart';
 @JsonSerializable()
 class RemoteConfigVersionInfo {
   @JsonKey(name: "is_focus_update")
-  bool isFocusUpdate;
+  bool? isFocusUpdate;
 
   @JsonKey(name: "last_version")
-  AndroidIosVersionInfo last;
+  AndroidIosVersionInfo? last;
 
   @JsonKey(name: "last_version_detail")
-  String lastVersionDetail;
+  String? lastVersionDetail;
 
   RemoteConfigVersionInfo({this.last, this.lastVersionDetail, this.isFocusUpdate});
 
@@ -25,16 +23,16 @@ class RemoteConfigVersionInfo {
 @JsonSerializable()
 class AndroidIosVersionInfo {
   @JsonKey(name: "android")
-  String android;
+  String? android;
 
   @JsonKey(name: "ios")
-  String ios;
+  String? ios;
 
   AndroidIosVersionInfo({this.android, this.ios});
 
   factory AndroidIosVersionInfo.fromJson(Map<String, dynamic> srcJson) => _$AndroidIosVersionInfoFromJson(srcJson);
 
-  String get version {
+  String? get version {
     return (Platform.isIOS) ? ios : android;
   }
 }

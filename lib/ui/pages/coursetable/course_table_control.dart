@@ -1,5 +1,3 @@
-// TODO: remove sdk version selector after migrating to null-safety.
-// @dart=2.10
 import 'package:flutter/material.dart';
 import 'package:flutter_app/src/config/app_colors.dart';
 import 'package:flutter_app/src/model/coursetable/course_table_json.dart';
@@ -14,7 +12,7 @@ class CourseTableControl {
   bool isHideB = false;
   bool isHideC = false;
   bool isHideD = false;
-  CourseTableJson courseTable;
+  late CourseTableJson courseTable;
   List<String> dayStringList = [
     R.current.Monday,
     R.current.Tuesday,
@@ -45,7 +43,7 @@ class CourseTableControl {
   List<String> sectionStringList = ["1", "2", "3", "4", "N", "5", "6", "7", "8", "9", "A", "B", "C", "D"];
   static int dayLength = 8;
   static int sectionLength = 14;
-  Map<String, Color> colorMap;
+  late Map<String, Color>? colorMap;
 
   void set(CourseTableJson value) {
     courseTable = value;
@@ -74,7 +72,7 @@ class CourseTableControl {
     return intList;
   }
 
-  CourseInfoJson getCourseInfo(int intDay, int intNumber) {
+  CourseInfoJson? getCourseInfo(int intDay, int intNumber) {
     final day = Day.values[intDay];
     final number = SectionNumber.values[intNumber];
 
@@ -82,20 +80,20 @@ class CourseTableControl {
       return null;
     }
 
-    return courseTable?.courseInfoMap[day][number];
+    return courseTable.courseInfoMap![day]![number];
   }
 
-  Color getCourseInfoColor(int intDay, int intNumber) {
+  Color? getCourseInfoColor(int intDay, int intNumber) {
     final courseInfo = getCourseInfo(intDay, intNumber);
 
     if (colorMap == null) {
       return Colors.white;
     }
 
-    for (final key in colorMap.keys) {
+    for (final key in colorMap!.keys) {
       if (courseInfo != null) {
-        if (key == courseInfo.main.course.id) {
-          return colorMap[key];
+        if (key == courseInfo.main!.course!.id) {
+          return colorMap![key];
         }
       }
     }
@@ -112,7 +110,7 @@ class CourseTableControl {
     final colors = AppColors.courseTableColors.toList()..shuffle();
 
     for (int i = 0; i < colorCount; i++) {
-      colorMap[courseInfoList[i]] = colors[i % colors.length];
+      colorMap![courseInfoList[i]] = colors[i % colors.length];
     }
   }
 

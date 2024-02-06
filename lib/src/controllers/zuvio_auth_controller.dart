@@ -69,7 +69,7 @@ class ZAuthController extends GetxController with SuspendInteractionsTransaction
     Log.d('Zuvio user info saved.');
 
     if (kDebugMode) {
-      Log.d(LocalStorage.instance.getZuvioLoginCredential().email);
+      Log.d(LocalStorage.instance.getZuvioLoginCredential()!.email);
       Log.d(LocalStorage.instance.getZuvioUserInfo());
     }
   }

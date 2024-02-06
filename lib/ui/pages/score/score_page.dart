@@ -49,7 +49,7 @@ class _ScoreViewerPageState extends State<ScoreViewerPage> with TickerProviderSt
     final titleWidget = _buildTile(sprintf("%s %d/%d", [
       R.current.creditSummary,
       courseScoreCredit.getTotalCourseCredit(),
-      courseScoreCredit.graduationInformation.lowCredit,
+      courseScoreCredit.graduationInformation!.lowCredit,
     ]));
 
     final widgetList = [
@@ -77,12 +77,12 @@ class _ScoreViewerPageState extends State<ScoreViewerPage> with TickerProviderSt
     for (final courseScoreInfoList in generalLesson.values) {
       for (final course in courseScoreInfoList) {
         if (course.isCoreGeneralLesson) {
-          coreCredit += course.credit.toInt();
+          coreCredit += course.credit!.toInt();
         } else {
-          selectCredit += course.credit.toInt();
+          selectCredit += course.credit!.toInt();
         }
 
-        final courseItemWidget = _buildOneLineCourse(course.name, course.openClass);
+        final courseItemWidget = _buildOneLineCourse(course.name, course.openClass!);
         widgetList.add(courseItemWidget);
       }
     }
@@ -103,8 +103,8 @@ class _ScoreViewerPageState extends State<ScoreViewerPage> with TickerProviderSt
   }
 
   Widget get _otherDepartmentItemTile {
-    final department = LocalStorage.instance.getGraduationInformation().selectDepartment.substring(0, 2);
-    final otherDepartmentMaxCredit = courseScoreCredit.graduationInformation.outerDepartmentMaxCredit;
+    final department = LocalStorage.instance.getGraduationInformation()!.selectDepartment!.substring(0, 2);
+    final otherDepartmentMaxCredit = courseScoreCredit.graduationInformation!.outerDepartmentMaxCredit;
 
     final generalLesson = courseScoreCredit.getOtherDepartmentCourse(department);
     final List<Widget> widgetList = [];
@@ -112,8 +112,8 @@ class _ScoreViewerPageState extends State<ScoreViewerPage> with TickerProviderSt
 
     for (final courseScoreInfoList in generalLesson.values) {
       for (final course in courseScoreInfoList) {
-        otherDepartmentCredit += course.credit.toInt();
-        final courseItemWidget = _buildOneLineCourse(course.name, course.openClass);
+        otherDepartmentCredit += course.credit!.toInt();
+        final courseItemWidget = _buildOneLineCourse(course.name, course.openClass!);
         widgetList.add(courseItemWidget);
       }
     }
@@ -137,7 +137,7 @@ class _ScoreViewerPageState extends State<ScoreViewerPage> with TickerProviderSt
     super.initState();
 
     courseScoreCredit = LocalStorage.instance.getCourseScoreCredit();
-    courseScoreList.addAll(LocalStorage.instance.getSemesterCourseScore());
+    courseScoreList.addAll(LocalStorage.instance.getSemesterCourseScore()!);
 
     if (courseScoreList.isEmpty) {
       _addScoreRankTask();
@@ -175,10 +175,10 @@ class _ScoreViewerPageState extends State<ScoreViewerPage> with TickerProviderSt
       for (int i = 0; i < total; i++) {
         final courseInfo = courseInfoList[i];
         final courseId = courseInfo.courseId;
-        if (courseInfo.category.isEmpty) {
-          final task = CourseCategoryInfoTask(courseId);
+        if (courseInfo.category!.isEmpty) {
+          final task = CourseCategoryInfoTask(courseId!);
           task.openLoadingDialog = false;
-          if (courseId.isNotEmpty) {
+          if (courseId!.isNotEmpty) {
             taskFlow.addTask(task);
           }
         }
@@ -194,7 +194,7 @@ class _ScoreViewerPageState extends State<ScoreViewerPage> with TickerProviderSt
         progressRateDialog.update(nowProgress: rate / total, progressString: sprintf("%d/%d", [rate, total]));
         final categoryInfo = task.result;
         final courseScoreInfo = courseScoreCredit.getCourseByCourseId(categoryInfo['courseId']);
-        courseScoreInfo.category = categoryInfo['category'];
+        courseScoreInfo!.category = categoryInfo['category'];
         courseScoreInfo.openClass = categoryInfo['openClass'].replaceAll("\n", " ");
 
         if (rate == total) {
@@ -283,7 +283,7 @@ class _ScoreViewerPageState extends State<ScoreViewerPage> with TickerProviderSt
     tabChildList.clear();
 
     try {
-      if (courseScoreCredit.graduationInformation.isSelect) {
+      if (courseScoreCredit.graduationInformation!.isSelect) {
         tabLabelList.add(_buildTabLabel(R.current.creditSummary));
         tabChildList.add(
           AnimationLimiter(
@@ -310,7 +310,7 @@ class _ScoreViewerPageState extends State<ScoreViewerPage> with TickerProviderSt
 
     for (int i = 0; i < courseScoreList.length; i++) {
       final courseScore = courseScoreList[i];
-      tabLabelList.add(_buildTabLabel("${courseScore.semester.year}-${courseScore.semester.semester}"));
+      tabLabelList.add(_buildTabLabel("${courseScore.semester!.year}-${courseScore.semester!.semester}"));
       tabChildList.add(_buildSemesterScores(courseScore));
     }
 
@@ -351,7 +351,7 @@ class _ScoreViewerPageState extends State<ScoreViewerPage> with TickerProviderSt
 
   Widget _buildType(String type, String title) {
     final nowCredit = courseScoreCredit.getCreditByType(type);
-    final minCredit = courseScoreCredit.graduationInformation.courseTypeMinCredit[type];
+    final minCredit = courseScoreCredit.graduationInformation!.courseTypeMinCredit![type];
 
     return InkWell(
       child: Padding(
@@ -441,7 +441,7 @@ class _ScoreViewerPageState extends State<ScoreViewerPage> with TickerProviderSt
               children: [
                 Padding(
                   padding: const EdgeInsets.only(bottom: 16.0),
-                  child: CourseScoreSection(scoreInfoList: courseScore.courseScoreList),
+                  child: CourseScoreSection(scoreInfoList: courseScore.courseScoreList!),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -470,14 +470,14 @@ class _ScoreViewerPageState extends State<ScoreViewerPage> with TickerProviderSt
               padding: const EdgeInsets.symmetric(vertical: 16.0),
               child: RankGradeMetrics(
                 title: R.current.semesterRanking,
-                rankInfo: courseScore.now,
+                rankInfo: courseScore.now!,
               ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16.0),
               child: RankGradeMetrics(
                 title: R.current.previousRankings,
-                rankInfo: courseScore.history,
+                rankInfo: courseScore.history!,
               ),
             ),
           ],

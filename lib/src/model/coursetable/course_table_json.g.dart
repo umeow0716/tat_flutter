@@ -1,5 +1,3 @@
-// TODO: remove sdk version selector after migrating to null-safety.
-// @dart=2.10
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 part of 'course_table_json.dart';
@@ -8,17 +6,18 @@ part of 'course_table_json.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-CourseTableJson _$CourseTableJsonFromJson(Map<String, dynamic> json) {
+CourseTableJson? _$CourseTableJsonFromJson(Map<String, dynamic> json) {
   return CourseTableJson(
     courseSemester:
         json['courseSemester'] == null ? null : SemesterJson.fromJson(json['courseSemester'] as Map<String, dynamic>),
-    courseInfoMap: (json['courseInfoMap'] as Map<String, dynamic>)?.map(
+    courseInfoMap: (json['courseInfoMap'] as Map<String, dynamic>).map(
       (k, e) => MapEntry(
-          _$enumDecodeNullable(_$DayEnumMap, k),
-          (e as Map<String, dynamic>)?.map(
-            (k, e) => MapEntry(_$enumDecodeNullable(_$SectionNumberEnumMap, k),
-                e == null ? null : CourseInfoJson.fromJson(e as Map<String, dynamic>)),
-          )),
+          _$enumDecodeNullable(_$DayEnumMap, k)!,
+          (e as Map<String, dynamic>).map(
+            (k, e) => MapEntry(_$enumDecodeNullable(_$SectionNumberEnumMap, k)!,
+              CourseInfoJson.fromJson(e! as Map<String, dynamic>)),
+          ),
+      ),
     ),
     studentId: json['studentId'] as String,
     studentName: json['studentName'] as String,
@@ -36,26 +35,26 @@ Map<String, dynamic> _$CourseTableJsonToJson(CourseTableJson instance) => <Strin
 T _$enumDecode<T>(
   Map<T, dynamic> enumValues,
   dynamic source, {
-  T unknownValue,
+  T? unknownValue,
 }) {
   if (source == null) {
     throw ArgumentError('A value must be provided. Supported values: '
         '${enumValues.values.join(', ')}');
   }
 
-  final value = enumValues.entries.singleWhere((e) => e.value == source, orElse: () => null)?.key;
+  final value = enumValues.entries.singleWhere((e) => e.value == source).key;
 
   if (value == null && unknownValue == null) {
     throw ArgumentError('`$source` is not one of the supported values: '
         '${enumValues.values.join(', ')}');
   }
-  return value ?? unknownValue;
+  return value ?? unknownValue!;
 }
 
-T _$enumDecodeNullable<T>(
+T? _$enumDecodeNullable<T>(
   Map<T, dynamic> enumValues,
   dynamic source, {
-  T unknownValue,
+  T? unknownValue,
 }) {
   if (source == null) {
     return null;

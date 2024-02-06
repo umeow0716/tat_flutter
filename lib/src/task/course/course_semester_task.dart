@@ -11,7 +11,7 @@ import 'package:numberpicker/numberpicker.dart';
 import '../task.dart';
 import 'course_system_task.dart';
 
-class CourseSemesterTask extends CourseSystemTask<List<SemesterJson>> {
+class CourseSemesterTask extends CourseSystemTask<List<SemesterJson?>?> {
   final String id;
 
   CourseSemesterTask(this.id) : super("CourseSemesterTask");
@@ -20,19 +20,21 @@ class CourseSemesterTask extends CourseSystemTask<List<SemesterJson>> {
   Future<TaskStatus> execute() async {
     final status = await super.execute();
     if (status == TaskStatus.success) {
-      List<SemesterJson>? value;
+      List<SemesterJson?>? value;
 
       if (id.length == 5) {
         value = await _selectSemesterDialog();
       } else {
         super.onStart(R.current.getCourseSemester);
         if(id != LocalStorage.instance.getAccount()) {
-          List<SemesterJson> localSemesters = LocalStorage.instance.getCourseTableList()
+          List<SemesterJson?> localSemesters = LocalStorage.instance.getCourseTableList()
             .where((courseTable) => courseTable.studentId == id)
             .map((courseTable) => courseTable.courseSemester)
             .toList();
           value = localSemesters;
-        } else value = await CourseConnector.getCourseSemester(id) as List<SemesterJson>?;
+        } else {
+          value = await CourseConnector.getCourseSemester(id);
+        }
         super.onEnd();
       }
 

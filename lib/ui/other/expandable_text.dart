@@ -1,17 +1,15 @@
-// TODO: remove sdk version selector after migrating to null-safety.
-// @dart=2.10
 import 'package:flutter/material.dart';
 
 class ExpandableText extends StatefulWidget {
-  final String text;
+  final String? text;
 
-  final int maxLines;
+  final int? maxLines;
 
-  final TextStyle style;
+  final TextStyle? style;
 
-  final bool expand;
+  final bool? expand;
 
-  const ExpandableText({Key key, this.text, this.maxLines, this.style, this.expand}) : super(key: key);
+  const ExpandableText({Key? key, this.text, this.maxLines, this.style, this.expand}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _ExpandableTextState();

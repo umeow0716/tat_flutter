@@ -1,5 +1,3 @@
-// TODO: remove sdk version selector after migrating to null-safety.
-// @dart=2.10
 import 'dart:collection';
 
 import 'package:dio/dio.dart';
@@ -18,8 +16,8 @@ import 'package:flutter_app/src/connector/ischool_plus_connector.dart';
 enum CourseConnectorStatus { loginSuccess, loginFail, unknownError }
 
 class CourseMainInfo {
-  List<CourseMainInfoJson> json;
-  String studentName;
+  List<CourseMainInfoJson?>? json;
+  String? studentName;
 }
 
 class CourseConnector {
@@ -51,11 +49,11 @@ class CourseConnector {
       nodes = tagNode.getElementsByTagName("input");
       data = {};
       for (Element node in nodes) {
-        String name = node.attributes['name'];
-        String value = node.attributes['value'];
+        String name = node.attributes['name']!;
+        String value = node.attributes['value']!;
         data[name] = value;
       }
-      String jumpUrl = tagNode.getElementsByTagName("form")[0].attributes["action"];
+      String jumpUrl = tagNode.getElementsByTagName("form")[0].attributes["action"]!;
       parameter = ConnectorParameter(jumpUrl);
       parameter.data = data;
       await Connector.getDataByPostResponse(parameter);
@@ -66,7 +64,7 @@ class CourseConnector {
     }
   }
 
-  static Future<String> getCourseENName(String url) async {
+  static Future<String?> getCourseENName(String url) async {
     try {
       ConnectorParameter parameter;
       Document tagNode;
@@ -84,7 +82,7 @@ class CourseConnector {
     }
   }
 
-  static Future<CourseExtraInfoJson> getCourseExtraInfo(String courseId) async {
+  static Future<CourseExtraInfoJson?> getCourseExtraInfo(String courseId) async {
     try {
       ConnectorParameter parameter;
       Document tagNode;
@@ -115,7 +113,7 @@ class CourseConnector {
       final Iterable<RegExpMatch> studentSemesterDetailMatches = studentSemesterDetailFilter.allMatches(titleString);
       // "studentSemesterDetails" should consist of three numerical values
       // ex: [110310144, 112, 1]
-      final List<String> studentSemesterDetails = studentSemesterDetailMatches.map((match) => match.group(0)).toList();
+      final List<String?> studentSemesterDetails = studentSemesterDetailMatches.map((match) => match.group(0)).toList();
       if (studentSemesterDetails.isEmpty) {
         throw RangeError("[TAT] course_connector.dart: studentSemesterDetails list is empty");
       }
@@ -146,8 +144,8 @@ class CourseConnector {
       // the category of the course will be set to ▲ (校訂專業必修) as default
       if (classExtraInfoNodes[18].text.trim() != "" &&
           classExtraInfoNodes[18].getElementsByTagName("a")[0].attributes.containsKey("href")) {
-        courseExtra.href = _courseCNHost + classExtraInfoNodes[18].getElementsByTagName("a")[0].attributes["href"];
-        parameter = ConnectorParameter(courseExtra.href);
+        courseExtra.href = _courseCNHost + classExtraInfoNodes[18].getElementsByTagName("a")[0].attributes["href"]!;
+        parameter = ConnectorParameter(courseExtra.href!);
         result = await Connector.getDataByPost(parameter);
         tagNode = parse(result);
         nodes = tagNode.getElementsByTagName("tr");
@@ -168,7 +166,7 @@ class CourseConnector {
     }
   }
 
-  static Future<List<SemesterJson>> getCourseSemester(String studentId) async {
+  static Future<List<SemesterJson>?> getCourseSemester(String studentId) async {
     try {
       ConnectorParameter parameter;
       Document tagNode;
@@ -215,7 +213,7 @@ class CourseConnector {
     return String.fromCharCodes(newString);
   }
 
-  static Future<CourseMainInfo> getENCourseMainInfoList(String studentId, SemesterJson semester) async {
+  static Future<CourseMainInfo?> getENCourseMainInfoList(String studentId, SemesterJson semester) async {
     var info = CourseMainInfo();
     try {
       ConnectorParameter parameter;
@@ -225,8 +223,8 @@ class CourseConnector {
       Map<String, String> data = {
         "code": studentId,
         "format": "-2",
-        "year": semester.year,
-        "sem": semester.semester,
+        "year": semester.year!,
+        "sem": semester.semester!,
       };
       parameter = ConnectorParameter(_postCourseENUrl);
       parameter.data = data;
@@ -244,7 +242,7 @@ class CourseConnector {
       }
       info.studentName = studentName;
 
-      List<CourseMainInfoJson> courseMainInfoList = [];
+      List<CourseMainInfoJson?> courseMainInfoList = [];
       for (int i = 1; i < courseNodes.length - 1; i++) {
         CourseMainInfoJson courseMainInfo = CourseMainInfoJson();
         CourseMainJson courseMain = CourseMainJson();
@@ -269,7 +267,7 @@ class CourseConnector {
           Day day = dayEnum[j]; //要做變換網站是從星期日開始
           String time = nodesOne[j + 6].text;
           time = strQ2B(time);
-          courseMain.time[day] = time;
+          courseMain.time![day] = time;
         }
 
         courseMainInfo.course = courseMain;
@@ -280,7 +278,7 @@ class CourseConnector {
         for (String name in nodesOne[4].innerHtml.split("<br>")) {
           TeacherJson teacher = TeacherJson();
           teacher.name = name.replaceAll("\n", "");
-          courseMainInfo.teacher.add(teacher);
+          courseMainInfo.teacher!.add(teacher);
         }
 
         //取得教室名稱
@@ -288,15 +286,15 @@ class CourseConnector {
         for (String name in nodesOne[13].innerHtml.split("<br>").getRange(0, length - 1)) {
           ClassroomJson classroom = ClassroomJson();
           classroom.name = name.replaceAll("\n", "");
-          courseMainInfo.classroom.add(classroom);
+          courseMainInfo.classroom!.add(classroom);
         }
 
         //取得開設教室名稱
         for (Element node in nodesOne[5].getElementsByTagName("a")) {
           ClassJson classInfo = ClassJson();
           classInfo.name = node.text;
-          classInfo.href = _courseCNHost + node.attributes["href"];
-          courseMainInfo.openClass.add(classInfo);
+          classInfo.href = _courseCNHost + node.attributes["href"]!;
+          courseMainInfo.openClass!.add(classInfo);
         }
         courseMainInfoList.add(courseMainInfo);
       }
@@ -308,7 +306,7 @@ class CourseConnector {
     }
   }
 
-  static Future<CourseMainInfo> getTWCourseMainInfoList(String studentId, SemesterJson semester) async {
+  static Future<CourseMainInfo?> getTWCourseMainInfoList(String studentId, SemesterJson semester) async {
     var info = CourseMainInfo();
     try {
       ConnectorParameter parameter;
@@ -319,8 +317,8 @@ class CourseConnector {
       Map<String, String> data = {
         "code": studentId,
         "format": "-2",
-        "year": semester.year,
-        "sem": semester.semester,
+        "year": semester.year!,
+        "sem": semester.semester!,
       };
       parameter = ConnectorParameter(_postCourseCNUrl);
       parameter.data = data;
@@ -330,7 +328,7 @@ class CourseConnector {
       courseNodes = node.getElementsByTagName("tr");
       String studentName;
       try {
-        studentName = RegExp(r"姓名：([\u4E00-\u9FA5]+)").firstMatch(courseNodes[0].text).group(1);
+        studentName = RegExp(r"姓名：([\u4E00-\u9FA5]+)").firstMatch(courseNodes[0].text)!.group(1)!;
       } catch (e) {
         studentName = "";
       }
@@ -360,7 +358,7 @@ class CourseConnector {
         courseMain.note = nodesOne[19].text.replaceAll("\n", ""); //備註
         if (nodesOne[18].getElementsByTagName("a").isNotEmpty) {
           courseMain.scheduleHref =
-              _courseCNHost + nodesOne[18].getElementsByTagName("a")[0].attributes["href"]; //教學進度大綱
+              _courseCNHost + nodesOne[18].getElementsByTagName("a")[0].attributes["href"]!; //教學進度大綱
         }
 
         //時間
@@ -368,7 +366,7 @@ class CourseConnector {
           Day day = dayEnum[j]; //要做變換網站是從星期日開始
           String time = nodesOne[j + 8].text;
           time = strQ2B(time);
-          courseMain.time[day] = time;
+          courseMain.time![day] = time;
         }
 
         courseMainInfo.course = courseMain;
@@ -377,24 +375,24 @@ class CourseConnector {
         for (Element node in nodesOne[6].getElementsByTagName("a")) {
           TeacherJson teacher = TeacherJson();
           teacher.name = node.text;
-          teacher.href = _courseCNHost + node.attributes["href"];
-          courseMainInfo.teacher.add(teacher);
+          teacher.href = _courseCNHost + node.attributes["href"]!;
+          courseMainInfo.teacher!.add(teacher);
         }
 
         //取得教室名稱
         for (Element node in nodesOne[15].getElementsByTagName("a")) {
           ClassroomJson classroom = ClassroomJson();
           classroom.name = node.text;
-          classroom.href = _courseCNHost + node.attributes["href"];
-          courseMainInfo.classroom.add(classroom);
+          classroom.href = _courseCNHost + node.attributes["href"]!;
+          courseMainInfo.classroom!.add(classroom);
         }
 
         //取得開設教室名稱
         for (Element node in nodesOne[7].getElementsByTagName("a")) {
           ClassJson classInfo = ClassJson();
           classInfo.name = node.text;
-          classInfo.href = _courseCNHost + node.attributes["href"];
-          courseMainInfo.openClass.add(classInfo);
+          classInfo.href = _courseCNHost + node.attributes["href"]!;
+          courseMainInfo.openClass!.add(classInfo);
         }
 
         courseMainInfoList.add(courseMainInfo);
@@ -407,7 +405,7 @@ class CourseConnector {
     }
   }
 
-  static Future<CourseMainInfo> getTWTeacherCourseMainInfoList(String studentId, SemesterJson semester) async {
+  static Future<CourseMainInfo?> getTWTeacherCourseMainInfoList(String studentId, SemesterJson semester) async {
     var info = CourseMainInfo();
     try {
       ConnectorParameter parameter;
@@ -418,8 +416,8 @@ class CourseConnector {
       Map<String, String> data = {
         "code": studentId,
         "format": "-3",
-        "year": semester.year,
-        "sem": semester.semester,
+        "year": semester.year!,
+        "sem": semester.semester!,
       };
       parameter = ConnectorParameter(_postTeacherCourseCNUrl);
       parameter.data = data;
@@ -448,7 +446,7 @@ class CourseConnector {
         nodes = nodesOne[0].getElementsByTagName("a"); //確定是否有課號
         if (nodes.isNotEmpty) {
           courseMain.id = nodes[0].text;
-          courseMain.href = _courseCNHost + nodes[0].attributes["href"];
+          courseMain.href = _courseCNHost + nodes[0].attributes["href"]!;
         }
         //取的課程名稱/課程連結
         nodes = nodesOne[1].getElementsByTagName("a"); //確定是否有連結
@@ -463,7 +461,7 @@ class CourseConnector {
         courseMain.note = nodesOne[20].text.replaceAll("\n", ""); //備註
         if (nodesOne[19].getElementsByTagName("a").isNotEmpty) {
           courseMain.scheduleHref =
-              _courseCNHost + nodesOne[19].getElementsByTagName("a")[0].attributes["href"]; //教學進度大綱
+              _courseCNHost + nodesOne[19].getElementsByTagName("a")[0].attributes["href"]!; //教學進度大綱
         }
 
         //時間
@@ -471,7 +469,7 @@ class CourseConnector {
           Day day = dayEnum[j]; //要做變換網站是從星期日開始
           String time = nodesOne[j + 8].text;
           time = strQ2B(time);
-          courseMain.time[day] = time;
+          courseMain.time![day] = time;
         }
 
         courseMainInfo.course = courseMain;
@@ -480,22 +478,22 @@ class CourseConnector {
         TeacherJson teacher = TeacherJson();
         teacher.name = "";
         teacher.href = "";
-        courseMainInfo.teacher.add(teacher);
+        courseMainInfo.teacher!.add(teacher);
 
         //取得教室名稱
         for (Element node in nodesOne[15].getElementsByTagName("a")) {
           ClassroomJson classroom = ClassroomJson();
           classroom.name = node.text;
-          classroom.href = _courseCNHost + node.attributes["href"];
-          courseMainInfo.classroom.add(classroom);
+          classroom.href = _courseCNHost + node.attributes["href"]!;
+          courseMainInfo.classroom!.add(classroom);
         }
 
         //取得開設教室名稱
         for (Element node in nodesOne[7].getElementsByTagName("a")) {
           ClassJson classInfo = ClassJson();
           classInfo.name = node.text;
-          classInfo.href = _courseCNHost + node.attributes["href"];
-          courseMainInfo.openClass.add(classInfo);
+          classInfo.href = _courseCNHost + node.attributes["href"]!;
+          courseMainInfo.openClass!.add(classInfo);
         }
 
         courseMainInfoList.add(courseMainInfo);
@@ -508,7 +506,7 @@ class CourseConnector {
     }
   }
 
-  static Future<Map> getGraduation(String year, String department) async {
+  static Future<Map?> getGraduation(String year, String department) async {
     ConnectorParameter parameter;
     String result;
     Document tagNode;
@@ -524,34 +522,34 @@ class CourseConnector {
       tagNode = parse(result);
       node = tagNode.getElementsByTagName("tbody").first;
       nodes = node.getElementsByTagName("tr");
-      String href;
+      String? href;
       for (int i = 1; i < nodes.length; i++) {
         node = nodes[i];
         node = node.getElementsByTagName("a").first;
         if (node.text.contains(department)) {
-          href = node.attributes["href"];
+          href = node.attributes["href"]!;
           break;
         }
       }
-      href = "https://aps.ntut.edu.tw/course/tw/$href";
+      href = "https://aps.ntut.edu.tw/course/tw/${href!}";
       parameter = ConnectorParameter(href);
       result = await Connector.getDataByGet(parameter);
 
       exp = RegExp(r"最低畢業學分：?(\d+)學分");
-      matches = exp.firstMatch(result);
-      graduationMap["lowCredit"] = int.parse(matches.group(1));
+      matches = exp.firstMatch(result)!;
+      graduationMap["lowCredit"] = int.parse(matches.group(1)!);
 
       exp = RegExp(r"共同必修：?(\d+)學分");
-      matches = exp.firstMatch(result);
-      graduationMap["△"] = int.parse(matches.group(1));
+      matches = exp.firstMatch(result)!;
+      graduationMap["△"] = int.parse(matches.group(1)!);
 
       exp = RegExp(r"專業必修：?(\d+)學分");
-      matches = exp.firstMatch(result);
-      graduationMap["▲"] = int.parse(matches.group(1));
+      matches = exp.firstMatch(result)!;
+      graduationMap["▲"] = int.parse(matches.group(1)!);
 
       exp = RegExp(r"專業選修：?(\d+)學分");
-      matches = exp.firstMatch(result);
-      graduationMap["★"] = int.parse(matches.group(1));
+      matches = exp.firstMatch(result)!;
+      graduationMap["★"] = int.parse(matches.group(1)!);
 
       /*
       exp = RegExp("通識博雅課程應修滿(\d+)學分");
@@ -566,7 +564,7 @@ class CourseConnector {
     }
   }
 
-  static Future<List<String>> getYearList() async {
+  static Future<List<String>?> getYearList() async {
     ConnectorParameter parameter;
     String result;
     Document tagNode;
@@ -595,7 +593,7 @@ class CourseConnector {
   name 名稱
   code 參數
   */
-  static Future<List<Map>> getDivisionList(String year) async {
+  static Future<List<Map>?> getDivisionList(String year) async {
     ConnectorParameter parameter;
     String result;
     Document tagNode;
@@ -610,7 +608,7 @@ class CourseConnector {
       nodes = tagNode.getElementsByTagName("a");
       for (int i = 0; i < nodes.length; i++) {
         node = nodes[i];
-        Map<String, String> code = Uri.parse(node.attributes["href"]).queryParameters;
+        Map<String, String> code = Uri.parse(node.attributes["href"]!).queryParameters;
         resultList.add({"name": node.text, "code": code});
       }
       return resultList;
@@ -625,7 +623,7 @@ class CourseConnector {
   name 名稱
   code 參數
   */
-  static Future<List<Map>> getDepartmentList(Map code) async {
+  static Future<List<Map>?> getDepartmentList(Map code) async {
     ConnectorParameter parameter;
     String result;
     Document tagNode;
@@ -641,7 +639,7 @@ class CourseConnector {
       nodes = node.getElementsByTagName("a");
       for (int i = 0; i < nodes.length; i++) {
         node = nodes[i];
-        Map<String, String> code = Uri.parse(node.attributes["href"]).queryParameters;
+        Map<String, String> code = Uri.parse(node.attributes["href"]!).queryParameters;
         String name = node.text.replaceAll(RegExp("[ |s]"), "");
         resultList.add({"name": name, "code": code});
       }
@@ -656,7 +654,7 @@ class CourseConnector {
   Map Key
   minGraduationCredits
   */
-  static Future<GraduationInformationJson> getCreditInfo(Map code, String select) async {
+  static Future<GraduationInformationJson?> getCreditInfo(Map code, String select) async {
     ConnectorParameter parameter;
     String result;
     Document tagNode;
@@ -693,22 +691,22 @@ class CourseConnector {
             String creditString = tdNode.text.replaceAll(RegExp(r"[\s|\n]"), "");
             switch (j - 1) {
               case 0:
-                graduationInformation.courseTypeMinCredit["○"] = int.parse(creditString);
+                graduationInformation.courseTypeMinCredit!["○"] = int.parse(creditString);
                 break;
               case 1:
-                graduationInformation.courseTypeMinCredit["△"] = int.parse(creditString);
+                graduationInformation.courseTypeMinCredit!["△"] = int.parse(creditString);
                 break;
               case 2:
-                graduationInformation.courseTypeMinCredit["☆"] = int.parse(creditString);
+                graduationInformation.courseTypeMinCredit!["☆"] = int.parse(creditString);
                 break;
               case 3:
-                graduationInformation.courseTypeMinCredit["●"] = int.parse(creditString);
+                graduationInformation.courseTypeMinCredit!["●"] = int.parse(creditString);
                 break;
               case 4:
-                graduationInformation.courseTypeMinCredit["▲"] = int.parse(creditString);
+                graduationInformation.courseTypeMinCredit!["▲"] = int.parse(creditString);
                 break;
               case 5:
-                graduationInformation.courseTypeMinCredit["★"] = int.parse(creditString);
+                graduationInformation.courseTypeMinCredit!["★"] = int.parse(creditString);
                 break;
               case 6:
                 graduationInformation.outerDepartmentMaxCredit = int.parse(creditString);

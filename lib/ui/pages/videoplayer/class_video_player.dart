@@ -143,9 +143,9 @@ class _VideoPlayer extends State<ClassVideoPlayer> {
 
     bool externalPlayerHasLaunched = false;
 
-    if (LocalStorage.instance.getOtherSetting().useExternalVideoPlayer) {
+    if (LocalStorage.instance.getOtherSetting()!.useExternalVideoPlayer!) {
       final name = "${widget.name}_${_selectedVideoInfo.name}.mp4";
-      externalPlayerHasLaunched = await MXPlayerUtil.launch(url: urlStr, name: name);
+      externalPlayerHasLaunched = await MXPlayerUtil.launch(url: urlStr as String, name: name);
     }
 
     final url = Uri.tryParse(urlStr ?? "");
@@ -192,10 +192,10 @@ class _VideoPlayer extends State<ClassVideoPlayer> {
                     return;
                   }
 
-                  final courseName = widget.courseInfo.main.course.name;
+                  final courseName = widget.courseInfo.main!.course!.name;
                   final saveName = "${widget.name}_${_selectedVideoInfo.name}.mp4";
                   final subDir = (LanguageUtil.getLangIndex() == LangEnum.zh) ? "上課錄影" : "video";
-                  final dirName = path.join(courseName, subDir);
+                  final dirName = path.join(courseName!, subDir);
 
                   FileDownload.download(url, dirName, saveName);
                 },

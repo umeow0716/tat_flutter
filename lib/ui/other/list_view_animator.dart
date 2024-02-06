@@ -1,5 +1,3 @@
-// TODO: remove sdk version selector after migrating to null-safety.
-// @dart=2.10
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
@@ -8,16 +6,18 @@ class Animator extends StatefulWidget {
   final Widget child;
   final Duration time;
 
-  const Animator(this.child, this.time, {Key key}) : super(key: key);
+  const Animator(this.child, this.time, {Key? key}) : super(key: key);
 
   @override
   State<Animator> createState() => _AnimatorState();
 }
 
 class _AnimatorState extends State<Animator> with SingleTickerProviderStateMixin {
-  Timer timer;
-  AnimationController animationController;
-  Animation animation;
+  Timer timer = Timer(const Duration(microseconds: 120), () {
+    duration = const Duration();
+  });
+  late AnimationController animationController;
+  late Animation animation;
 
   @override
   void initState() {
@@ -39,7 +39,7 @@ class _AnimatorState extends State<Animator> with SingleTickerProviderStateMixin
     return AnimatedBuilder(
       animation: animation,
       child: widget.child,
-      builder: (BuildContext context, Widget child) {
+      builder: (BuildContext context, Widget? child) {
         return Opacity(
           opacity: animation.value,
           child: Transform.translate(
@@ -52,11 +52,13 @@ class _AnimatorState extends State<Animator> with SingleTickerProviderStateMixin
   }
 }
 
-Timer timer;
+Timer timer = Timer(const Duration(microseconds: 120), () {
+  duration = const Duration();
+});
 Duration duration = const Duration();
 
 wait() {
-  if (timer == null || !timer.isActive) {
+  if (timer == null || !timer!.isActive) {
     timer = Timer(const Duration(microseconds: 120), () {
       duration = const Duration();
     });
@@ -68,7 +70,7 @@ wait() {
 class WidgetAnimator extends StatelessWidget {
   final Widget child;
 
-  const WidgetAnimator(this.child, {Key key}) : super(key: key);
+  const WidgetAnimator(this.child, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

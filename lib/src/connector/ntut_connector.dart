@@ -74,7 +74,7 @@ class NTUTConnector {
       final parameter = ConnectorParameter(_getCalendarUrl);
       parameter.data = data;
       final result = await Connector.getDataByGet(parameter);
-      final calendarList = getNTUTCalendarJsonList(json.decode(result));
+      final calendarList = getNTUTCalendarJsonList(json.decode(result)).where((element) => !element.isEmpty()).toList();
       return calendarList;
     } catch (e, stack) {
       Log.eWithStack(e.toString(), stack);
@@ -99,13 +99,13 @@ class NTUTConnector {
 
   static Future<Map<String, Map<String, String>>> getUserImageRequestInfo() async {
     final imageInfo = <String, Map<String, String>>{};
-    final userPhoto = LocalStorage.instance.getUserInfo().userPhoto;
+    final userPhoto = LocalStorage.instance.getUserInfo()!.userPhoto;
     Log.d("getUserImage");
 
     final url = '$_getPictureUrl?realname=$userPhoto';
 
     imageInfo['url'] = {'value': url};
-    imageInfo['header'] = await Connector.getLoginHeaders(url);
+    imageInfo['header'] = (await Connector.getLoginHeaders(url))!;
 
     return imageInfo;
   }

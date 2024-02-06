@@ -1,5 +1,3 @@
-// TODO: remove sdk version selector after migrating to null-safety.
-// @dart=2.10
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 part of 'course_score_json.dart';
@@ -14,8 +12,8 @@ CourseScoreCreditJson _$CourseScoreCreditJsonFromJson(Map<String, dynamic> json)
         ? null
         : GraduationInformationJson.fromJson(json['graduationInformation'] as Map<String, dynamic>),
     semesterCourseScoreList: (json['semesterCourseScoreList'] as List)
-        ?.map((e) => e == null ? null : SemesterCourseScoreJson.fromJson(e as Map<String, dynamic>))
-        ?.toList(),
+        .map((e) => SemesterCourseScoreJson.fromJson(e as Map<String, dynamic>))
+        .toList(),
   );
 }
 
@@ -52,8 +50,8 @@ SemesterCourseScoreJson _$SemesterCourseScoreJsonFromJson(Map<String, dynamic> j
     now: json['now'] == null ? null : RankJson.fromJson(json['now'] as Map<String, dynamic>),
     averageScore: (json['averageScore'] as num)?.toDouble(),
     courseScoreList: (json['courseScoreList'] as List)
-        ?.map((e) => e == null ? null : CourseScoreInfoJson.fromJson(e as Map<String, dynamic>))
-        ?.toList(),
+        .map((e) => CourseScoreInfoJson.fromJson(e as Map<String, dynamic>))
+        .toList(),
     history: json['history'] == null ? null : RankJson.fromJson(json['history'] as Map<String, dynamic>),
     performanceScore: (json['performanceScore'] as num)?.toDouble(),
     takeCredit: (json['takeCredit'] as num)?.toDouble(),

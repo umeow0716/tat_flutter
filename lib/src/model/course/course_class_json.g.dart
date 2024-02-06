@@ -1,5 +1,3 @@
-// TODO: remove sdk version selector after migrating to null-safety.
-// @dart=2.10
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 part of 'course_class_json.dart';
@@ -17,8 +15,8 @@ CourseMainJson _$CourseMainJsonFromJson(Map<String, dynamic> json) {
     hours: json['hours'] as String,
     stage: json['stage'] as String,
     note: json['note'] as String,
-    time: (json['time'] as Map<String, dynamic>)?.map(
-      (k, e) => MapEntry(_$enumDecodeNullable(_$DayEnumMap, k), e as String),
+    time: (json['time'] as Map<String, dynamic>).map(
+      (k, e) => MapEntry(_$enumDecodeNullable(_$DayEnumMap, k)!, e as String),
     ),
     scheduleHref: json['scheduleHref'] as String,
   );
@@ -39,26 +37,26 @@ Map<String, dynamic> _$CourseMainJsonToJson(CourseMainJson instance) => <String,
 T _$enumDecode<T>(
   Map<T, dynamic> enumValues,
   dynamic source, {
-  T unknownValue,
+  T? unknownValue,
 }) {
   if (source == null) {
     throw ArgumentError('A value must be provided. Supported values: '
         '${enumValues.values.join(', ')}');
   }
 
-  final value = enumValues.entries.singleWhere((e) => e.value == source, orElse: () => null)?.key;
+  final value = enumValues.entries.singleWhere((e) => e.value == source).key;
 
   if (value == null && unknownValue == null) {
     throw ArgumentError('`$source` is not one of the supported values: '
         '${enumValues.values.join(', ')}');
   }
-  return value ?? unknownValue;
+  return value ?? unknownValue!;
 }
 
-T _$enumDecodeNullable<T>(
+T? _$enumDecodeNullable<T>(
   Map<T, dynamic> enumValues,
   dynamic source, {
-  T unknownValue,
+  T? unknownValue,
 }) {
   if (source == null) {
     return null;

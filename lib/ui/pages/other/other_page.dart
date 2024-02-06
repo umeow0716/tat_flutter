@@ -1,5 +1,3 @@
-// TODO: remove sdk version selector after migrating to null-safety.
-// @dart=2.10
 import 'dart:convert';
 import 'dart:io';
 
@@ -46,7 +44,7 @@ enum OnListViewPress {
 class OtherPage extends StatefulWidget {
   final PageController pageController;
 
-  const OtherPage(this.pageController, {Key key}) : super(key: key);
+  const OtherPage(this.pageController, {Key? key}) : super(key: key);
 
   @override
   State<OtherPage> createState() => _OtherPageState();
@@ -84,14 +82,14 @@ class _OtherPageState extends State<OtherPage> {
       "title": R.current.fileViewer,
       "onPress": OnListViewPress.fileViewer
     },
-    if (LocalStorage.instance.getPassword().isNotEmpty)
+    if (LocalStorage.instance.getPassword()!.isNotEmpty)
       {
         "icon": EvaIcons.undoOutline,
         "color": Colors.teal[400],
         "title": R.current.logout,
         "onPress": OnListViewPress.logout
       },
-    if (LocalStorage.instance.getPassword().isEmpty)
+    if (LocalStorage.instance.getPassword()!.isEmpty)
       {
         "icon": EvaIcons.logIn,
         "color": Colors.teal[400],
@@ -130,7 +128,7 @@ class _OtherPageState extends State<OtherPage> {
         MsgDialog(parameter).show();
         break;
       case OnListViewPress.login:
-        RouteUtils.toLoginScreen().then((value) {
+        RouteUtils.toLoginScreen()!.then((value) {
           if (value) widget.pageController.jumpToPage(0);
         });
         break;
@@ -173,9 +171,9 @@ class _OtherPageState extends State<OtherPage> {
         const TextStyle textStyle = TextStyle(color: Color(0xFFE3E2E6), fontFamily: 'TATFont', fontWeight: FontWeight.w700);
         const TextStyle itemStyle = TextStyle(color: Color(0xFFE3E2E6), fontFamily: 'TATFont', fontWeight: FontWeight.w400);
 
-        List<SemesterJson> semesterList = [];
-        String studentId = LocalStorage.instance.getUserData().account;
-        String studentName = LocalStorage.instance.getUserInfo().givenName;
+        List<SemesterJson?>? semesterList = [];
+        String studentId = LocalStorage.instance.getUserData().account!;
+        String studentName = LocalStorage.instance.getUserInfo()!.givenName!;
 
         Future<void> export(List<SemesterJson> values) async {
           List<String> courseTableList = [];
@@ -185,12 +183,12 @@ class _OtherPageState extends State<OtherPage> {
             var task = CourseTableTask(studentId, value);
             taskFlow.addTask(task);
             if (await taskFlow.start()) {
-              task.result.courseInfoMap.forEach((key, value) {
+              task.result!.courseInfoMap!.forEach((key, value) {
                 value.forEach((key, T) {
-                  T.main.course.scheduleHref = '';
+                  T.main!.course!.scheduleHref = '';
                 });
               });
-              courseTableList.add(const JsonEncoder().convert(task.result.toJson()));
+              courseTableList.add(const JsonEncoder().convert(task.result!.toJson()));
             }
           }
 
@@ -215,7 +213,7 @@ class _OtherPageState extends State<OtherPage> {
         taskFlow.addTask(task);
         if (!await taskFlow.start()) break;
         
-        semesterList = task.result.toList();
+        semesterList = task.result?.toList();
         // ignore: use_build_context_synchronously
         await showDialog(
           context: context,
@@ -229,8 +227,8 @@ class _OtherPageState extends State<OtherPage> {
               confirmText: Text(R.current.confirm, style: textStyle,),
               itemsTextStyle: itemStyle,
               selectedItemsTextStyle: itemStyle,
-              items: semesterList.map((d) => MultiSelectItem<SemesterJson>(d, '${d.year}-${d.semester}')).toList(),
-              initialValue: semesterList,
+              items: semesterList!.map((d) => MultiSelectItem<SemesterJson>(d!, '${d.year}-${d.semester}')).toList(),
+              initialValue: semesterList as List<SemesterJson>,
               onConfirm: (values) async { await export(values); },
             );
           },
@@ -239,13 +237,13 @@ class _OtherPageState extends State<OtherPage> {
         break;
 
       case OnListViewPress.importCourseTable:
-        FilePickerResult result = await FilePicker.platform.pickFiles(
+        FilePickerResult? result = await FilePicker.platform.pickFiles(
           type: FileType.custom,
           allowedExtensions: ['json'],
         );
         if(result == null) break;
         try{
-          File file = result.paths.map((path) => File(path)).toList().first;
+          File file = result.paths.map((path) => File(path!)).toList().first;
           List<CourseTableJson> courseTableList = [];
           
           String data = await file.readAsString();
@@ -276,8 +274,8 @@ class _OtherPageState extends State<OtherPage> {
 
             if(i == courseTableList.length - 1) {
               await LocalStorage.instance.saveCourseTableList();
-              LocalStorage.instance.getCourseSetting().info = courseTableList[0];
-              LocalStorage.instance.getSemesterList().clear();
+              LocalStorage.instance.getCourseSetting()?.info = courseTableList[0];
+              LocalStorage.instance.getSemesterList()?.clear();
               widget.pageController.jumpToPage(0);
               MyToast.show(R.current.importSuccess);
             }
@@ -307,11 +305,11 @@ class _OtherPageState extends State<OtherPage> {
         title: Text(R.current.titleOther),
       ),
       body: Column(children: <Widget>[
-        if (LocalStorage.instance.getAccount().isNotEmpty)
+        if (LocalStorage.instance.getAccount()!.isNotEmpty)
           SizedBox(
             child: FutureBuilder<Map<String, Map<String, String>>>(
               future: NTUTConnector.getUserImageRequestInfo(),
-              builder: (_, snapshot) => snapshot.data != null ? _buildHeader(snapshot.data) : const SizedBox.shrink(),
+              builder: (_, snapshot) => snapshot.data != null ? _buildHeader(snapshot.data!) : const SizedBox.shrink(),
             ),
           ),
         const SizedBox(
@@ -337,8 +335,8 @@ class _OtherPageState extends State<OtherPage> {
 
   Widget _buildHeader(Map userImageInfo) {
     final userInfo = LocalStorage.instance.getUserInfo();
-    String givenName = userInfo.givenName;
-    String userMail = userInfo.userMail;
+    String? givenName = userInfo!.givenName;
+    String? userMail = userInfo.userMail;
     final userImage = CachedNetworkImage(
       cacheManager: LocalStorage.instance.cacheManager,
       imageUrl: userImageInfo["url"]["value"],
@@ -356,7 +354,7 @@ class _OtherPageState extends State<OtherPage> {
     );
     final columnItem = <Widget>[];
     final data = MediaQuery.of(context);
-    if (givenName.isNotEmpty) {
+    if (givenName != null) {
       columnItem
         ..add(Text(
           givenName,
@@ -371,15 +369,15 @@ class _OtherPageState extends State<OtherPage> {
         ..add(MediaQuery(
           data: data.copyWith(textScaleFactor: 1.0),
           child: Text(
-            userMail,
+            userMail!,
             style: const TextStyle(
               fontSize: 16,
             ),
           ),
         ));
     } else {
-      givenName = (givenName.isEmpty) ? R.current.pleaseLogin : givenName;
-      userMail = (userMail.isEmpty) ? "" : userMail;
+      givenName = (givenName!.isEmpty) ? R.current.pleaseLogin : givenName;
+      userMail = (userMail!.isEmpty) ? "" : userMail;
     }
     final taskFlow = TaskFlow();
     final task = NTUTTask("ImageTask");
@@ -397,7 +395,7 @@ class _OtherPageState extends State<OtherPage> {
               child: FutureBuilder<bool>(
                 future: taskFlow.start(),
                 builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done && snapshot.data) {
+                  if (snapshot.connectionState == ConnectionState.done && snapshot.data!) {
                     return userImage;
                   }
                   return SpinKitRotatingCircle(color: Theme.of(context).colorScheme.secondary);

@@ -1,5 +1,3 @@
-// TODO: remove sdk version selector after migrating to null-safety.
-// @dart=2.10
 import 'package:flutter/material.dart';
 import 'package:flutter_app/src/connector/ntut_connector.dart';
 import 'package:flutter_app/src/model/ntut/ap_tree_json.dart';
@@ -8,10 +6,10 @@ import 'package:flutter_app/src/task/task_flow.dart';
 import 'package:flutter_app/ui/other/route_utils.dart';
 
 class SubSystemPage extends StatefulWidget {
-  final String title;
-  final String arg;
+  final String? title;
+  final String? arg;
 
-  const SubSystemPage({Key key, this.title, this.arg}) : super(key: key);
+  const SubSystemPage({Key? key, this.title, this.arg}) : super(key: key);
 
   @override
   State<SubSystemPage> createState() => _SubSystemPageState();
@@ -19,7 +17,7 @@ class SubSystemPage extends StatefulWidget {
 
 class _SubSystemPageState extends State<SubSystemPage> {
   bool isLoading = true;
-  APTreeJson apTree;
+  late APTreeJson apTree;
 
   @override
   void initState() {
@@ -27,7 +25,7 @@ class _SubSystemPageState extends State<SubSystemPage> {
     loadTree(widget.arg);
   }
 
-  void loadTree(String arg) async {
+  void loadTree(String? arg) async {
     setState(() {
       isLoading = true;
     });
@@ -35,7 +33,7 @@ class _SubSystemPageState extends State<SubSystemPage> {
     var task = NTUTSubSystemTask(arg);
     taskFlow.addTask(task);
     if (await taskFlow.start()) {
-      apTree = task.result;
+      apTree = task.result!;
       setState(() {
         isLoading = false;
       });
@@ -46,7 +44,7 @@ class _SubSystemPageState extends State<SubSystemPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(widget.title!),
       ),
       body: isLoading
           ? const Center(

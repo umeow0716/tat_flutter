@@ -1,5 +1,3 @@
-// TODO: remove sdk version selector after migrating to null-safety.
-// @dart=2.10
 import 'dart:isolate';
 import 'dart:ui';
 
@@ -34,7 +32,7 @@ class MyDownloader {
         String mapId = keyList[i];
         if (mapId == id) {
           Log.d("$id find callback");
-          _callBackMap[mapId]();
+          _callBackMap[mapId]!();
           //Function.apply(_callBackMap[mapId] , []);
           _callBackMap.remove(mapId);
         }
@@ -51,7 +49,7 @@ class MyDownloader {
   }
 
   static void downloadCallback(String id, int status, int progress) {
-    final SendPort send = IsolateNameServer.lookupPortByName('downloader_send_port');
+    final SendPort send = IsolateNameServer.lookupPortByName('downloader_send_port')!;
     send.send([id, status, progress]);
   }
 

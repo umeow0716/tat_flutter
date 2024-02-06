@@ -9,10 +9,10 @@ class APPVersion {
   static void initAndCheck() async {
     final versionConfig = await RemoteConfigUtil.getVersionConfig();
 
-    if (!versionConfig.isFocusUpdate) {
-      if (!LocalStorage.instance.autoCheckAppUpdate ||
-          !LocalStorage.instance.getFirstUse(LocalStorage.appCheckUpdate) ||
-          LocalStorage.instance.getAccount().isEmpty) return;
+    if (!versionConfig.isFocusUpdate!) {
+      if (!LocalStorage.instance.autoCheckAppUpdate! ||
+          !LocalStorage.instance.getFirstUse(LocalStorage.appCheckUpdate!)! ||
+          LocalStorage.instance.getAccount()!.isEmpty) return;
     }
 
     LocalStorage.instance.setAlreadyUse(LocalStorage.appCheckUpdate);

@@ -16,7 +16,7 @@ class IPlusGetCourseSubscribeTask extends IPlusSystemTask<Map<String, dynamic>> 
     if (status == TaskStatus.success) {
       super.onStart(R.current.searchSubscribe);
       final courseBid = await ISchoolPlusConnector.getBid(id);
-      final openNotifications = await ISchoolPlusConnector.getCourseSubscribe(courseBid);
+      final openNotifications = await ISchoolPlusConnector.getCourseSubscribe(courseBid!);
       super.onEnd();
       result = {
         "courseBid": courseBid,

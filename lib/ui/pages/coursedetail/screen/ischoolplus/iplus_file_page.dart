@@ -71,10 +71,10 @@ class _IPlusFilePage extends State<IPlusFilePage> with AutomaticKeepAliveClientM
 
   void _addTask() async {
     await Future.delayed(const Duration(microseconds: 500));
-    final courseId = widget.courseInfo.main.course.id;
+    final courseId = widget.courseInfo.main!.course!.id;
 
     final taskFlow = TaskFlow();
-    final task = IPlusCourseFileTask(courseId);
+    final task = IPlusCourseFileTask(courseId!);
     taskFlow.addTask(task);
 
     if (await taskFlow.start()) {
@@ -203,8 +203,8 @@ class _IPlusFilePage extends State<IPlusFilePage> with AutomaticKeepAliveClientM
   List<Widget> _buildFileItem(CourseFileJson courseFile) {
     final List<Widget> widgetList = [];
     final List<Widget> iconWidgetList = [];
-    for (final fileType in courseFile.fileType) {
-      iconWidgetList.add(iconList[fileType.type.index]);
+    for (final fileType in courseFile.fileType!) {
+      iconWidgetList.add(iconList[fileType.type!.index]);
     }
     widgetList.add(
       Row(
@@ -219,7 +219,7 @@ class _IPlusFilePage extends State<IPlusFilePage> with AutomaticKeepAliveClientM
             padding: EdgeInsets.only(left: 10),
           ),
           Expanded(
-            child: Text(courseFile.name),
+            child: Text(courseFile.name!),
           ),
         ],
       ),
@@ -229,8 +229,8 @@ class _IPlusFilePage extends State<IPlusFilePage> with AutomaticKeepAliveClientM
 
   Future<void> _downloadOneFile(int index, [showToast = true]) async {
     final courseFile = courseFileList[index];
-    final fileType = courseFile.fileType[0];
-    final dirName = widget.courseInfo.main.course.name;
+    final fileType = courseFile.fileType![0];
+    final dirName = widget.courseInfo.main!.course!.name;
     String url = "";
     String referer = "";
 
@@ -238,7 +238,7 @@ class _IPlusFilePage extends State<IPlusFilePage> with AutomaticKeepAliveClientM
     if (showToast) {
       MyToast.show(R.current.downloadWillStart);
     }
-    final urlList = await ISchoolPlusConnector.getRealFileUrl(fileType.postData) as List<String>?;
+    final urlList = await ISchoolPlusConnector.getRealFileUrl(fileType.postData);
     if (urlList == null) {
       MyToast.show(sprintf("%s%s", [courseFile.name, R.current.downloadError]));
       return;
@@ -266,10 +266,10 @@ class _IPlusFilePage extends State<IPlusFilePage> with AutomaticKeepAliveClientM
       errorDialogParameter.dialogType = DialogType.info;
       errorDialogParameter.okButtonText = R.current.sure;
       errorDialogParameter.onOkButtonClicked =
-          () => RouteUtils.toVideoPlayer(urlParse.toString(), widget.courseInfo, courseFile.name);
+          () => RouteUtils.toVideoPlayer(urlParse.toString(), widget.courseInfo, courseFile.name!);
       MsgDialog(errorDialogParameter).show();
     } else {
-      await FileDownload.download(url, dirName, courseFile.name, referer);
+      await FileDownload.download(url, dirName, courseFile.name!, referer);
     }
   }
 

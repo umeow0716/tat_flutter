@@ -8,9 +8,6 @@
 
 # So, the following will be added to the top of all dart files:
 
-# // TODO: remove sdk version selector after migrating to null-safety.
-# // @dart=2.10
-
 # Please ensure that when executing these commands,
 # all folders can be fully accessed, which means that we must make sure that when executing these commands,
 # we can use recursive search to process all targets one by one.

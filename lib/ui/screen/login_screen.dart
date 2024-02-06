@@ -1,5 +1,3 @@
-// TODO: remove sdk version selector after migrating to null-safety.
-// @dart=2.10
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_app/src/config/app_colors.dart';
@@ -10,7 +8,7 @@ import 'package:flutter_app/src/task/task.dart';
 import 'package:flutter_app/ui/other/route_utils.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key key}) : super(key: key);
+  const LoginScreen({Key? key}) : super(key: key);
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -27,12 +25,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void initState() {
-    _accountControl.text = LocalStorage.instance.getAccount();
+    _accountControl.text = LocalStorage.instance.getAccount()!;
     super.initState();
   }
 
   void _loginPress(BuildContext context) async {
-    if (_formKey.currentState.validate()) {
+    if (_formKey.currentState!.validate()) {
       _passwordFocus.unfocus();
       _accountFocus.unfocus();
 
@@ -52,8 +50,8 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  String _validatorAccount(String value) {
-    if (value.isNotEmpty) {
+  String? _validatorAccount(String? value) {
+    if (value!.isNotEmpty) {
       _accountErrorMessage = '';
     } else {
       setState(() {
@@ -63,8 +61,8 @@ class _LoginScreenState extends State<LoginScreen> {
     return _accountErrorMessage.isNotEmpty ? _accountErrorMessage : null;
   }
 
-  String _validatorPassword(String value) {
-    if (value.isNotEmpty) {
+  String? _validatorPassword(String? value) {
+    if (value!.isNotEmpty) {
       _passwordErrorMessage = '';
     } else {
       setState(() {

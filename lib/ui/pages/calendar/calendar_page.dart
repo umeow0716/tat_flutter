@@ -12,6 +12,7 @@ class CalendarPage extends StatelessWidget {
   const CalendarPage({super.key});
 
   Widget _buildEventList(BuildContext context, List<NTUTCalendarJson> selectedEvents) {
+    selectedEvents = selectedEvents.where((element) => !element.isEmpty()).toList();
     final eventBorderColor = Theme.of(context).colorScheme.onBackground;
     return ListView.builder(
       itemCount: selectedEvents.length,
@@ -21,7 +22,7 @@ class CalendarPage extends StatelessWidget {
           padding: const EdgeInsets.all(4.0),
           child: Card(
             child: ListTile(
-              title: Text(event.calTitle),
+              title: Text(event.calTitle as String),
               shape: RoundedRectangleBorder(
                 side: BorderSide(color: eventBorderColor),
                 borderRadius: BorderRadius.circular(12),

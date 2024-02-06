@@ -1,12 +1,9 @@
-// TODO: remove sdk version selector after migrating to null-safety.
-// @dart=2.10
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter_app/debug/log/log.dart';
-import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/src/connector/core/connector.dart';
 import 'package:flutter_app/src/model/ischoolplus/course_file_json.dart';
 import 'package:flutter_app/src/model/ischoolplus/ischool_plus_announcement_json.dart';
@@ -23,8 +20,8 @@ enum ISchoolPlusConnectorStatus { loginSuccess, loginFail, unknownError }
 enum IPlusReturnStatus { success, fail, noPermission }
 
 class ReturnWithStatus<T> {
-  IPlusReturnStatus status;
-  T result;
+  IPlusReturnStatus? status;
+  T? result;
 }
 
 class ISchoolPlusConnector {
@@ -67,7 +64,7 @@ class ISchoolPlusConnector {
       for (final node in nodes) {
         final name = node.attributes['name'];
         final value = node.attributes['value'];
-        data[name] = value;
+        data[name!] = value!;
       }
 
       // Step 2
@@ -86,7 +83,7 @@ class ISchoolPlusConnector {
       // The redirectUrl is provided by <a> HTML DOM on Step 2.
       // It should be https://istudy.ntut.edu.tw/login2.php with lot of the parameters.
       final redirectUrl = nodes.first.attributes["href"];
-      parameter = ConnectorParameter(redirectUrl);
+      parameter = ConnectorParameter(redirectUrl!);
       await Connector.getDataByGet(parameter);
 
       // Perform retry for cryptic API errors (?).
@@ -117,13 +114,13 @@ class ISchoolPlusConnector {
   }
 
   static Future<ReturnWithStatus<List<CourseFileJson>>> getCourseFile(String courseId) async {
-    ConnectorParameter parameter;
-    String result;
-    html.Document tagNode;
-    html.Element node, itemNode, resourceNode;
-    RegExp exp;
-    RegExpMatch matches;
-    List<html.Element> nodes, itemNodes, resourceNodes;
+    ConnectorParameter? parameter;
+    String? result;
+    html.Document? tagNode;
+    html.Element? node, itemNode, resourceNode;
+    RegExp? exp;
+    RegExpMatch? matches;
+    List<html.Element>? nodes, itemNodes, resourceNodes;
     var value = ReturnWithStatus<List<CourseFileJson>>();
     try {
       List<CourseFileJson> courseFileList = [];
@@ -135,14 +132,14 @@ class ISchoolPlusConnector {
       parameter = ConnectorParameter("${_iSchoolPlusUrl}learn/path/launch.php");
       result = await Connector.getDataByGet(parameter);
       exp = RegExp(r"cid=(?<cid>[\w|-]+,)");
-      matches = exp.firstMatch(result);
-      String cid = matches.group(1);
+      matches = exp.firstMatch(result)!;
+      String cid = matches.group(1)!;
       parameter = ConnectorParameter("${_iSchoolPlusUrl}learn/path/pathtree.php");
       parameter.data = {'cid': cid};
 
       result = await Connector.getDataByGet(parameter);
       tagNode = html.parse(result);
-      node = tagNode.getElementById("fetchResourceForm");
+      node = tagNode.getElementById("fetchResourceForm")!;
       nodes = node.getElementsByTagName("input");
 
       Map<String, String> downloadPost = {
@@ -159,9 +156,9 @@ class ISchoolPlusConnector {
 
       for (html.Element node in nodes) {
         //將資料團入上方Map
-        String key = node.attributes['name'];
+        String key = node.attributes['name']!;
         if (downloadPost.containsKey(key)) {
-          downloadPost[key] = node.attributes['value'];
+          downloadPost[key] = node.attributes['value']!;
         }
       }
       parameter = ConnectorParameter("${_iSchoolPlusUrl}learn/path/SCORM_loadCA.php"); //取得下載檔案XML
@@ -182,7 +179,7 @@ class ISchoolPlusConnector {
             break;
           }
         }
-        String base = resourceNode.attributes["xml:base"];
+        String base = resourceNode!.attributes["xml:base"]!;
         String href = '${(base != null) ? base : ''}@${resourceNode.attributes["href"]}';
 
         CourseFileJson courseFile = CourseFileJson();
@@ -205,7 +202,7 @@ class ISchoolPlusConnector {
   }
 
   //List[0] RealUrl , List[1] referer
-  static Future<List<String>> getRealFileUrl(Map<String, String> postParameter) async {
+  static Future<List<String>?> getRealFileUrl(Map<String, String> postParameter) async {
     ConnectorParameter parameter;
     String url;
     String result;
@@ -221,51 +218,50 @@ class ISchoolPlusConnector {
       if (response.statusCode == HttpStatus.ok) {
         exp = RegExp("[\"'](?<url>https?://.+)[\"']");
         //檢測網址 "http://....." or 'https://.....' or "http://..." or 'http://...'
-        matches = exp.firstMatch(result);
+        matches = exp.firstMatch(result)!;
         bool pass = (matches?.groupCount == null)
             ? false
-            : matches.group(1).toLowerCase().contains("http")
+            : matches.group(1)!.toLowerCase().contains("http")
                 ? true
                 : false;
         if (pass) {
-          url = matches.group(1);
+          url = matches.group(1)!;
           //已經是完整連結
           return [url, url];
         } else {
           exp = RegExp("\"(?<url>/.+)\""); //檢測/ 開頭網址
-          matches = exp.firstMatch(result);
+          matches = exp.firstMatch(result)!;
           bool pass = (matches?.groupCount == null) ? false : true;
           if (pass) {
-            String realUrl = _iSchoolPlusUrl + matches.group(1);
+            String realUrl = _iSchoolPlusUrl + matches.group(1)!;
             return [realUrl, realUrl]; //一般下載連結
           } else {
             exp = RegExp("\"(?<url>.+)\""); //檢測""內包含字
-            matches = exp.firstMatch(result);
+            matches = exp.firstMatch(result)!;
             url = "${_iSchoolPlusUrl}learn/path/${matches.group(1)}"; //是PDF預覽畫面
             parameter = ConnectorParameter(url); //去PDF預覽頁面取得真實下載網址
             result = await Connector.getDataByGet(parameter);
             exp = RegExp("DEFAULT_URL.+['|\"](?<url>.+)['|\"]"); //取的PDF真實下載位置
-            matches = exp.firstMatch(result);
+            matches = exp.firstMatch(result)!;
             String realUrl = "${_iSchoolPlusUrl}learn/path/${matches.group(1)}";
             return [realUrl, url]; //PDF需要有referer不然會無法下載
           }
         }
-      } else if (response.isRedirect || result.isEmpty) {
+      } else if (response.isRedirect! || result.isEmpty) {
         //發生跳轉 出現檔案下載預覽頁面
-        url = response.headers[HttpHeaders.locationHeader][0];
+        url = response.headers[HttpHeaders.locationHeader]![0];
         url = "${_iSchoolPlusUrl}learn/path/$url";
         url = url.replaceAll("download_preview", "download"); //下載預覽頁面換成真實下載網址
         return [url, url];
       }
     } catch (e, stack) {
       Log.eWithStack(e.toString(), stack);
-      Log.e(result);
       return null;
     }
     return null;
   }
 
-  static String bid;
+  static String? bid;
 
   static Future<ReturnWithStatus<List<ISchoolPlusAnnouncementJson>>> getCourseAnnouncement(String courseId) async {
     String result;
@@ -290,12 +286,12 @@ class ISchoolPlusConnector {
       parameter.data = data;
       result = await Connector.getDataByPost(parameter);
       tagNode = html.parse(result);
-      bid = tagNode.getElementById("bid").attributes["value"];
+      bid = tagNode.getElementById("bid")!.attributes["value"];
 
-      node = tagNode.getElementById("formSearch");
+      node = tagNode.getElementById("formSearch")!;
       nodes = node.getElementsByTagName("input");
-      String selectPage = tagNode.getElementById("selectPage").attributes['value'];
-      String inputPerPage = tagNode.getElementById("inputPerPage").attributes['value'];
+      String selectPage = tagNode.getElementById("selectPage")!.attributes['value']!;
+      String inputPerPage = tagNode.getElementById("inputPerPage")!.attributes['value']!;
       data = {
         "token": "",
         "bid": "",
@@ -306,9 +302,9 @@ class ISchoolPlusConnector {
         "inputPerPage": inputPerPage
       };
       for (html.Element node in nodes) {
-        String name = node.attributes['name'];
+        String name = node.attributes['name']!;
         if (data.containsKey(name)) {
-          data[name] = node.attributes['value'];
+          data[name] = node.attributes['value']!;
         }
       }
       parameter = ConnectorParameter("https://istudy.ntut.edu.tw/mooc/controllers/forum_ajax.php");
@@ -324,7 +320,7 @@ class ISchoolPlusConnector {
           for (String keyName in json.decode(result)['data'].keys.toList()) {
             ISchoolPlusAnnouncementJson courseInfo = ISchoolPlusAnnouncementJson.fromJson(jsonData[keyName]);
             courseInfo.subject = HtmlUtils.clean(courseInfo.subject); //處理HTM特殊字
-            courseInfo.token = data['token'];
+            courseInfo.token = data['token']!;
             courseInfo.bid = keyName.split("|").first;
             courseInfo.nid = keyName.split("|").last;
             announcementList.add(courseInfo);
@@ -341,7 +337,7 @@ class ISchoolPlusConnector {
     }
   }
 
-  static Future<Map> getCourseAnnouncementDetail(ISchoolPlusAnnouncementJson value) async {
+  static Future<Map?> getCourseAnnouncementDetail(ISchoolPlusAnnouncementJson value) async {
     String result;
     try {
       ConnectorParameter parameter;
@@ -366,7 +362,7 @@ class ISchoolPlusConnector {
       node = tagNode.getElementsByClassName("main node-info").first;
       Map detail = {};
 
-      String title = node.attributes["data-title"];
+      String title = node.attributes["data-title"]!;
       node = tagNode.getElementsByClassName("author-name").first;
       String sender = node.text;
       node = tagNode.getElementsByClassName("post-time").first;
@@ -381,7 +377,7 @@ class ISchoolPlusConnector {
         node = nodes.first;
         nodes = node.getElementsByTagName("a");
         for (html.Element node in nodes) {
-          String href = node.attributes["href"];
+          String href = node.attributes["href"]!;
           if (href[0] == '/') {
             href = href.substring(1, href.length);
           }
@@ -427,7 +423,7 @@ class ISchoolPlusConnector {
     }
   }
 
-  static Future<List<String>> getSubscribeNotice() async {
+  static Future<List<String>?> getSubscribeNotice() async {
     ConnectorParameter parameter;
     html.Document tagNode;
     html.Element node;
@@ -475,7 +471,7 @@ class ISchoolPlusConnector {
     }
   }
 
-  static Future<String> getBid(String courseId) async {
+  static Future<String?> getBid(String courseId) async {
     /*
     ConnectorParameter parameter;
     html.Document tagNode;
@@ -506,14 +502,14 @@ class ISchoolPlusConnector {
       parameter = ConnectorParameter(_getCourseName);
       result = await Connector.getDataByGet(parameter);
       tagNode = html.parse(result);
-      node = tagNode.getElementById("selcourse");
+      node = tagNode.getElementById("selcourse")!;
       nodes = node.getElementsByTagName("option");
-      String courseValue;
+      String? courseValue;
       for (int i = 1; i < nodes.length; i++) {
         node = nodes[i];
         String name = node.text.split("_").last;
         if (name == courseId) {
-          courseValue = node.attributes["value"];
+          courseValue = node.attributes["value"]!;
           break;
         }
       }
@@ -532,7 +528,7 @@ class ISchoolPlusConnector {
     }
   }
 
-  static Future<List<ClassmateJson>> getCourseStudentList(String courseId) async {
+  static Future<List<ClassmateJson>?> getCourseStudentList(String courseId) async {
     ConnectorParameter parameter;
     html.Document tagNode;
     html.Element node;
@@ -540,7 +536,7 @@ class ISchoolPlusConnector {
     List<html.Element> trList;
     List<html.Element> nodes;
     String response;
-    List<ClassmateJson> result = new List<ClassmateJson>();
+    List<ClassmateJson> result = [];
     try {
       if (!await _selectCourse(courseId)) {
         return null;
@@ -555,7 +551,7 @@ class ISchoolPlusConnector {
       for(int i = 0 ; i < nodes.length ; i++) {
         node = nodes[i].querySelectorAll('td')[1];
 
-        String information = node.querySelector('div').innerHtml;
+        String information = node.querySelector('div')!.innerHtml;
         int splitIndex = information.indexOf(' ');
         
         String studentId = information.substring(0, splitIndex);
@@ -570,7 +566,7 @@ class ISchoolPlusConnector {
         result.add(student);
       }
 
-      result.sort((a, b) => a.studentId.compareTo(b.studentId));
+      result.sort((a, b) => a.studentId!.compareTo(b.studentId!));
 
       return result.length != 0 ? result : null;
     } catch (e, stack) {

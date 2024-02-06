@@ -37,11 +37,11 @@ class RankGradeMetrics extends StatelessWidget {
             children: [
               GradeMetricsCell(
                 name: R.current.rank,
-                value: '${rankInfo.rank.toInt()} / ${rankInfo.total.toInt()}',
+                value: '${rankInfo.rank!.toInt()} / ${rankInfo.total!.toInt()}',
               ),
               GradeMetricsCell(
                 name: R.current.percentage,
-                value: '${rankInfo.percentage.toStringAsFixed(1)}%',
+                value: '${rankInfo.percentage!.toStringAsFixed(1)}%',
               ),
             ],
           ),
@@ -56,8 +56,8 @@ class RankGradeMetrics extends StatelessWidget {
     return Column(
       children: [
         MetricsTitle(title: _title),
-        _buildSingleRankMetric(R.current.kClass, classRankInfo),
-        _buildSingleRankMetric(R.current.kDepartment, departmentRankInfo),
+        _buildSingleRankMetric(R.current.kClass, classRankInfo!),
+        _buildSingleRankMetric(R.current.kDepartment, departmentRankInfo!),
       ],
     );
   }

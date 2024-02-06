@@ -32,8 +32,8 @@ class CourseScoreSection extends StatelessWidget {
                 padding: const EdgeInsets.only(bottom: 8.0),
                 child: ScoreTile(
                   courseName: scoreInfo.name,
-                  category: scoreInfo.category,
-                  scoreValue: scoreInfo.score,
+                  category: scoreInfo.category!,
+                  scoreValue: scoreInfo.score!,
                   onCategoryChanged: _onCategoryChanged,
                 ),
               );

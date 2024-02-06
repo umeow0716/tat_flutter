@@ -1,5 +1,3 @@
-// TODO: remove sdk version selector after migrating to null-safety.
-// @dart=2.10
 import 'dart:io';
 import 'dart:ui' as ui;
 
@@ -30,7 +28,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sprintf/sprintf.dart';
 
 class CourseTablePage extends StatefulWidget {
-  const CourseTablePage({Key key}) : super(key: key);
+  const CourseTablePage({Key? key}) : super(key: key);
 
   @override
   State<CourseTablePage> createState() => _CourseTablePageState();
@@ -41,7 +39,7 @@ class _CourseTablePageState extends State<CourseTablePage> {
   final FocusNode _studentFocus = FocusNode();
   final GlobalKey _key = GlobalKey();
   bool isLoading = true;
-  CourseTableJson courseTableData;
+  CourseTableJson? courseTableData;
   static double dayHeight = 25;
   static double studentIdHeight = 40;
   static double courseHeight = 60;
@@ -63,13 +61,13 @@ class _CourseTablePageState extends State<CourseTablePage> {
     setState(() {
       loadCourseNotice = false;
     });
-    if (!LocalStorage.instance.getOtherSetting().checkIPlusNew) {
+    if (!LocalStorage.instance.getOtherSetting()!.checkIPlusNew!) {
       return;
     }
-    if (!LocalStorage.instance.getFirstUse(LocalStorage.courseNotice, timeOut: 15 * 60)) {
+    if (!LocalStorage.instance.getFirstUse(LocalStorage.courseNotice, timeOut: 15 * 60)!) {
       return;
     }
-    if (LocalStorage.instance.getAccount() != LocalStorage.instance.getCourseSetting().info.studentId) {
+    if (LocalStorage.instance.getAccount() != LocalStorage.instance.getCourseSetting()!.info!.studentId) {
       //只有顯示自己的課表時才會檢查新公告
       return;
     }
@@ -82,12 +80,12 @@ class _CourseTablePageState extends State<CourseTablePage> {
     task.openLoadingDialog = false;
     taskFlow.addTask(task);
     if (await taskFlow.start()) {
-      List<String> v = task.result;
+      List<String> v = task.result!;
       List<String> value = [];
       v = v ?? [];
       for (int i = 0; i < v.length; i++) {
         String courseName = v[i];
-        CourseInfoJson courseInfo = courseTableData.getCourseInfoByCourseName(courseName);
+        CourseInfoJson? courseInfo = courseTableData?.getCourseInfoByCourseName(courseName);
         if (courseInfo != null) {
           value.add(courseName);
         }
@@ -106,7 +104,7 @@ class _CourseTablePageState extends State<CourseTablePage> {
                     child: Text(value[index]),
                     onPressed: () {
                       String courseName = value[index];
-                      CourseInfoJson courseInfo = courseTableData.getCourseInfoByCourseName(courseName);
+                      CourseInfoJson? courseInfo = courseTableData?.getCourseInfoByCourseName(courseName);
                       if (courseInfo != null) {
                         _showCourseDetail(courseInfo);
                       } else {
@@ -151,17 +149,21 @@ class _CourseTablePageState extends State<CourseTablePage> {
   }
 
   void _loadLocalSettings() {
-    final renderObject = _key.currentContext.findRenderObject();
-    courseHeight = (renderObject.semanticBounds.size.height - studentIdHeight - dayHeight) / showCourseTableNum;
-    final courseTable = LocalStorage.instance.getCourseSetting().info;
+    final renderObject = _key.currentContext?.findRenderObject();
+    if(renderObject?.semanticBounds.size.height != null) {
+      courseHeight = (renderObject!.semanticBounds.size.height - studentIdHeight - dayHeight) / showCourseTableNum;
+    }
+    final courseTable = LocalStorage.instance.getCourseSetting()?.info;
     if (courseTable == null || courseTable.isEmpty) {
-      _getCourseTable(studentId: courseTable.studentId, semesterSetting: courseTable.courseSemester);
+      _getCourseTable(studentId: courseTable!.studentId, semesterSetting: courseTable.courseSemester);
     } else {
       _showCourseTable(courseTable);
     }
   }
 
-  Future<void> _getSemesterList(String studentId) async {
+  Future<void> _getSemesterList(String? studentId) async {
+    if(studentId == null) return;
+
     final taskFlow = TaskFlow();
     final task = CourseSemesterTask(studentId);
     taskFlow.addTask(task);
@@ -170,7 +172,7 @@ class _CourseTablePageState extends State<CourseTablePage> {
     }
   }
 
-  void _getCourseTable({SemesterJson semesterSetting, String studentId, bool refresh = false}) async {
+  void _getCourseTable({SemesterJson? semesterSetting, String? studentId, bool refresh = false}) async {
     await Future.delayed(const Duration(microseconds: 100)); //等待頁面刷新
     UserDataJson userData = LocalStorage.instance.getUserData();
     studentId = studentId?.trim() ?? '';
@@ -178,40 +180,39 @@ class _CourseTablePageState extends State<CourseTablePage> {
     if (courseTableData?.studentId != studentId) {
       LocalStorage.instance.clearSemesterJsonList(); //需重設因為更換了studentId
     }
-    SemesterJson semesterJson;
-    print(studentId);
-    if ((semesterSetting.isEmpty || semesterSetting.semester.isEmpty || semesterSetting.year.isEmpty) && studentId == LocalStorage.instance.getAccount()) {
+
+    SemesterJson? semesterJson;
+
+    if ((semesterSetting!.isEmpty || semesterSetting.semester!.isEmpty || semesterSetting.year!.isEmpty) && studentId == LocalStorage.instance.getAccount()) {
       await _getSemesterList(studentId);
       semesterJson = LocalStorage.instance.getSemesterJsonItem(0);
     } else {
       semesterJson = semesterSetting;
     }
-    if (semesterJson == null) {
-      return;
+
+    CourseTableJson? courseTable;
+    if (!refresh) {
+      courseTable = LocalStorage.instance.getCourseTable(studentId!, semesterSetting); //去取找是否已經暫存
     }
 
-    CourseTableJson courseTable;
-    if (!refresh) {
-      courseTable = LocalStorage.instance.getCourseTable(studentId, semesterSetting); //去取找是否已經暫存
-    }
     if (courseTable == null) {
       TaskFlow taskFlow = TaskFlow();
-      var task = CourseTableTask(studentId, semesterJson);
+      var task = CourseTableTask(studentId as String, semesterJson as SemesterJson);
       taskFlow.addTask(task);
       if (await taskFlow.start()) {
         courseTable = task.result;
       }
     }
-
+    
     if (courseTable != null) {
-      LocalStorage.instance.getCourseSetting().info = courseTable;
+      LocalStorage.instance.getCourseSetting()!.info = courseTable;
       LocalStorage.instance.saveCourseSetting();
       _showCourseTable(courseTable);
     }
   }
 
-  Widget _getSemesterItem(SemesterJson semester) {
-    final semesterString = "${semester.year}-${semester.semester}";
+  Widget _getSemesterItem(SemesterJson? semester) {
+    final semesterString = "${semester?.year}-${semester?.semester}";
     return TextButton(
       child: Text(semesterString),
       onPressed: () {
@@ -228,13 +229,13 @@ class _CourseTablePageState extends State<CourseTablePage> {
       final task = CourseSemesterTask(_studentIdControl.text);
       taskFlow.addTask(task);
       if (await taskFlow.start()) {
-        LocalStorage.instance.setSemesterJsonList(task.result);
+        LocalStorage.instance.setSemesterJsonList(task.result!);
       }
     }
 
-    final List<SemesterJson> semesterList = LocalStorage.instance.getSemesterList();
+    final List<SemesterJson?>? semesterList = LocalStorage.instance.getSemesterList();
 
-    if (semesterList?.isEmpty ?? true) {
+    if (semesterList == null) {
       return;
     }
 
@@ -278,7 +279,7 @@ class _CourseTablePageState extends State<CourseTablePage> {
     } else {
       List<CourseTableJson> values = LocalStorage.instance.getCourseTableList();
       for(int i = 0 ; i < values.length ; i++) {
-        if(values[i].studentId == courseTableData.studentId) {
+        if(values[i].studentId == courseTableData?.studentId) {
           values.removeAt(i);
           i--;
         }
@@ -296,7 +297,7 @@ class _CourseTablePageState extends State<CourseTablePage> {
     for(int i = 0 ; i < values.length ; i++) {
       if (!studentIdList.contains(values[i].studentId)) {
         value.add(values[i]);
-        studentIdList.add(values[i].studentId);
+        studentIdList.add(values[i].studentId!);
       }
     }
     if (value.isEmpty) {
@@ -319,7 +320,7 @@ class _CourseTablePageState extends State<CourseTablePage> {
                       children: [],
                     ),
                     endActionPane: ActionPane(
-                      motion: null,
+                      motion: const ScrollMotion(),
                       children: [
                         SlidableAction(
                           label: R.current.delete,
@@ -342,7 +343,7 @@ class _CourseTablePageState extends State<CourseTablePage> {
                             value[index].studentName
                           ])),
                           onPressed: () {
-                            LocalStorage.instance.getCourseSetting().info = value[index]; //儲存課表
+                            LocalStorage.instance.getCourseSetting()!.info = value[index]; //儲存課表
                             LocalStorage.instance.saveCourseSetting();
                             _showCourseTable(value[index]);
                             LocalStorage.instance.clearSemesterJsonList(); //須清除已儲存學期
@@ -609,7 +610,7 @@ class _CourseTablePageState extends State<CourseTablePage> {
                               child: Padding(
                                 padding: const EdgeInsets.all(2),
                                 child: AutoSizeText(
-                                  courseInfo.main.course.name,
+                                  courseInfo.main!.course!.name!,
                                   style: const TextStyle(
                                     color: Colors.black,
                                     fontSize: 14,
@@ -643,25 +644,25 @@ class _CourseTablePageState extends State<CourseTablePage> {
   //顯示課程對話框
   void showCourseDetailDialog(int section, CourseInfoJson courseInfo) {
     _unFocusStudentInput();
-    final course = courseInfo.main.course;
-    final classroomName = courseInfo.main.getClassroomName();
-    final teacherName = courseInfo.main.getTeacherName();
-    final studentId = LocalStorage.instance.getCourseSetting().info.studentId;
+    final course = courseInfo.main!.course;
+    final classroomName = courseInfo.main!.getClassroomName();
+    final teacherName = courseInfo.main!.getTeacherName();
+    final studentId = LocalStorage.instance.getCourseSetting()!.info!.studentId;
     setState(() {
-      _studentIdControl.text = studentId;
+      _studentIdControl.text = studentId!;
     });
     Get.dialog(
       AlertDialog(
         contentPadding: const EdgeInsets.fromLTRB(24.0, 20.0, 10.0, 10.0),
-        title: Text(course.name),
+        title: Text(course!.name!),
         content: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
             GestureDetector(
-              child: Text(sprintf("%s : %s", [R.current.courseId, course.id])),
+              child: Text(sprintf("%s : %s", [R.current.courseId, course!.id])),
               onLongPress: () async {
-                course.id = await _showEditDialog(course.id);
+                course.id = await _showEditDialog(course.id!);
                 await LocalStorage.instance.saveOtherSetting();
                 setState(() {});
               },
@@ -671,7 +672,7 @@ class _CourseTablePageState extends State<CourseTablePage> {
             Text(sprintf("%s : %s", [R.current.instructor, teacherName])),
           ],
         ),
-        actions: courseInfo.main.course.id.isNotEmpty && studentId == LocalStorage.instance.getAccount()
+        actions: courseInfo.main!.course!.id!.isNotEmpty && studentId == LocalStorage.instance.getAccount()
             ? [
                 TextButton.icon(
                   onPressed: () => _showCourseDetail(courseInfo),
@@ -722,15 +723,15 @@ class _CourseTablePageState extends State<CourseTablePage> {
   }
 
   void _showCourseDetail(CourseInfoJson courseInfo) {
-    final course = courseInfo.main.course;
+    final course = courseInfo.main!.course;
     Get.back();
-    final studentId = LocalStorage.instance.getCourseSetting().info.studentId;
-    if (course.id.isEmpty) {
-      MyToast.show(course.name + R.current.noSupport);
+    final studentId = LocalStorage.instance.getCourseSetting()!.info!.studentId;
+    if (course!.id!.isEmpty) {
+      MyToast.show(course.name! + R.current.noSupport);
     } else {
-      RouteUtils.toISchoolPage(studentId, courseInfo).then((value) {
+      RouteUtils.toISchoolPage(studentId!, courseInfo)!.then((value) {
         if (value != null) {
-          final semesterSetting = LocalStorage.instance.getCourseSetting().info.courseSemester;
+          final semesterSetting = LocalStorage.instance.getCourseSetting()!.info!.courseSemester;
           _getCourseTable(semesterSetting: semesterSetting, studentId: value);
         }
       });
@@ -748,7 +749,7 @@ class _CourseTablePageState extends State<CourseTablePage> {
     }
     getCourseNotice(); //查詢訂閱的課程是否有公告
     courseTableData = courseTable;
-    _studentIdControl.text = courseTable.studentId;
+    _studentIdControl.text = courseTable.studentId!;
     _unFocusStudentInput();
     setState(() {
       isLoading = true;
@@ -758,7 +759,7 @@ class _CourseTablePageState extends State<CourseTablePage> {
     setState(() {
       isLoading = false;
     });
-    favorite = (LocalStorage.instance.getCourseTable(courseTable.studentId, courseTable.courseSemester) != null);
+    favorite = (LocalStorage.instance.getCourseTable(courseTable.studentId!, courseTable.courseSemester!) != null);
     if (favorite) {
       LocalStorage.instance.addCourseTable(courseTableData);
     }
@@ -768,9 +769,9 @@ class _CourseTablePageState extends State<CourseTablePage> {
 
   Future screenshot() async {
     final originHeight = courseHeight;
-    final renderObject = _key.currentContext.findRenderObject();
-    final height = renderObject.semanticBounds.size.height - studentIdHeight - dayHeight;
-    final RenderRepaintBoundary boundary = overRepaintKey.currentContext.findRenderObject();
+    final renderObject = _key.currentContext!.findRenderObject();
+    final height = renderObject!.semanticBounds.size.height - studentIdHeight - dayHeight;
+    final RenderRepaintBoundary? boundary = overRepaintKey.currentContext!.findRenderObject() as RenderRepaintBoundary?;
     final directory = await getApplicationSupportDirectory();
     final path = directory.path;
 
@@ -781,7 +782,7 @@ class _CourseTablePageState extends State<CourseTablePage> {
 
     Log.d(path);
 
-    final image = await boundary.toImage(pixelRatio: 2);
+    final image = await boundary!.toImage(pixelRatio: 2);
 
     setState(() {
       courseHeight = originHeight;
@@ -789,7 +790,7 @@ class _CourseTablePageState extends State<CourseTablePage> {
     });
 
     final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-    final pngBytes = byteData.buffer.asUint8List();
+    final pngBytes = byteData!.buffer.asUint8List();
     final imgFile = File('$path/course_widget.png');
 
     await imgFile.writeAsBytes(pngBytes);

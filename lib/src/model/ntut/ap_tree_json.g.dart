@@ -1,5 +1,3 @@
-// TODO: remove sdk version selector after migrating to null-safety.
-// @dart=2.10
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 part of 'ap_tree_json.dart';
@@ -10,7 +8,7 @@ part of 'ap_tree_json.dart';
 
 APTreeJson _$APTreeJsonFromJson(Map<String, dynamic> json) {
   return APTreeJson(
-    (json['apList'] as List)?.map((e) => e == null ? null : APListJson.fromJson(e as Map<String, dynamic>))?.toList(),
+    (json['apList'] as List).map((e) => APListJson.fromJson(e as Map<String, dynamic>)).toList(),
     json['parentDn'] as String,
   );
 }

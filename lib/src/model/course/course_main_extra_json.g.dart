@@ -1,5 +1,3 @@
-// TODO: remove sdk version selector after migrating to null-safety.
-// @dart=2.10
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 part of 'course_main_extra_json.dart';
@@ -11,11 +9,11 @@ part of 'course_main_extra_json.dart';
 CourseExtraInfoJson _$CourseExtraInfoJsonFromJson(Map<String, dynamic> json) {
   return CourseExtraInfoJson(
     courseSemester:
-        json['courseSemester'] == null ? null : SemesterJson.fromJson(json['courseSemester'] as Map<String, dynamic>),
-    course: json['course'] == null ? null : CourseExtraJson.fromJson(json['course'] as Map<String, dynamic>),
+        SemesterJson.fromJson(json['courseSemester'] as Map<String, dynamic>),
+    course: CourseExtraJson.fromJson(json['course'] as Map<String, dynamic>),
     classmate: (json['classmate'] as List)
-        ?.map((e) => e == null ? null : ClassmateJson.fromJson(e as Map<String, dynamic>))
-        ?.toList(),
+        .map((e) => ClassmateJson.fromJson(e as Map<String, dynamic>))
+        .toList(),
   );
 }
 
@@ -27,16 +25,16 @@ Map<String, dynamic> _$CourseExtraInfoJsonToJson(CourseExtraInfoJson instance) =
 
 CourseMainInfoJson _$CourseMainInfoJsonFromJson(Map<String, dynamic> json) {
   return CourseMainInfoJson(
-    course: json['course'] == null ? null : CourseMainJson.fromJson(json['course'] as Map<String, dynamic>),
+    course:CourseMainJson.fromJson(json['course'] as Map<String, dynamic>),
     teacher: (json['teacher'] as List)
-        ?.map((e) => e == null ? null : TeacherJson.fromJson(e as Map<String, dynamic>))
-        ?.toList(),
+        .map((e) => TeacherJson.fromJson(e as Map<String, dynamic>))
+        .toList(),
     classroom: (json['classroom'] as List)
-        ?.map((e) => e == null ? null : ClassroomJson.fromJson(e as Map<String, dynamic>))
-        ?.toList(),
+        .map((e) => ClassroomJson.fromJson(e as Map<String, dynamic>))
+        .toList(),
     openClass: (json['openClass'] as List)
-        ?.map((e) => e == null ? null : ClassJson.fromJson(e as Map<String, dynamic>))
-        ?.toList(),
+        .map((e) => ClassJson.fromJson(e as Map<String, dynamic>))
+        .toList(),
   );
 }
 

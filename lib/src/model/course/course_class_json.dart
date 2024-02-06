@@ -1,5 +1,3 @@
-// TODO: remove sdk version selector after migrating to null-safety.
-// @dart=2.10
 import 'package:flutter_app/src/model/coursetable/course_table_json.dart';
 import 'package:flutter_app/src/model/json_init.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -11,15 +9,15 @@ part 'course_class_json.g.dart';
 
 @JsonSerializable()
 class CourseMainJson {
-  String name;
-  String id;
-  String href;
-  String note; //備註
-  String stage; //階段
-  String credits; //學分
-  String hours; //時數
-  String scheduleHref; // 教學進度大綱
-  Map<Day, String> time; //時間
+  String? name;
+  String? id;
+  String? href;
+  String? note; //備註
+  String? stage; //階段
+  String? credits; //學分
+  String? hours; //時數
+  String? scheduleHref; // 教學進度大綱
+  Map<Day, String>? time; //時間
 
   CourseMainJson(
       {this.name, this.href, this.id, this.credits, this.hours, this.stage, this.note, this.time, this.scheduleHref}) {
@@ -35,13 +33,13 @@ class CourseMainJson {
   }
 
   bool get isEmpty {
-    return name.isEmpty &&
-        href.isEmpty &&
-        note.isEmpty &&
-        stage.isEmpty &&
-        credits.isEmpty &&
-        hours.isEmpty &&
-        scheduleHref.isEmpty;
+    return name!.isEmpty &&
+        href!.isEmpty &&
+        note!.isEmpty &&
+        stage!.isEmpty &&
+        credits!.isEmpty &&
+        hours!.isEmpty &&
+        scheduleHref!.isEmpty;
   }
 
   @override
@@ -58,13 +56,13 @@ class CourseMainJson {
 
 @JsonSerializable()
 class CourseExtraJson {
-  String id;
-  String name;
-  String href; //課程名稱用於取得英文
-  String category; //類別 (必修...)
-  String selectNumber; //選課人數
-  String withdrawNumber; //徹選人數
-  String openClass; //開課班級(計算學分用)
+  String? id;
+  String? name;
+  String? href; //課程名稱用於取得英文
+  String? category; //類別 (必修...)
+  String? selectNumber; //選課人數
+  String? withdrawNumber; //徹選人數
+  String? openClass; //開課班級(計算學分用)
 
   CourseExtraJson({this.name, this.category, this.selectNumber, this.withdrawNumber, this.href}) {
     id = JsonInit.stringInit(id);
@@ -77,12 +75,12 @@ class CourseExtraJson {
   }
 
   bool get isEmpty {
-    return id.isEmpty &&
-        name.isEmpty &&
-        category.isEmpty &&
-        selectNumber.isEmpty &&
-        withdrawNumber.isEmpty &&
-        openClass.isEmpty;
+    return id!.isEmpty &&
+        name!.isEmpty &&
+        category!.isEmpty &&
+        selectNumber!.isEmpty &&
+        withdrawNumber!.isEmpty &&
+        openClass!.isEmpty;
   }
 
   @override
@@ -99,8 +97,8 @@ class CourseExtraJson {
 
 @JsonSerializable()
 class ClassJson {
-  String name;
-  String href;
+  String? name;
+  String? href;
 
   ClassJson({this.name, this.href}) {
     name = JsonInit.stringInit(name);
@@ -108,7 +106,7 @@ class ClassJson {
   }
 
   bool get isEmpty {
-    return name.isEmpty && href.isEmpty;
+    return name!.isEmpty && href!.isEmpty;
   }
 
   @override
@@ -123,9 +121,9 @@ class ClassJson {
 
 @JsonSerializable()
 class ClassroomJson {
-  String name;
-  String href;
-  bool mainUse;
+  String? name;
+  String? href;
+  bool? mainUse;
 
   ClassroomJson({this.name, this.href, this.mainUse}) {
     name = JsonInit.stringInit(name);
@@ -134,7 +132,7 @@ class ClassroomJson {
   }
 
   bool get isEmpty {
-    return name.isEmpty && href.isEmpty;
+    return name!.isEmpty && href!.isEmpty;
   }
 
   @override
@@ -149,8 +147,8 @@ class ClassroomJson {
 
 @JsonSerializable()
 class TeacherJson {
-  String name;
-  String href;
+  String? name;
+  String? href;
 
   TeacherJson({this.name, this.href}) {
     name = JsonInit.stringInit(name);
@@ -158,7 +156,7 @@ class TeacherJson {
   }
 
   bool get isEmpty {
-    return name.isEmpty && href.isEmpty;
+    return name!.isEmpty && href!.isEmpty;
   }
 
   @override
@@ -173,8 +171,8 @@ class TeacherJson {
 
 @JsonSerializable()
 class SemesterJson {
-  String year;
-  String semester;
+  String? year;
+  String? semester;
 
   SemesterJson({this.year, this.semester}) {
     year = JsonInit.stringInit(year);
@@ -186,7 +184,7 @@ class SemesterJson {
   Map<String, dynamic> toJson() => _$SemesterJsonToJson(this);
 
   bool get isEmpty {
-    return year.isEmpty && semester.isEmpty;
+    return year!.isEmpty && semester!.isEmpty;
   }
 
   @override
@@ -200,8 +198,8 @@ class SemesterJson {
       return false;
     }
 
-    final isSemesterSame = int.tryParse(other.semester) == int.tryParse(semester);
-    final isYearSame = int.tryParse(other.year) == int.tryParse(year);
+    final isSemesterSame = int.tryParse(other.semester!) == int.tryParse(semester!);
+    final isYearSame = int.tryParse(other.year!) == int.tryParse(year!);
 
     return isSemesterSame && isYearSame;
   }
@@ -212,10 +210,10 @@ class SemesterJson {
 
 @JsonSerializable()
 class ClassmateJson {
-  String departmentName; //電機系
+  String? departmentName; //電機系
   //String studentEnglishName;
-  String studentName;
-  String studentId;
+  String? studentName;
+  String? studentId;
   //String href;
   //bool isSelect; //是否撤選
 
@@ -511,10 +509,10 @@ class ClassmateJson {
     // isSelect = isSelect ?? false;
 
     for(int i = 0 ; i < studentIdData.length ; i++) {
-      if(studentIdData[i]['code'] == studentId.substring(3, 5)) {
+      if(studentIdData[i]['code'] == studentId!.substring(3, 5)) {
         departmentName = studentIdData[i][
           LanguageUtil.getLangIndex() == LangEnum.zh ? 'tw' : 'en'
-        ];
+        ]!;
         break;
       }
 
@@ -525,7 +523,7 @@ class ClassmateJson {
   }
 
   bool get isEmpty {
-    return studentName.isEmpty && studentId.isEmpty /* && href.isEmpty && className.isEmpty && studentEnglishName.isEmpty */;
+    return studentName!.isEmpty && studentId!.isEmpty /* && href.isEmpty && className.isEmpty && studentEnglishName.isEmpty */;
   }
 
   @override
@@ -535,13 +533,13 @@ class ClassmateJson {
         [departmentName, /*studentEnglishName,*/ studentName, studentId, /*href, isSelect.toString()*/]);
   }
 
-  String getName() {
-    String name;
+  String? getName() {
+    String? name;
     // if (LanguageUtil.getLangIndex() == LangEnum.en) {
     //   name = studentEnglishName;
     // }
     name = name ?? studentName;
-    name = (name.contains(RegExp(r"\w"))) ? name : studentName;
+    name = (name!.contains(RegExp(r"\w"))) ? name : studentName;
     return name;
   }
 

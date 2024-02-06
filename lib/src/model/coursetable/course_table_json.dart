@@ -1,5 +1,3 @@
-// TODO: remove sdk version selector after migrating to null-safety.
-// @dart=2.10
 import 'package:flutter_app/src/model/course/course_class_json.dart';
 import 'package:flutter_app/src/model/course/course_main_extra_json.dart';
 import 'package:flutter_app/src/model/json_init.dart';
@@ -16,10 +14,10 @@ enum SectionNumber { T_1, T_2, T_3, T_4, T_N, T_5, T_6, T_7, T_8, T_9, T_A, T_B,
 
 @JsonSerializable()
 class CourseTableJson {
-  SemesterJson courseSemester; //課程學期資料
-  String studentId;
-  String studentName;
-  Map<Day, Map<SectionNumber, CourseInfoJson>> courseInfoMap;
+  SemesterJson? courseSemester; //課程學期資料
+  String? studentId;
+  String? studentName;
+  Map<Day, Map<SectionNumber, CourseInfoJson>>? courseInfoMap;
 
   CourseTableJson({this.courseSemester, this.courseInfoMap, this.studentId, this.studentName}) {
     studentId = JsonInit.stringInit(studentId);
@@ -30,7 +28,7 @@ class CourseTableJson {
     } else {
       courseInfoMap = {};
       for (Day value in Day.values) {
-        courseInfoMap[value] = {};
+        courseInfoMap![value] = {};
       }
     }
   }
@@ -47,18 +45,16 @@ class CourseTableJson {
   int getCreditByCourseId(String courseId) {
     for (Day day in Day.values) {
       for (SectionNumber number in SectionNumber.values) {
-        CourseInfoJson courseDetail = courseInfoMap[day][number];
-        if (courseDetail != null) {
-          if (courseDetail.main.course.id == courseId) {
-            String creditString = courseDetail.main.course.credits;
-            try {
-              return double.parse(creditString).toInt();
-            } catch (e) {
-              return 0;
-            }
+        CourseInfoJson? courseDetail = courseInfoMap?[day]?[number];
+        if (courseDetail?.main?.course?.id == courseId) {
+          String? creditString = courseDetail?.main?.course?.credits;
+          try {
+            return double.parse(creditString as String).toInt();
+          } catch (e) {
+            return 0;
           }
         }
-      }
+            }
     }
     return 0;
   }
@@ -66,7 +62,7 @@ class CourseTableJson {
   bool isDayInCourseTable(Day day) {
     bool pass = false;
     for (SectionNumber number in SectionNumber.values) {
-      if (courseInfoMap[day][number] != null) {
+      if (courseInfoMap![day]![number] != null) {
         pass = true;
         break;
       }
@@ -77,7 +73,7 @@ class CourseTableJson {
   bool isSectionNumberInCourseTable(SectionNumber number) {
     bool pass = false;
     for (Day day in Day.values) {
-      if (courseInfoMap[day].containsKey(number)) {
+      if (courseInfoMap![day]!.containsKey(number)) {
         pass = true;
         break;
       }
@@ -85,7 +81,7 @@ class CourseTableJson {
     return pass;
   }
 
-  factory CourseTableJson.fromJson(Map<String, dynamic> json) => _$CourseTableJsonFromJson(json);
+  factory CourseTableJson.fromJson(Map<String, dynamic> json) => _$CourseTableJsonFromJson(json)!;
 
   Map<String, dynamic> toJson() => _$CourseTableJsonToJson(this);
 
@@ -95,7 +91,7 @@ class CourseTableJson {
     for (Day day in Day.values) {
       for (SectionNumber number in SectionNumber.values) {
         courseInfoString += "$day  $number\n";
-        courseInfoString += "${courseInfoMap[day][number]}\n";
+        courseInfoString += "${courseInfoMap![day]![number]}\n";
       }
     }
     return sprintf("studentId :%s \n ---------courseSemester-------- \n%s \n---------courseInfo--------     \n%s \n",
@@ -103,21 +99,21 @@ class CourseTableJson {
   }
 
   bool get isEmpty {
-    return studentId.isEmpty && courseSemester.isEmpty;
+    return studentId!.isEmpty && courseSemester!.isEmpty;
   }
 
   CourseInfoJson getCourseDetailByTime(Day day, SectionNumber sectionNumber) {
-    return courseInfoMap[day][sectionNumber];
+    return courseInfoMap![day]![sectionNumber]!;
   }
 
   void setCourseDetailByTime(Day day, SectionNumber sectionNumber, CourseInfoJson courseInfo) {
     if (day == Day.UnKnown) {
       for (SectionNumber value in SectionNumber.values) {
-        if (courseInfo.main.course.id.isEmpty) {
+        if (courseInfo.main!.course!.id!.isEmpty) {
           continue;
         }
-        if (!courseInfoMap[day].containsKey(value)) {
-          courseInfoMap[day][value] = courseInfo;
+        if (!courseInfoMap![day]!.containsKey(value)) {
+          courseInfoMap![day]![value] = courseInfo;
           //Log.d( day.toString() + value.toString() + courseInfo.toString() );
           break;
         }
@@ -127,7 +123,7 @@ class CourseTableJson {
       throw Exception("衝堂");
     } */
     else {
-      courseInfoMap[day][sectionNumber] = courseInfo;
+      courseInfoMap![day]![sectionNumber] = courseInfo;
     }
   }
 
@@ -147,9 +143,9 @@ class CourseTableJson {
     List<String> courseIdList = [];
     for (Day day in Day.values) {
       for (SectionNumber number in SectionNumber.values) {
-        CourseInfoJson courseInfo = courseInfoMap[day][number];
+        CourseInfoJson? courseInfo = courseInfoMap![day]![number];
         if (courseInfo != null) {
-          String id = courseInfo.main.course.id;
+          String id = courseInfo.main!.course!.id!;
           if (!courseIdList.contains(id)) {
             courseIdList.add(id);
           }
@@ -159,13 +155,13 @@ class CourseTableJson {
     return courseIdList;
   }
 
-  String getCourseNameByCourseId(String courseId) {
+  String? getCourseNameByCourseId(String courseId) {
     for (Day day in Day.values) {
       for (SectionNumber number in SectionNumber.values) {
-        CourseInfoJson courseDetail = courseInfoMap[day][number];
+        CourseInfoJson? courseDetail = courseInfoMap![day]![number];
         if (courseDetail != null) {
-          if (courseDetail.main.course.id == courseId) {
-            return courseDetail.main.course.name;
+          if (courseDetail.main!.course!.id == courseId) {
+            return courseDetail.main!.course!.name;
           }
         }
       }
@@ -173,12 +169,12 @@ class CourseTableJson {
     return null;
   }
 
-  CourseInfoJson getCourseInfoByCourseName(String courseName) {
+  CourseInfoJson? getCourseInfoByCourseName(String courseName) {
     for (Day day in Day.values) {
       for (SectionNumber number in SectionNumber.values) {
-        CourseInfoJson courseDetail = courseInfoMap[day][number];
+        CourseInfoJson? courseDetail = courseInfoMap![day]![number];
         if (courseDetail != null) {
-          if (courseDetail.main.course.name == courseName) {
+          if (courseDetail.main!.course!.name == courseName) {
             return courseDetail;
           }
         }
@@ -190,8 +186,8 @@ class CourseTableJson {
 
 @JsonSerializable()
 class CourseInfoJson {
-  CourseMainInfoJson main;
-  CourseExtraInfoJson extra;
+  CourseMainInfoJson? main;
+  CourseExtraInfoJson? extra;
 
   CourseInfoJson({this.main, this.extra}) {
     main = main ?? CourseMainInfoJson();
@@ -199,7 +195,7 @@ class CourseInfoJson {
   }
 
   bool get isEmpty {
-    return main.isEmpty && extra.isEmpty;
+    return main!.isEmpty && extra!.isEmpty;
   }
 
 /*

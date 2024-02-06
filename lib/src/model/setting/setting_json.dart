@@ -1,5 +1,3 @@
-// TODO: remove sdk version selector after migrating to null-safety.
-// @dart=2.10
 import 'package:flutter_app/src/model/coursetable/course_table_json.dart';
 import 'package:flutter_app/src/model/json_init.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -9,9 +7,9 @@ part 'setting_json.g.dart';
 
 @JsonSerializable()
 class SettingJson {
-  CourseSettingJson course;
-  OtherSettingJson other;
-  AnnouncementSettingJson announcement;
+  CourseSettingJson? course;
+  OtherSettingJson? other;
+  AnnouncementSettingJson? announcement;
 
   SettingJson({this.course, this.other, this.announcement}) {
     course = course ?? CourseSettingJson();
@@ -20,7 +18,7 @@ class SettingJson {
   }
 
   bool get isEmpty {
-    return course.isEmpty && other.isEmpty && announcement.isEmpty;
+    return course!.isEmpty && other!.isEmpty && announcement!.isEmpty;
   }
 
   @override
@@ -37,14 +35,14 @@ class SettingJson {
 
 @JsonSerializable()
 class CourseSettingJson {
-  CourseTableJson info;
+  CourseTableJson? info;
 
   CourseSettingJson({this.info}) {
     info = info ?? CourseTableJson();
   }
 
   bool get isEmpty {
-    return info.isEmpty;
+    return info!.isEmpty;
   }
 
   @override
@@ -59,8 +57,8 @@ class CourseSettingJson {
 
 @JsonSerializable()
 class AnnouncementSettingJson {
-  int page;
-  int maxPage;
+  int? page;
+  int? maxPage;
 
   AnnouncementSettingJson({this.page, this.maxPage}) {
     page = page ?? 0;
@@ -83,10 +81,10 @@ class AnnouncementSettingJson {
 
 @JsonSerializable()
 class OtherSettingJson {
-  String lang;
-  bool autoCheckAppUpdate;
-  bool useExternalVideoPlayer;
-  bool checkIPlusNew;
+  String? lang;
+  bool? autoCheckAppUpdate;
+  bool? useExternalVideoPlayer;
+  bool? checkIPlusNew;
 
   OtherSettingJson({this.lang, this.autoCheckAppUpdate, this.useExternalVideoPlayer, this.checkIPlusNew}) {
     lang = JsonInit.stringInit(lang);
@@ -96,7 +94,7 @@ class OtherSettingJson {
   }
 
   bool get isEmpty {
-    return lang.isEmpty;
+    return lang!.isEmpty;
   }
 
   @override

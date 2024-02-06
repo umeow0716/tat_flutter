@@ -1,5 +1,3 @@
-// TODO: remove sdk version selector after migrating to null-safety.
-// @dart=2.10
 import 'package:json_annotation/json_annotation.dart';
 
 part 'ntut_calendar_json.g.dart';
@@ -7,8 +5,8 @@ part 'ntut_calendar_json.g.dart';
 List<NTUTCalendarJson> getNTUTCalendarJsonList(List<dynamic> list) {
   List<NTUTCalendarJson> result = [];
   for (var item in list) {
-    NTUTCalendarJson value = NTUTCalendarJson.fromJson(item);
-    if (value.calTitle.isNotEmpty) {
+    NTUTCalendarJson? value = NTUTCalendarJson.fromJson(item);
+    if (value.calTitle != null) {
       result.add(value);
     }
   }
@@ -18,58 +16,58 @@ List<NTUTCalendarJson> getNTUTCalendarJsonList(List<dynamic> list) {
 @JsonSerializable()
 class NTUTCalendarJson {
   @JsonKey(name: 'id')
-  int id;
+  int? id;
 
   @JsonKey(name: 'calStart')
-  int calStart;
+  int? calStart;
 
   @JsonKey(name: 'calEnd')
-  int calEnd;
+  int? calEnd;
 
   @JsonKey(name: 'allDay')
-  String allDay;
+  String? allDay;
 
   @JsonKey(name: 'calTitle')
-  String calTitle;
+  String? calTitle;
 
   @JsonKey(name: 'calPlace')
-  String calPlace;
+  String? calPlace;
 
   @JsonKey(name: 'calContent')
-  String calContent;
+  String? calContent;
 
   @JsonKey(name: 'calColor')
-  String calColor;
+  String? calColor;
 
   @JsonKey(name: 'ownerId')
-  String ownerId;
+  String? ownerId;
 
   @JsonKey(name: 'ownerName')
-  String ownerName;
+  String? ownerName;
 
   @JsonKey(name: 'creatorId')
-  String creatorId;
+  String? creatorId;
 
   @JsonKey(name: 'creatorName')
-  String creatorName;
+  String? creatorName;
 
   @JsonKey(name: 'modifierId')
-  String modifierId;
+  String? modifierId;
 
   @JsonKey(name: 'modifierName')
-  String modifierName;
+  String? modifierName;
 
   @JsonKey(name: 'modifyDate')
-  int modifyDate;
+  int? modifyDate;
 
   @JsonKey(name: 'hasBeenDeleted')
-  int hasBeenDeleted;
+  int? hasBeenDeleted;
 
   @JsonKey(name: 'calInviteeList')
-  List<dynamic> calInviteeList;
+  List<dynamic>? calInviteeList;
 
   @JsonKey(name: 'calAlertList')
-  List<dynamic> calAlertList;
+  List<dynamic>? calAlertList;
 
   NTUTCalendarJson(
     this.id,
@@ -96,14 +94,23 @@ class NTUTCalendarJson {
 
   @override
   String toString() {
-    return calTitle;
+    if(calTitle != null) {
+      return calTitle as String;
+    } else {
+      return '';
+    }
+  }
+
+  bool isEmpty() {
+    if(calTitle == null) return true;
+    return calTitle!.isEmpty;
   }
 
   DateTime get startTime {
-    return DateTime.fromMillisecondsSinceEpoch(calStart, isUtc: true).add(const Duration(hours: 8));
+    return DateTime.fromMillisecondsSinceEpoch(calStart as int, isUtc: true).add(const Duration(hours: 8));
   }
 
   DateTime get endTime {
-    return DateTime.fromMillisecondsSinceEpoch(calEnd, isUtc: true).add(const Duration(hours: 8));
+    return DateTime.fromMillisecondsSinceEpoch(calEnd as int, isUtc: true).add(const Duration(hours: 8));
   }
 }

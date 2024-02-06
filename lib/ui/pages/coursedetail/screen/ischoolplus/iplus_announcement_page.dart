@@ -1,5 +1,3 @@
-// TODO: remove sdk version selector after migrating to null-safety.
-// @dart=2.10
 import 'package:flutter/material.dart';
 import 'package:flutter_app/src/model/coursetable/course_table_json.dart';
 import 'package:flutter_app/src/model/ischoolplus/ischool_plus_announcement_json.dart';
@@ -16,17 +14,17 @@ class IPlusAnnouncementPage extends StatefulWidget {
   final CourseInfoJson courseInfo;
   final String studentId;
 
-  const IPlusAnnouncementPage(this.studentId, this.courseInfo, {Key key}) : super(key: key);
+  const IPlusAnnouncementPage(this.studentId, this.courseInfo, {Key? key}) : super(key: key);
 
   @override
   State<IPlusAnnouncementPage> createState() => _IPlusAnnouncementPage();
 }
 
 class _IPlusAnnouncementPage extends State<IPlusAnnouncementPage> with AutomaticKeepAliveClientMixin {
-  List<ISchoolPlusAnnouncementJson> items;
-  String courseBid;
+  late List<ISchoolPlusAnnouncementJson> items;
+  late String courseBid;
+  late bool isSupport;
   bool needRefresh = false;
-  bool isSupport;
   bool openNotifications = false;
 
   @override
@@ -41,18 +39,18 @@ class _IPlusAnnouncementPage extends State<IPlusAnnouncementPage> with Automatic
 
   void _addTask() async {
     //第一次
-    String courseId = widget.courseInfo.main.course.id;
+    String courseId = widget.courseInfo.main!.course!.id!;
     TaskFlow taskFlow = TaskFlow();
     var task = IPlusCourseAnnouncementTask(courseId);
     var getTask = IPlusGetCourseSubscribeTask(courseId);
     taskFlow.addTask(task);
     taskFlow.addTask(getTask);
     if (await taskFlow.start()) {
-      items = task.result;
-      courseBid = getTask.result["courseBid"];
-      openNotifications = getTask.result["openNotifications"];
+      items = task.result!;
+      courseBid = getTask.result!["courseBid"];
+      openNotifications = getTask.result!["openNotifications"];
     }
-    items = items ?? [];
+    items = items;
 
     if (mounted) {
       setState(() {});
@@ -63,11 +61,11 @@ class _IPlusAnnouncementPage extends State<IPlusAnnouncementPage> with Automatic
     TaskFlow taskFlow = TaskFlow();
     var task = IPlusCourseAnnouncementDetailTask(value);
     taskFlow.addTask(task);
-    Map detail;
+    Map? detail;
     if (await taskFlow.start()) {
-      detail = task.result;
+      detail = task.result!;
     }
-    RouteUtils.toIPlusAnnouncementDetailPage(widget.courseInfo, detail);
+    RouteUtils.toIPlusAnnouncementDetailPage(widget.courseInfo, detail!);
   }
 
   @override

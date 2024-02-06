@@ -12,10 +12,10 @@ enum LangEnum { en, zh }
 class LanguageUtil {
   static Future<void> init(BuildContext context) async {
     final otherSetting = LocalStorage.instance.getOtherSetting();
-    if (otherSetting.lang.isEmpty || !otherSetting.lang.contains("_")) {
+    if (otherSetting!.lang!.isEmpty || !otherSetting.lang!.contains("_")) {
       setLangByIndex(LangEnum.zh);
     } else {
-      load(string2Locale(otherSetting.lang));
+      load(string2Locale(otherSetting.lang!));
     }
   }
 
@@ -27,7 +27,7 @@ class LanguageUtil {
     if (getSupportLocale.contains(locale)) {
       await R.load(locale);
       final lang = locale2String(locale);
-      OtherSettingJson otherSetting = LocalStorage.instance.getOtherSetting();
+      OtherSettingJson otherSetting = LocalStorage.instance.getOtherSetting()!;
       if (otherSetting.lang != lang) {
         otherSetting.lang = lang;
         LocalStorage.instance.setOtherSetting(otherSetting);
@@ -74,7 +74,7 @@ class LanguageUtil {
     if(otherSetting == null) {
       return LangEnum.zh;
     }
-    final index = getSupportLocale.indexOf(string2Locale(otherSetting.lang));
+    final index = getSupportLocale.indexOf(string2Locale(otherSetting.lang!));
     switch (index) {
       case 0:
         return LangEnum.en;

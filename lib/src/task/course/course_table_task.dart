@@ -38,14 +38,14 @@ class CourseTableTask extends CourseSystemTask<CourseTableJson> {
         courseTable.studentId = studentId;
         courseTable.studentName = value.studentName;
 
-        for (final courseMainInfo in value.json) {
+        for (final courseMainInfo in value.json!) {
           final courseInfo = CourseInfoJson();
           bool add = false;
           for (int i = 0; i < 7; i++) {
             final day = Day.values[i];
-            final time = courseMainInfo.course.time[day];
+            final time = courseMainInfo?.course?.time?[day];
             courseInfo.main = courseMainInfo;
-            add |= courseTable.setCourseDetailByTimeString(day, time, courseInfo);
+            add |= courseTable.setCourseDetailByTimeString(day, time!, courseInfo);
           }
           if (!add) {
             courseTable.setCourseDetailByTime(Day.UnKnown, SectionNumber.T_UnKnown, courseInfo);

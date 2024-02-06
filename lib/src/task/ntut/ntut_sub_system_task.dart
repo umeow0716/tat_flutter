@@ -8,7 +8,7 @@ import 'package:flutter_app/src/task/ntut/ntut_task.dart';
 import '../task.dart';
 
 class NTUTSubSystemTask extends NTUTTask<APTreeJson> {
-  final String arg;
+  final String? arg;
 
   NTUTSubSystemTask(this.arg) : super("NTUTSubSystemTask");
 

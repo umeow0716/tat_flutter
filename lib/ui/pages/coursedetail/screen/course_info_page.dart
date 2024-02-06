@@ -1,5 +1,3 @@
-// TODO: remove sdk version selector after migrating to null-safety.
-// @dart=2.10
 import 'dart:async';
 
 import 'package:back_button_interceptor/back_button_interceptor.dart';
@@ -20,7 +18,7 @@ class CourseInfoPage extends StatefulWidget {
   final CourseInfoJson courseInfo;
   final String studentId;
 
-  const CourseInfoPage(this.studentId, this.courseInfo, {Key key}) : super(key: key);
+  const CourseInfoPage(this.studentId, this.courseInfo, {Key? key}) : super(key: key);
 
   final int courseInfoWithAlpha = 0x44;
 
@@ -29,8 +27,8 @@ class CourseInfoPage extends StatefulWidget {
 }
 
 class _CourseInfoPageState extends State<CourseInfoPage> with AutomaticKeepAliveClientMixin {
-  CourseMainInfoJson courseMainInfo;
-  CourseExtraInfoJson courseExtraInfo;
+  late CourseMainInfoJson courseMainInfo;
+  late CourseExtraInfoJson courseExtraInfo;
   bool isLoading = true;
   final List<Widget> courseData = [];
   final List<Widget> listItem = [];
@@ -60,30 +58,30 @@ class _CourseInfoPageState extends State<CourseInfoPage> with AutomaticKeepAlive
   }
 
   void _addTask() async {
-    courseMainInfo = widget.courseInfo.main;
-    final courseId = courseMainInfo.course.id;
+    courseMainInfo = widget.courseInfo.main!;
+    final courseId = courseMainInfo.course!.id;
     final taskFlow = TaskFlow();
-    final task = CourseExtraInfoTask(courseId);
+    final task = CourseExtraInfoTask(courseId!);
     taskFlow.addTask(task);
     if (await taskFlow.start()) {
-      courseExtraInfo = task.result;
+      courseExtraInfo = task.result!;
     }
 
     final studentTask = IPlusCourseStudentList(courseId);
     taskFlow.addTask(studentTask);
     if(await taskFlow.start()) {
-      courseExtraInfo.classmate = studentTask.result;
+      courseExtraInfo.classmate = studentTask.result!;
     }
     widget.courseInfo.extra = courseExtraInfo;
-    courseData.add(_buildCourseInfo(sprintf("%s: %s", [R.current.courseId, courseMainInfo.course.id])));
-    courseData.add(_buildCourseInfo(sprintf("%s: %s", [R.current.courseName, courseMainInfo.course.name])));
-    courseData.add(_buildCourseInfo(sprintf("%s: %s    ", [R.current.credit, courseMainInfo.course.credits])));
-    courseData.add(_buildCourseInfo(sprintf("%s: %s    ", [R.current.category, courseExtraInfo.course.category])));
+    courseData.add(_buildCourseInfo(sprintf("%s: %s", [R.current.courseId, courseMainInfo.course!.id])));
+    courseData.add(_buildCourseInfo(sprintf("%s: %s", [R.current.courseName, courseMainInfo.course!.name])));
+    courseData.add(_buildCourseInfo(sprintf("%s: %s    ", [R.current.credit, courseMainInfo.course!.credits])));
+    courseData.add(_buildCourseInfo(sprintf("%s: %s    ", [R.current.category, courseExtraInfo.course!.category])));
     courseData.add(
       _buildCourseInfoWithButton(
         sprintf("%s: %s", [R.current.instructor, courseMainInfo.getTeacherName()]),
         R.current.syllabus,
-        courseMainInfo.course.scheduleHref,
+        courseMainInfo.course!.scheduleHref!,
       ),
     );
     courseData.add(_buildCourseInfo(sprintf("%s: %s", [R.current.startClass, courseMainInfo.getOpenClassName()])));
@@ -94,8 +92,8 @@ class _CourseInfoPageState extends State<CourseInfoPage> with AutomaticKeepAlive
       courseMainInfo.getClassroomHrefList(),
     ));
 
-    courseData.add(_buildCourseInfo(sprintf("%s: %s", [R.current.numberOfStudent, courseExtraInfo.course.selectNumber])));
-    courseData.add(_buildCourseInfo(sprintf("%s: %s", [R.current.numberOfWithdraw, courseExtraInfo.course.withdrawNumber])));
+    courseData.add(_buildCourseInfo(sprintf("%s: %s", [R.current.numberOfStudent, courseExtraInfo.course!.selectNumber])));
+    courseData.add(_buildCourseInfo(sprintf("%s: %s", [R.current.numberOfWithdraw, courseExtraInfo.course!.withdrawNumber])));
 
     listItem.removeRange(0, listItem.length);
     listItem.add(_buildInfoTitle(R.current.courseData));
@@ -109,12 +107,12 @@ class _CourseInfoPageState extends State<CourseInfoPage> with AutomaticKeepAlive
         ),
       );
 
-      for (int i = 0; i < courseExtraInfo.classmate.length; i++) {
-        ClassmateJson classmate = widget.courseInfo.extra.classmate[i];
+      for (int i = 0; i < courseExtraInfo.classmate!.length; i++) {
+        ClassmateJson classmate = widget.courseInfo.extra!.classmate![i];
         listItem.add(
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 0),
-            child: _buildClassmateInfo(i, classmate.departmentName, classmate.studentId, classmate.getName()),
+            child: _buildClassmateInfo(i, classmate.departmentName!, classmate.studentId!, classmate.getName()!),
           ),
         );
       }

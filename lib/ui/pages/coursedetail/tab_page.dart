@@ -1,12 +1,10 @@
-// TODO: remove sdk version selector after migrating to null-safety.
-// @dart=2.10
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
 class TabPage {
-  GlobalKey<NavigatorState> navigatorKey;
-  Widget tab;
-  Widget tabPage;
+  late GlobalKey<NavigatorState> navigatorKey;
+  late Widget tab;
+  late Widget tabPage;
 
   TabPage(String title, IconData icons, Widget initPage, {useNavigatorKey = false}) {
     navigatorKey = GlobalKey();
@@ -33,7 +31,7 @@ class TabPage {
 }
 
 class TabPageList {
-  List<TabPage> tabPageList;
+  late List<TabPage> tabPageList;
 
   TabPageList() {
     tabPageList = [];

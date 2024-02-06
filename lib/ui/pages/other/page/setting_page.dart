@@ -163,10 +163,10 @@ class _SettingPageState extends State<SettingPage> {
           ),
         ],
       ),
-      value: LocalStorage.instance.getOtherSetting().checkIPlusNew,
+      value: LocalStorage.instance.getOtherSetting()!.checkIPlusNew!,
       onChanged: (value) {
         setState(() {
-          LocalStorage.instance.getOtherSetting().checkIPlusNew = value;
+          LocalStorage.instance.getOtherSetting()!.checkIPlusNew = value;
           LocalStorage.instance.saveOtherSetting();
         });
       },
@@ -189,10 +189,10 @@ class _SettingPageState extends State<SettingPage> {
           ),
         ],
       ),
-      value: LocalStorage.instance.getOtherSetting().useExternalVideoPlayer,
+      value: LocalStorage.instance.getOtherSetting()!.useExternalVideoPlayer!,
       onChanged: (value) {
         setState(() {
-          LocalStorage.instance.getOtherSetting().useExternalVideoPlayer = value;
+          LocalStorage.instance.getOtherSetting()!.useExternalVideoPlayer = value;
           LocalStorage.instance.saveOtherSetting();
         });
       },

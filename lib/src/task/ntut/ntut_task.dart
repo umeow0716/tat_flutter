@@ -29,7 +29,7 @@ class NTUTTask<T> extends DialogTask<T> {
     final account = LocalStorage.instance.getAccount();
     final password = LocalStorage.instance.getPassword();
 
-    if (account.isEmpty || password.isEmpty) {
+    if (account!.isEmpty || password!.isEmpty) {
       _isLogin = false;
       LocalStorage.instance.logout();
       RouteUtils.toLoginScreen();

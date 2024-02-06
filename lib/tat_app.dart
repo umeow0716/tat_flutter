@@ -23,7 +23,6 @@ import 'package:flutter_app/src/store/local_storage.dart';
 import 'package:flutter_app/src/util/analytics_utils.dart';
 import 'package:flutter_app/ui/pages/webview/web_view_page.dart';
 import 'package:flutter_app/ui/screen/main_screen.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get_instance/get_instance.dart';
 import 'package:get/route_manager.dart';
@@ -53,11 +52,6 @@ import 'package:tat_core/core/zuvio/usecase/make_roll_call_use_case.dart';
 typedef _FutureVoidCallBack = Future<void> Function();
 
 Future<void> runTATApp() async {
-  await FlutterDownloader.initialize(
-    debug: true, // optional: set to false to disable printing logs to console (default: true)
-    ignoreSsl: true // option: set to false to disable working with http links (default: false)
-  );
-  
   final firebaseMessaging = FirebaseMessaging.instance;
   final firebaseAuth = FirebaseAuth.instance;
 
@@ -209,6 +203,8 @@ class _TATLifeCycleEventHandler extends WidgetsBindingObserver {
       case AppLifecycleState.inactive:
         break;
       case AppLifecycleState.paused:
+        break;
+      case AppLifecycleState.hidden:
         break;
     }
   }

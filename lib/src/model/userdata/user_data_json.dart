@@ -1,5 +1,3 @@
-// TODO: remove sdk version selector after migrating to null-safety.
-// @dart=2.10
 import 'package:flutter_app/src/model/json_init.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sprintf/sprintf.dart';
@@ -8,9 +6,9 @@ part 'user_data_json.g.dart';
 
 @JsonSerializable()
 class UserDataJson {
-  String account;
-  String password;
-  UserInfoJson info;
+  String? account;
+  String? password;
+  UserInfoJson? info;
 
   UserDataJson({this.account, this.password, this.info}) {
     account = JsonInit.stringInit(account);
@@ -23,7 +21,7 @@ class UserDataJson {
   Map<String, dynamic> toJson() => _$UserDataJsonToJson(this);
 
   bool get isEmpty {
-    return account.isEmpty && password.isEmpty && info.isEmpty;
+    return account!.isEmpty && password!.isEmpty && info!.isEmpty;
   }
 
   @override
@@ -38,11 +36,11 @@ class UserDataJson {
 
 @JsonSerializable()
 class UserInfoJson {
-  String givenName;
-  String userMail;
-  String userPhoto;
-  String passwordExpiredRemind;
-  String userDn;
+  String? givenName;
+  String? userMail;
+  String? userPhoto;
+  String? passwordExpiredRemind;
+  String? userDn;
 
   UserInfoJson({this.givenName, this.userMail, this.userPhoto, this.passwordExpiredRemind, this.userDn}) {
     givenName = JsonInit.stringInit(givenName);
@@ -57,11 +55,11 @@ class UserInfoJson {
   Map<String, dynamic> toJson() => _$UserInfoJsonToJson(this);
 
   bool get isEmpty {
-    return givenName.isEmpty &&
-        userMail.isEmpty &&
-        userPhoto.isEmpty &&
-        userDn.isEmpty &&
-        passwordExpiredRemind.isEmpty;
+    return givenName!.isEmpty &&
+        userMail!.isEmpty &&
+        userPhoto!.isEmpty &&
+        userDn!.isEmpty &&
+        passwordExpiredRemind!.isEmpty;
   }
 
   @override

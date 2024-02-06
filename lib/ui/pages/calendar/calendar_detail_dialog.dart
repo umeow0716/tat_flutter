@@ -1,5 +1,3 @@
-// TODO: remove sdk version selector after migrating to null-safety.
-// @dart=2.10
 import 'package:flutter/material.dart';
 import 'package:flutter_app/src/model/ntut/ntut_calendar_json.dart';
 import 'package:flutter_app/src/r.dart';
@@ -10,7 +8,7 @@ import 'package:sprintf/sprintf.dart';
 class CalendarDetailDialog extends StatefulWidget {
   final NTUTCalendarJson calendarDetail;
 
-  const CalendarDetailDialog({Key key, this.calendarDetail}) : super(key: key);
+  const CalendarDetailDialog({Key? key, required this.calendarDetail}) : super(key: key);
 
   @override
   State<CalendarDetailDialog> createState() => _CalendarDetailDialogState();
@@ -27,7 +25,7 @@ class _CalendarDetailDialogState extends State<CalendarDetailDialog> {
     return AlertDialog(
       title: Center(
         child: Text(
-          widget.calendarDetail.calTitle,
+          widget.calendarDetail.calTitle as String,
           textAlign: TextAlign.center,
         ),
       ),
@@ -59,14 +57,14 @@ class _CalendarDetailDialogState extends State<CalendarDetailDialog> {
                 width: 4,
               ),
               Expanded(
-                child: Text(widget.calendarDetail.creatorName),
+                child: Text(widget.calendarDetail.creatorName as String),
               )
             ],
           ),
           const SizedBox(
             height: 6,
           ),
-          if (widget.calendarDetail.calContent.isNotEmpty)
+          if (widget.calendarDetail.calContent != null)
             Row(
               children: [
                 const Icon(Icons.info),
@@ -74,7 +72,7 @@ class _CalendarDetailDialogState extends State<CalendarDetailDialog> {
                   width: 4,
                 ),
                 Expanded(
-                  child: Text(widget.calendarDetail.calContent),
+                  child: Text(widget.calendarDetail.calContent as String),
                 )
               ],
             ),

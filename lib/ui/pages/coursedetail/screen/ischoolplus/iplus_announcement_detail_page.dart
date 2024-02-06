@@ -1,5 +1,3 @@
-// TODO: remove sdk version selector after migrating to null-safety.
-// @dart=2.10
 import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/debug/log/log.dart';
@@ -17,7 +15,7 @@ class IPlusAnnouncementDetailPage extends StatefulWidget {
   final Map data;
   final CourseInfoJson courseInfo;
 
-  const IPlusAnnouncementDetailPage(this.courseInfo, this.data, {Key key}) : super(key: key);
+  const IPlusAnnouncementDetailPage(this.courseInfo, this.data, {Key? key}) : super(key: key);
 
   @override
   State<IPlusAnnouncementDetailPage> createState() => _IPlusAnnouncementDetailPage();
@@ -50,7 +48,7 @@ class _IPlusAnnouncementDetailPage extends State<IPlusAnnouncementDetailPage> {
         leading: BackButton(
           onPressed: () => Get.back(),
         ),
-        title: Text(widget.courseInfo.main.course.name),
+        title: Text(widget.courseInfo.main!.course!.name!),
         actions: <Widget>[
           PopupMenuButton<int>(
             onSelected: (result) {
@@ -191,7 +189,7 @@ class _IPlusAnnouncementDetailPage extends State<IPlusAnnouncementDetailPage> {
   }
 
   void _downloadFile(String url, String name) async {
-    String courseName = widget.courseInfo.main.course.name;
+    String courseName = widget.courseInfo.main!.course!.name!;
     await FileDownload.download(url, courseName, name);
   }
 

@@ -1,5 +1,3 @@
-// TODO: remove sdk version selector after migrating to null-safety.
-// @dart=2.10
 import 'package:flutter_app/debug/log/log.dart';
 import 'package:flutter_app/src/connector/ntut_connector.dart';
 import 'package:flutter_app/src/model/course/course_class_json.dart';
@@ -38,11 +36,11 @@ class ScoreConnector {
       nodes = tagNode.getElementsByTagName("input");
       data = {};
       for (Element node in nodes) {
-        String name = node.attributes['name'];
-        String value = node.attributes['value'];
+        String name = node.attributes['name']!;
+        String value = node.attributes['value']!;
         data[name] = value;
       }
-      String jumpUrl = tagNode.getElementsByTagName("form")[0].attributes["action"];
+      String jumpUrl = tagNode.getElementsByTagName("form")[0].attributes["action"]!;
       parameter = ConnectorParameter(jumpUrl);
       parameter.data = data;
       await Connector.getDataByPostResponse(parameter);
@@ -121,11 +119,11 @@ class ScoreConnector {
           RegExp creditDoubleFilter = RegExp(r'\d+(\.\d+)?');
           final Iterable<RegExpMatch> creditDoubleMatches =
               creditDoubleFilter.allMatches(scoreNode.getElementsByTagName("th")[6].text);
-          final List<String> creditDoubles = creditDoubleMatches.map((match) => match.group(0)).toList();
+          final List<String?> creditDoubles = creditDoubleMatches.map((match) => match.group(0)).toList();
 
-          score.credit = double.parse(creditDoubles[0]);
+          score.credit = double.parse(creditDoubles[0]!);
           score.score = scoreNode.getElementsByTagName("th")[7].text.replaceAll(RegExp(r"[\s| ]"), "");
-          courseScore.courseScoreList.add(score);
+          courseScore.courseScoreList!.add(score);
         }
         try {
           courseScore.averageScore = double.parse(scoreNodes[scoreNodes.length - 5].getElementsByTagName("td")[0].text);
@@ -219,7 +217,7 @@ class ScoreConnector {
     }
   }
 
-  static Future<List<String>> getCoreGeneralLesson() async {
+  static Future<List<String>?> getCoreGeneralLesson() async {
     ConnectorParameter parameter;
     String result;
     Document tagNode;

@@ -1,5 +1,3 @@
-// TODO: remove sdk version selector after migrating to null-safety.
-// @dart=2.10
 import 'package:json_annotation/json_annotation.dart';
 
 part 'ap_tree_json.g.dart';

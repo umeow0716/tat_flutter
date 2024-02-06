@@ -1,24 +1,22 @@
-// TODO: remove sdk version selector after migrating to null-safety.
-// @dart=2.10
 import 'package:flutter/material.dart';
 import 'package:sprintf/sprintf.dart';
 
 bool _isShowing = false;
-BuildContext _context, _dismissingContext;
+BuildContext? _context, _dismissingContext;
 bool _barrierDismissible = true;
 String _dialogMessage = "Loading...";
 String _progressString = "0/100";
 double _progress = 0;
 
 class ProgressRateDialog {
-  _Body _dialog;
+  late _Body _dialog;
 
-  ProgressRateDialog(BuildContext context, {bool isDismissible}) {
+  ProgressRateDialog(BuildContext context, {bool? isDismissible}) {
     _context = context;
     _barrierDismissible = isDismissible ?? true;
   }
 
-  void update({String message, double nowProgress, String progressString}) {
+  void update({String? message, double? nowProgress, String? progressString}) {
     _progress = nowProgress ?? _progress;
     _dialogMessage = message ?? _dialogMessage;
     _progressString = progressString ?? _progressString;
@@ -33,8 +31,8 @@ class ProgressRateDialog {
     if (_isShowing) {
       try {
         _isShowing = false;
-        if (Navigator.of(_dismissingContext).canPop()) {
-          Navigator.of(_dismissingContext).pop();
+        if (Navigator.of(_dismissingContext!).canPop()) {
+          Navigator.of(_dismissingContext!).pop();
         }
       } catch (_) {}
     }
@@ -44,7 +42,7 @@ class ProgressRateDialog {
     if (_isShowing) {
       try {
         _isShowing = false;
-        Navigator.of(_dismissingContext).pop(true);
+        Navigator.of(_dismissingContext!).pop(true);
         return Future.value(true);
       } catch (_) {
         return Future.value(false);
@@ -59,7 +57,7 @@ class ProgressRateDialog {
       try {
         _dialog = _Body();
         showDialog<dynamic>(
-          context: _context,
+          context: _context!,
           barrierDismissible: false,
           builder: (BuildContext context) {
             _dismissingContext = context;

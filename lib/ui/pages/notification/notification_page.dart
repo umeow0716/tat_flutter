@@ -1,10 +1,8 @@
-// TODO: remove sdk version selector after migrating to null-safety.
-// @dart=2.10
 import 'package:flutter/material.dart';
 import 'package:flutter_app/src/r.dart';
 
 class NotificationPage extends StatefulWidget {
-  const NotificationPage({Key key}) : super(key: key);
+  const NotificationPage({Key? key}) : super(key: key);
 
   @override
   State<NotificationPage> createState() => _NotificationPageState();
@@ -18,10 +16,10 @@ class _NotificationPageState extends State<NotificationPage> with AutomaticKeepA
       appBar: AppBar(
         title: Text(R.current.titleNotification),
       ),
-      body: Center(
+      body: const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
+          children: [
             Icon(Icons.mark_chat_unread),
             SizedBox(height: 20),
             Text("訊息功能，即將登場！"),

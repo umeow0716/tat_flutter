@@ -1,5 +1,3 @@
-// TODO: remove sdk version selector after migrating to null-safety.
-// @dart=2.10
 import 'dart:async';
 import 'dart:convert';
 
@@ -41,15 +39,15 @@ class LocalStorage {
 
   final _httpClientInterceptors = <Interceptor>[];
 
-  SharedPreferences _pref;
-  UserDataJson _userData;
-  List<SemesterJson> _courseSemesterList;
-  CourseScoreCreditJson _courseScoreList;
-  SettingJson _setting;
+  late SharedPreferences _pref;
+  late UserDataJson _userData;
+  late CourseScoreCreditJson _courseScoreList;
+  late SettingJson _setting;
+  List<SemesterJson?>? _courseSemesterList = [];
 
-  bool get autoCheckAppUpdate => _setting.other.autoCheckAppUpdate;
+  bool? get autoCheckAppUpdate => _setting.other!.autoCheckAppUpdate;
 
-  bool getFirstUse(String key, {int timeOut}) {
+  bool? getFirstUse(String key, {int? timeOut}) {
     if (timeOut != null) {
       final millsTimeOut = timeOut * 1000;
       final wKey = "firstUse$key";
@@ -88,15 +86,15 @@ class LocalStorage {
 
   void setAccount(String account) => _userData.account = account;
 
-  String getAccount() => _userData.account;
+  String? getAccount() => _userData.account;
 
   void setPassword(String password) => _userData.password = password;
 
-  String getPassword() => _userData.password;
+  String? getPassword() => _userData.password;
 
   void setUserInfo(UserInfoJson value) => _userData.info = value;
 
-  UserInfoJson getUserInfo() => _userData.info;
+  UserInfoJson? getUserInfo() => _userData.info;
 
   UserDataJson getUserData() => _userData;
 
@@ -117,7 +115,7 @@ class LocalStorage {
     }
   }
 
-  String getCourseNameByCourseId(String courseId) {
+  String? getCourseNameByCourseId(String courseId) {
     for (final courseDetail in _courseTableList) {
       final name = courseDetail.getCourseNameByCourseId(courseId);
       if (name != null) {
@@ -136,7 +134,9 @@ class LocalStorage {
     );
   }
 
-  void addCourseTable(CourseTableJson addCourseTable) {
+  void addCourseTable(CourseTableJson? addCourseTable) {
+    if(addCourseTable == null) return;
+
     removeCourseTable(addCourseTable);
     _courseTableList.add(addCourseTable);
   }
@@ -146,12 +146,12 @@ class LocalStorage {
       if (a.studentId == b.studentId) {
         return b.courseSemester.toString().compareTo(a.courseSemester.toString());
       }
-      return a.studentId.compareTo(b.studentId);
+      return a.studentId!.compareTo(b.studentId!);
     });
     return _courseTableList;
   }
 
-  CourseTableJson getCourseTable(String studentId, SemesterJson courseSemester) {
+  CourseTableJson? getCourseTable(String? studentId, SemesterJson? courseSemester) {
     if (courseSemester == null || studentId == null || studentId.isEmpty) {
       return null;
     }
@@ -170,9 +170,9 @@ class LocalStorage {
 
   Future<void> saveCourseScoreCredit() => _save(_scoreCreditJsonKey, _courseScoreList);
 
-  List<SemesterCourseScoreJson> getSemesterCourseScore() => _courseScoreList.semesterCourseScoreList;
+  List<SemesterCourseScoreJson>? getSemesterCourseScore() => _courseScoreList.semesterCourseScoreList;
 
-  GraduationInformationJson getGraduationInformation() => _courseScoreList.graduationInformation;
+  GraduationInformationJson? getGraduationInformation() => _courseScoreList.graduationInformation;
 
   CourseScoreCreditJson getCourseScoreCredit() => _courseScoreList;
 
@@ -205,13 +205,13 @@ class LocalStorage {
     return saveCourseSetting();
   }
 
-  CourseSettingJson getCourseSetting() => _setting.course;
+  CourseSettingJson? getCourseSetting() => _setting.course;
 
   Future<void> saveOtherSetting() => _saveSetting();
 
   void setOtherSetting(OtherSettingJson value) => _setting.other = value;
 
-  OtherSettingJson getOtherSetting() => _setting?.other;
+  OtherSettingJson? getOtherSetting() => _setting.other;
 
   Future<void> _saveAnnouncementSetting() => _saveSetting();
 
@@ -225,12 +225,12 @@ class LocalStorage {
 
   Future<void> saveZuvioUserInfo(ZUserInfo userInfo) => _writeString(_zUserInfoKey, jsonEncode(userInfo.toJson()));
 
-  ZLoginCredential getZuvioLoginCredential() {
+  ZLoginCredential? getZuvioLoginCredential() {
     final savedData = _readString(_zLoginCredentialKey);
     return (savedData == null) ? null : ZLoginCredential.fromJson(jsonDecode(savedData) as Map<String, dynamic>);
   }
 
-  ZUserInfo getZuvioUserInfo() {
+  ZUserInfo? getZuvioUserInfo() {
     final savedData = _readString(_zUserInfoKey);
     return (savedData == null) ? null : ZUserInfo.fromJson(jsonDecode(savedData) as Map<String, dynamic>);
   }
@@ -243,19 +243,19 @@ class LocalStorage {
 
     if (readJsonList != null) {
       for (final readJson in readJsonList) {
-        _courseSemesterList.add(SemesterJson.fromJson(json.decode(readJson)));
+        _courseSemesterList?.add(SemesterJson.fromJson(json.decode(readJson)));
       }
     }
   }
 
-  void setSemesterJsonList(List<SemesterJson> value) => _courseSemesterList = value;
+  void setSemesterJsonList(List<SemesterJson?>? value) => _courseSemesterList = value;
 
-  SemesterJson getSemesterJsonItem(int index) =>
-      ((_courseSemesterList?.length ?? -1) > index) ? _courseSemesterList[index] : null;
+  SemesterJson? getSemesterJsonItem(int index) =>
+      ((_courseSemesterList?.length ?? -1) > index) ? _courseSemesterList![index] : null;
 
-  List<SemesterJson> getSemesterList() => _courseSemesterList;
+  List<SemesterJson?>? getSemesterList() => _courseSemesterList;
 
-  String getVersion() => _readString("version");
+  String? getVersion() => _readString("version");
 
   Future<void> setVersion(String version) => _writeString("version", version);
 
@@ -263,7 +263,7 @@ class LocalStorage {
     _pref = await SharedPreferences.getInstance();
     await DioConnector.instance.init(interceptors: httpClientInterceptors);
     _httpClientInterceptors.addAll(httpClientInterceptors);
-    _courseSemesterList = _courseSemesterList ?? [];
+    _courseSemesterList = _courseSemesterList;
     _loadUserData();
     _loadCourseTableList();
     _loadSetting();
@@ -307,11 +307,11 @@ class LocalStorage {
 
   Future<void> _writeInt(String key, int value) => _pref.setInt(key, value);
 
-  int _readInt(String key) => _pref.getInt(key);
+  int? _readInt(String key) => _pref.getInt(key);
 
   Future<void> _writeStringList(String key, List<String> value) => _pref.setStringList(key, value);
 
-  String _readString(String key) => _pref.getString(key);
+  String? _readString(String key) => _pref.getString(key);
 
-  List<String> _readStringList(String key) => _pref.getStringList(key);
+  List<String>? _readStringList(String key) => _pref.getStringList(key);
 }
