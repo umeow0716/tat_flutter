@@ -73,7 +73,7 @@ class RollCallDashboardPage extends StatelessWidget {
         ),
         body: SafeArea(
           child: MediaQuery(
-            data: MediaQuery.of(context).copyWith(textScaleFactor: 1),
+            data: MediaQuery.of(context).copyWith(textScaler: const TextScaler.linear(1)),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: _scheduledMonitorList,

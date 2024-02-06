@@ -5,16 +5,13 @@ import 'dart:typed_data';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/src/config/app_link.dart';
 import 'package:flutter_app/src/connector/core/connector.dart';
 import 'package:flutter_app/src/connector/core/connector_parameter.dart';
-import 'package:flutter_app/src/file/file_store.dart';
 import 'package:flutter_app/src/model/remoteconfig/remote_config_version_info.dart';
 import 'package:flutter_app/src/r.dart';
 import 'package:get/get.dart';
 import 'package:package_info/package_info.dart';
 import 'package:sprintf/sprintf.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:version/version.dart';
 import 'package:flutter_install_app/flutter_install_app.dart';
 
@@ -62,8 +59,6 @@ class AppUpdate {
     final latest = latestVersionData['latest'];
     final title = sprintf("%s %s", [R.current.findNewVersion, latest]);
 
-    Text dynamicText = Text(R.current.update);
-
     await Get.dialog<bool>(
       AlertDialog(
         title: Text(title),
@@ -90,13 +85,6 @@ class AppUpdate {
     //   SystemNavigator.pop();
     //   exit(0);
     // }
-  }
-
-  static void _openAppStore() async {
-    final url = AppLink.storeUrlString;
-    if (await canLaunchUrl(Uri.parse(url))) {
-      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
-    }
   }
 }
 
@@ -131,13 +119,13 @@ class _DynamicButton extends State<StatefulWidget> {
       } else if(targetABI == 'armeabi-v7a') {
         filename = 'TAT_umeow_V${latest}_v7a.apk';
       } else {
-        filename = 'TAT_umeow_V${latest}.apk';
+        filename = 'TAT_umeow_V$latest.apk';
       }
 
       final dio = Dio();
 
       final response = await dio.get(
-        'https://tat.umeow.eu.org/${latest}/${filename}', 
+        'https://tat.umeow.eu.org/$latest/$filename', 
         onReceiveProgress: (int count, int total) {
           setState(() {
             _data = '${count ~/ 1024}/${total ~/ 1024} KB';

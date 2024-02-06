@@ -21,7 +21,7 @@ class IPlusCourseAnnouncementTask extends IPlusSystemTask<List<ISchoolPlusAnnoun
       super.onStart(R.current.getISchoolPlusCourseAnnouncement);
       final value = await ISchoolPlusConnector.getCourseAnnouncement(id);
       super.onEnd();
-      switch (value.status) {
+      switch (value.status!) {
         case IPlusReturnStatus.success:
           result = value.result;
           return TaskStatus.success;

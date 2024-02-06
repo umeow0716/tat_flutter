@@ -27,6 +27,7 @@ class CustomMultiSelectDialog<T> extends MultiSelectDialog<T> {
     super.selectedItemsTextStyle,
     super.separateSelectedItems = false,
     super.checkColor,
+    Key? key,
   });
 
   @override
@@ -153,7 +154,7 @@ class _MultiSelectDialogState<T> extends State<MultiSelectDialog<T>> {
                 _showSearch
                     ? Expanded(
                         child: Container(
-                          padding: EdgeInsets.only(left: 10),
+                          padding: const EdgeInsets.only(left: 10),
                           child: TextField(
                             style: widget.searchTextStyle,
                             decoration: InputDecoration(
@@ -182,11 +183,11 @@ class _MultiSelectDialogState<T> extends State<MultiSelectDialog<T>> {
                           ),
                         ),
                       )
-                    : widget.title ?? Text("Select"),
+                    : widget.title ?? const Text("Select"),
                 IconButton(
                   icon: _showSearch
-                      ? widget.closeSearchIcon ?? Icon(Icons.close)
-                      : widget.searchIcon ?? Icon(Icons.search),
+                      ? widget.closeSearchIcon ?? const Icon(Icons.close)
+                      : widget.searchIcon ?? const Icon(Icons.search),
                   onPressed: () {
                     setState(() {
                       _showSearch = !_showSearch;
@@ -204,9 +205,9 @@ class _MultiSelectDialogState<T> extends State<MultiSelectDialog<T>> {
             ),
       contentPadding:
           widget.listType == null || widget.listType == MultiSelectListType.LIST
-              ? EdgeInsets.only(top: 12.0)
-              : EdgeInsets.all(20),
-      content: Container(
+              ? const EdgeInsets.only(top: 12.0)
+              : const EdgeInsets.all(20),
+      content: SizedBox(
         height: widget.height,
         width: widget.width ?? MediaQuery.of(context).size.width * 0.73,
         child: widget.listType == null ||

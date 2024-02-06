@@ -1,5 +1,3 @@
-import 'dart:collection';
-
 import 'package:dio/dio.dart';
 import 'package:flutter_app/debug/log/log.dart';
 import 'package:flutter_app/src/connector/core/connector.dart';
@@ -731,7 +729,7 @@ class CourseConnector {
     }
   }
 
-  static Future<Map<String, String>> getCourseCategoryInfo(String courseId) async {
+  static Future<Map<String, String>?> getCourseCategoryInfo(String courseId) async {
     try {
       Map<String, String> result = <String, String>{
         'courseId': courseId
@@ -739,8 +737,7 @@ class CourseConnector {
       ConnectorParameter parameter;
       String response;
       Document tagNode;
-      Element node;
-      List<Element> courseNodes, nodes, classExtraInfoNodes;
+      List<Element> courseNodes;
       Map<String, String> data = {
         "snum": courseId,
       };

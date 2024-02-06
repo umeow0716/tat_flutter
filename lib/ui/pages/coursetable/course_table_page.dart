@@ -82,7 +82,6 @@ class _CourseTablePageState extends State<CourseTablePage> {
     if (await taskFlow.start()) {
       List<String> v = task.result!;
       List<String> value = [];
-      v = v ?? [];
       for (int i = 0; i < v.length; i++) {
         String courseName = v[i];
         CourseInfoJson? courseInfo = courseTableData?.getCourseInfoByCourseName(courseName);
@@ -90,7 +89,7 @@ class _CourseTablePageState extends State<CourseTablePage> {
           value.add(courseName);
         }
       }
-      if (value != null && value.isNotEmpty) {
+      if (value.isNotEmpty) {
         Get.dialog(
           AlertDialog(
             title: Text(R.current.findNewMessage),
@@ -137,7 +136,7 @@ class _CourseTablePageState extends State<CourseTablePage> {
 
   @override
   void setState(fn) {
-    if (mounted && context != null) {
+    if (mounted) {
       super.setState(fn);
     }
   }
@@ -244,7 +243,7 @@ class _CourseTablePageState extends State<CourseTablePage> {
         content: SizedBox(
           width: double.minPositive,
           child: ListView.builder(
-            itemCount: semesterList?.length ?? 0,
+            itemCount: semesterList.length,
             shrinkWrap: true,
             itemBuilder: (context, index) => _getSemesterItem(semesterList[index]),
           ),
@@ -257,7 +256,7 @@ class _CourseTablePageState extends State<CourseTablePage> {
   _onPopupMenuSelect(int value) {
     switch (value) {
       case 0:
-        final credit = courseTableData?.getTotalCredit()?.toString();
+        final credit = courseTableData?.getTotalCredit().toString();
         if (credit != null) {
           MyToast.show(sprintf("%s:%s", [R.current.credit, credit]));
         }
@@ -660,7 +659,7 @@ class _CourseTablePageState extends State<CourseTablePage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             GestureDetector(
-              child: Text(sprintf("%s : %s", [R.current.courseId, course!.id])),
+              child: Text(sprintf("%s : %s", [R.current.courseId, course.id])),
               onLongPress: () async {
                 course.id = await _showEditDialog(course.id!);
                 await LocalStorage.instance.saveOtherSetting();
@@ -743,7 +742,7 @@ class _CourseTablePageState extends State<CourseTablePage> {
     _studentFocus.unfocus();
   }
 
-  void _showCourseTable(CourseTableJson courseTable) async {
+  void _showCourseTable(CourseTableJson? courseTable) async {
     if (courseTable == null) {
       return;
     }

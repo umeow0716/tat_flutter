@@ -61,7 +61,15 @@ class ProgressRateDialog {
           barrierDismissible: false,
           builder: (BuildContext context) {
             _dismissingContext = context;
-            return WillPopScope(onWillPop: () async => _barrierDismissible, child: _dialog);
+            return PopScope(
+              canPop: false,
+              onPopInvoked: (bool_) {
+                if(!_barrierDismissible) {
+                  Navigator.of(_dismissingContext!).pop();
+                }
+              }, 
+              child: _dialog
+            );
           },
         );
         // Delaying the function for 200 milliseconds

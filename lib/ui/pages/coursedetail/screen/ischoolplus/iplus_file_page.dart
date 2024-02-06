@@ -209,9 +209,8 @@ class _IPlusFilePage extends State<IPlusFilePage> with AutomaticKeepAliveClientM
     widgetList.add(
       Row(
         children: [
-          Column(
-            children: const [
-              // TODO(TU): To know why we can't use the icon list here.
+          const Column(
+            children: [
               Icon(Icons.file_copy),
             ],
           ),

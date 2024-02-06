@@ -61,8 +61,8 @@ class ContributorsPage extends StatelessWidget {
                                   )
                                 ],
                               ),
-                              Row(
-                                children: const [
+                              const Row(
+                                children: [
                                   Expanded(
                                     child: Text(AppLink.tatGitHubRepoUrlString),
                                   ),

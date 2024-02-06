@@ -62,7 +62,7 @@ class CourseTableJson {
   bool isDayInCourseTable(Day day) {
     bool pass = false;
     for (SectionNumber number in SectionNumber.values) {
-      if (courseInfoMap![day]![number] != null) {
+      if (courseInfoMap?[day]?[number] != null) {
         pass = true;
         break;
       }

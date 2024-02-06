@@ -192,7 +192,7 @@ class _OtherPageState extends State<OtherPage> {
             }
           }
 
-          String exportData = JsonEncoder().convert(courseTableList);
+          String exportData = const JsonEncoder().convert(courseTableList);
 
           String path = await FileStore.findLocalPath();
           String filename = '$studentId$studentName-TATCourseTable.json';
@@ -367,7 +367,7 @@ class _OtherPageState extends State<OtherPage> {
           height: 5.0,
         ))
         ..add(MediaQuery(
-          data: data.copyWith(textScaleFactor: 1.0),
+          data: data.copyWith(textScaler: const TextScaler.linear(1.0)),
           child: Text(
             userMail!,
             style: const TextStyle(

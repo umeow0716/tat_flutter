@@ -25,7 +25,7 @@ Map<String, dynamic> _$CourseScoreCreditJsonToJson(CourseScoreCreditJson instanc
 GraduationInformationJson _$GraduationInformationJsonFromJson(Map<String, dynamic> json) {
   return GraduationInformationJson(
     lowCredit: json['lowCredit'] as int,
-    courseTypeMinCredit: (json['courseTypeMinCredit'] as Map<String, dynamic>)?.map(
+    courseTypeMinCredit: (json['courseTypeMinCredit'] as Map<String, dynamic>).map(
       (k, e) => MapEntry(k, e as int),
     ),
     outerDepartmentMaxCredit: json['outerDepartmentMaxCredit'] as int,
@@ -48,14 +48,14 @@ SemesterCourseScoreJson _$SemesterCourseScoreJsonFromJson(Map<String, dynamic> j
   return SemesterCourseScoreJson(
     semester: json['semester'] == null ? null : SemesterJson.fromJson(json['semester'] as Map<String, dynamic>),
     now: json['now'] == null ? null : RankJson.fromJson(json['now'] as Map<String, dynamic>),
-    averageScore: (json['averageScore'] as num)?.toDouble(),
+    averageScore: (json['averageScore'] as num).toDouble(),
     courseScoreList: (json['courseScoreList'] as List)
         .map((e) => CourseScoreInfoJson.fromJson(e as Map<String, dynamic>))
         .toList(),
     history: json['history'] == null ? null : RankJson.fromJson(json['history'] as Map<String, dynamic>),
-    performanceScore: (json['performanceScore'] as num)?.toDouble(),
-    takeCredit: (json['takeCredit'] as num)?.toDouble(),
-    totalCredit: (json['totalCredit'] as num)?.toDouble(),
+    performanceScore: (json['performanceScore'] as num).toDouble(),
+    takeCredit: (json['takeCredit'] as num).toDouble(),
+    totalCredit: (json['totalCredit'] as num).toDouble(),
   );
 }
 
@@ -84,9 +84,9 @@ Map<String, dynamic> _$RankJsonToJson(RankJson instance) => <String, dynamic>{
 
 RankItemJson _$RankItemJsonFromJson(Map<String, dynamic> json) {
   return RankItemJson(
-    percentage: (json['percentage'] as num)?.toDouble(),
-    rank: (json['rank'] as num)?.toDouble(),
-    total: (json['total'] as num)?.toDouble(),
+    percentage: (json['percentage'] as num).toDouble(),
+    rank: (json['rank'] as num).toDouble(),
+    total: (json['total'] as num).toDouble(),
   );
 }
 
@@ -102,7 +102,7 @@ CourseScoreInfoJson _$CourseScoreInfoJsonFromJson(Map<String, dynamic> json) {
     nameZh: json['nameZh'] as String,
     nameEn: json['nameEn'] as String,
     score: json['score'] as String,
-    credit: (json['credit'] as num)?.toDouble(),
+    credit: (json['credit'] as num).toDouble(),
     category: json['category'] as String,
     openClass: json['openClass'] as String,
   );

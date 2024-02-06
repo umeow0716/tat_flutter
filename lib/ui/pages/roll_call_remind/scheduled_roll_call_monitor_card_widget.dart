@@ -131,9 +131,9 @@ class ScheduledRollCallMonitorCard extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.deepOrange,
         ),
-        child: FittedBox(
+        child: const FittedBox(
           child: Row(
-            children: const [
+            children: [
               Icon(
                 Icons.cancel_outlined,
                 size: 14,
@@ -177,9 +177,9 @@ class ScheduledRollCallMonitorCard extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.white,
         ),
-        child: FittedBox(
+        child: const FittedBox(
           child: Row(
-            children: const [
+            children: [
               Icon(
                 Icons.games,
                 size: 14,

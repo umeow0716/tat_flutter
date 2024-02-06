@@ -17,7 +17,7 @@ class CourseCategoryInfoTask extends CourseSystemTask<Map<String, String>> {
 
     if (status == TaskStatus.success) {
       super.onStart(R.current.getCourseDetail);
-      final value = await CourseConnector.getCourseCategoryInfo(id) as Map<String, String>;
+      final value = await CourseConnector.getCourseCategoryInfo(id);
       super.onEnd();
 
       if (value != null) {

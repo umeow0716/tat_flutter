@@ -234,7 +234,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ],
               ),
             ),
-            child: Column(),
+            child: const Column(),
           ),
         ),
         ClipPath(
@@ -245,7 +245,7 @@ class _LoginScreenState extends State<LoginScreen> {
             decoration: const BoxDecoration(
               gradient: LinearGradient(colors: [Color(0x222196f3), Color(0x2203a9f4)]),
             ),
-            child: Column(),
+            child: const Column(),
           ),
         ),
         Container(

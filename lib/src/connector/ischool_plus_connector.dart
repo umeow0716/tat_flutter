@@ -179,8 +179,8 @@ class ISchoolPlusConnector {
             break;
           }
         }
-        String base = resourceNode!.attributes["xml:base"]!;
-        String href = '${(base != null) ? base : ''}@${resourceNode.attributes["href"]}';
+        String? base = resourceNode?.attributes["xml:base"];
+        String href = '${(base != null) ? base : ''}@${resourceNode?.attributes["href"]}';
 
         CourseFileJson courseFile = CourseFileJson();
         courseFile.name = itemNodes[i].text.split("\t")[0].replaceAll(RegExp(r"[\s|\n| ]"), "");
@@ -214,14 +214,14 @@ class ISchoolPlusConnector {
       response = await Connector.getDataByPostResponse(parameter);
       result = response.toString();
       RegExp exp;
-      RegExpMatch matches;
+      RegExpMatch? matches;
       if (response.statusCode == HttpStatus.ok) {
         exp = RegExp("[\"'](?<url>https?://.+)[\"']");
         //檢測網址 "http://....." or 'https://.....' or "http://..." or 'http://...'
-        matches = exp.firstMatch(result)!;
+        matches = exp.firstMatch(result);
         bool pass = (matches?.groupCount == null)
             ? false
-            : matches.group(1)!.toLowerCase().contains("http")
+            : matches!.group(1)!.toLowerCase().contains("http")
                 ? true
                 : false;
         if (pass) {
@@ -230,10 +230,10 @@ class ISchoolPlusConnector {
           return [url, url];
         } else {
           exp = RegExp("\"(?<url>/.+)\""); //檢測/ 開頭網址
-          matches = exp.firstMatch(result)!;
+          matches = exp.firstMatch(result);
           bool pass = (matches?.groupCount == null) ? false : true;
           if (pass) {
-            String realUrl = _iSchoolPlusUrl + matches.group(1)!;
+            String realUrl = _iSchoolPlusUrl + matches!.group(1)!;
             return [realUrl, realUrl]; //一般下載連結
           } else {
             exp = RegExp("\"(?<url>.+)\""); //檢測""內包含字
@@ -495,22 +495,25 @@ class ISchoolPlusConnector {
   static Future<bool> _selectCourse(String courseId) async {
     ConnectorParameter parameter;
     html.Document tagNode;
-    html.Element node;
-    List<html.Element> nodes;
+    html.Element? node;
+    List<html.Element>? nodes;
     String result;
     try {
       parameter = ConnectorParameter(_getCourseName);
       result = await Connector.getDataByGet(parameter);
       tagNode = html.parse(result);
-      node = tagNode.getElementById("selcourse")!;
-      nodes = node.getElementsByTagName("option");
+      node = tagNode.getElementById("selcourse");
+      nodes = node?.getElementsByTagName("option");
       String? courseValue;
-      for (int i = 1; i < nodes.length; i++) {
-        node = nodes[i];
-        String name = node.text.split("_").last;
-        if (name == courseId) {
-          courseValue = node.attributes["value"]!;
-          break;
+
+      if(nodes != null) {
+        for (int i = 1; i < nodes.length; i++) {
+          node = nodes[i];
+          String name = node.text.split("_").last;
+          if (name == courseId) {
+            courseValue = node.attributes["value"]!;
+            break;
+          }
         }
       }
       if (courseValue == null) {
@@ -533,7 +536,6 @@ class ISchoolPlusConnector {
     html.Document tagNode;
     html.Element node;
     html.Element table;
-    List<html.Element> trList;
     List<html.Element> nodes;
     String response;
     List<ClassmateJson> result = [];
@@ -568,7 +570,7 @@ class ISchoolPlusConnector {
 
       result.sort((a, b) => a.studentId!.compareTo(b.studentId!));
 
-      return result.length != 0 ? result : null;
+      return result.isNotEmpty ? result : null;
     } catch (e, stack) {
       Log.eWithStack(e, stack);
       return null;

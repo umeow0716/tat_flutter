@@ -12,7 +12,7 @@ class CourseTableControl {
   bool isHideB = false;
   bool isHideC = false;
   bool isHideD = false;
-  late CourseTableJson courseTable;
+  CourseTableJson? courseTable;
   List<String> dayStringList = [
     R.current.Monday,
     R.current.Tuesday,
@@ -47,14 +47,14 @@ class CourseTableControl {
 
   void set(CourseTableJson value) {
     courseTable = value;
-    isHideSaturday = !courseTable.isDayInCourseTable(Day.Saturday);
-    isHideSunday = !courseTable.isDayInCourseTable(Day.Sunday);
-    isHideUnKnown = !courseTable.isDayInCourseTable(Day.UnKnown);
-    isHideN = !courseTable.isSectionNumberInCourseTable(SectionNumber.T_N);
-    isHideA = (!courseTable.isSectionNumberInCourseTable(SectionNumber.T_A));
-    isHideB = (!courseTable.isSectionNumberInCourseTable(SectionNumber.T_B));
-    isHideC = (!courseTable.isSectionNumberInCourseTable(SectionNumber.T_C));
-    isHideD = (!courseTable.isSectionNumberInCourseTable(SectionNumber.T_D));
+    isHideSaturday = !courseTable!.isDayInCourseTable(Day.Saturday);
+    isHideSunday = !courseTable!.isDayInCourseTable(Day.Sunday);
+    isHideUnKnown = !courseTable!.isDayInCourseTable(Day.UnKnown);
+    isHideN = !courseTable!.isSectionNumberInCourseTable(SectionNumber.T_N);
+    isHideA = !(courseTable!.isSectionNumberInCourseTable(SectionNumber.T_A));
+    isHideB = !(courseTable!.isSectionNumberInCourseTable(SectionNumber.T_B));
+    isHideC = !(courseTable!.isSectionNumberInCourseTable(SectionNumber.T_C));
+    isHideD = !(courseTable!.isSectionNumberInCourseTable(SectionNumber.T_D));
     isHideA &= (isHideB & isHideC & isHideD);
     isHideB &= (isHideC & isHideD);
     isHideC &= isHideD;
@@ -80,7 +80,7 @@ class CourseTableControl {
       return null;
     }
 
-    return courseTable.courseInfoMap![day]![number];
+    return courseTable!.courseInfoMap![day]![number];
   }
 
   Color? getCourseInfoColor(int intDay, int intNumber) {
@@ -103,14 +103,16 @@ class CourseTableControl {
 
   void _initColorList() {
     colorMap = {};
-    List<String> courseInfoList = courseTable.getCourseIdList();
-    int colorCount = courseInfoList.length;
+    List<String>? courseInfoList = courseTable?.getCourseIdList();
+    int? colorCount = courseInfoList?.length;
+    if(colorCount == null) return;
+
     colorCount = (colorCount == 0) ? 1 : colorCount;
 
     final colors = AppColors.courseTableColors.toList()..shuffle();
 
     for (int i = 0; i < colorCount; i++) {
-      colorMap![courseInfoList[i]] = colors[i % colors.length];
+      colorMap![courseInfoList![i]] = colors[i % colors.length];
     }
   }
 

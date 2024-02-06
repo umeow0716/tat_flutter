@@ -3,9 +3,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_app/src/connector/core/connector.dart';
-import 'package:flutter_app/src/connector/core/connector_parameter.dart';
-import 'package:html_unescape/html_unescape_small.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_app/src/connector/core/dio_connector.dart';
 import 'package:flutter_app/ui/pages/webview/in_app_webview_callbacks.dart';
@@ -56,9 +53,9 @@ class _TATWebViewState extends State<TATWebView> {
     }
   }
 
-  void _onDownload(InAppWebViewController _controller, DownloadStartRequest request) async {
+  void _onDownload(InAppWebViewController controller, DownloadStartRequest request) async {
     String cookieStr = '';
-    String? filename = null;
+    String? filename;
 
     final status = await Permission.storage.request();
 
@@ -77,7 +74,7 @@ class _TATWebViewState extends State<TATWebView> {
         filename = Uri.decodeComponent(request.url.toString().split('/').last);
       }
 
-      final id = await FlutterDownloader.enqueue(
+      await FlutterDownloader.enqueue(
         url: request.url.toString(),
         fileName: filename,
         headers: {
@@ -90,6 +87,7 @@ class _TATWebViewState extends State<TATWebView> {
         saveInPublicStorage: true,
       );
     } else {
+      // ignore: avoid_print
       print('Permission Denied');
     }
   }
@@ -134,22 +132,38 @@ class _TATWebViewState extends State<TATWebView> {
         ),
       );
 
+  bool hasPop = false;
+  void onPop([ isButton = false ]) {
+    if(isButton && !hasPop) {
+      hasPop = true;
+      return Navigator.of(context).pop();
+    }
+    
+    _controller.canGoBack().then((bool result) {
+      if(result) {
+        _controller.goBack();
+      } else if(!hasPop) {
+        hasPop = true;
+        Navigator.of(context).pop();
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
           leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.white),
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
             onPressed: () {
-              Navigator.of(context).pop();
+              onPop(true);
             },
           ), 
           title: Text(widget._title ?? ''),
         ),
-        body: WillPopScope(
-          onWillPop: () async {
-            bool result = await _controller.canGoBack() as bool;
-            _controller.goBack();
-            return !result;
+        body: PopScope(
+          canPop: false,
+          onPopInvoked: (bool _) {
+            onPop(false);
           },
           child: Column(
             children: [

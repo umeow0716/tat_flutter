@@ -88,7 +88,7 @@ class CourseScoreCreditJson {
     final result = getCourseByType(type);
 
     for (final key in result.keys.toList()) {
-      for (final j in result![key]!) {
+      for (final j in result[key]!) {
         credit += j.credit!.toInt();
       }
     }

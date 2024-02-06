@@ -178,7 +178,7 @@ class _ScoreViewerPageState extends State<ScoreViewerPage> with TickerProviderSt
         if (courseInfo.category!.isEmpty) {
           final task = CourseCategoryInfoTask(courseId!);
           task.openLoadingDialog = false;
-          if (courseId!.isNotEmpty) {
+          if (courseId.isNotEmpty) {
             taskFlow.addTask(task);
           }
         }
@@ -207,7 +207,7 @@ class _ScoreViewerPageState extends State<ScoreViewerPage> with TickerProviderSt
         }
       };
 
-      taskFlow.start_withoutasync();
+      taskFlow.startWithoutAsync();
       Future.delayed(const Duration(seconds: 5)).then((_) {
         done = true;
         _buildTabBar();

@@ -11,7 +11,7 @@ class APPVersion {
 
     if (!versionConfig.isFocusUpdate!) {
       if (!LocalStorage.instance.autoCheckAppUpdate! ||
-          !LocalStorage.instance.getFirstUse(LocalStorage.appCheckUpdate!)! ||
+          !LocalStorage.instance.getFirstUse(LocalStorage.appCheckUpdate)! ||
           LocalStorage.instance.getAccount()!.isEmpty) return;
     }
 

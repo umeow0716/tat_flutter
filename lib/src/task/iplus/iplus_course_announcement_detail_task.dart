@@ -17,7 +17,7 @@ class IPlusCourseAnnouncementDetailTask extends IPlusSystemTask<Map> {
     final status = await super.execute();
     if (status == TaskStatus.success) {
       super.onStart(R.current.getISchoolPlusCourseAnnouncementDetail);
-      final value = await ISchoolPlusConnector.getCourseAnnouncementDetail(data) as Map<dynamic, dynamic>?;
+      final value = await ISchoolPlusConnector.getCourseAnnouncementDetail(data);
       super.onEnd();
       if (value != null) {
         result = value;

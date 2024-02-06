@@ -54,15 +54,20 @@ class GraduationPicker {
   Future<bool> show(Function(GraduationInformationJson?) finishCallBack) async {
     if (!_isShowing) {
       try {
-        _dialog = GraduationPickerWidget();
+        _dialog = const GraduationPickerWidget();
         Get.dialog<GraduationInformationJson>(
-          WillPopScope(
-              onWillPop: () async => _barrierDismissible,
-              child: Dialog(
-                  insetAnimationDuration: const Duration(milliseconds: 100),
-                  shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8))),
-                  child: _dialog
-                )),
+          PopScope(
+            canPop: false,
+            onPopInvoked: (bool _) {
+              if(!_barrierDismissible) {
+                Navigator.of(_dismissingContext).pop();
+              }
+            },
+            child: Dialog(
+              insetAnimationDuration: const Duration(milliseconds: 100),
+              shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8))),
+              child: _dialog
+            )),
           barrierDismissible: false,
         ).then((value) {
           finishCallBack(value);
@@ -93,7 +98,7 @@ class _GraduationPickerWidget extends State<GraduationPickerWidget> {
   List<String> yearList = [];
   List<Map> divisionList = [];
   List<Map> departmentList = [];
-  Map<String, String> _presetDepartment = {};
+  final Map<String, String> _presetDepartment = {};
   String _selectedYear = '';
   Map _selectedDepartment = {};
   Map _selectedDivision = {};
@@ -108,7 +113,6 @@ class _GraduationPickerWidget extends State<GraduationPickerWidget> {
   }
 
   Future<void> _addSelectTask() async {
-    _presetDepartment ??= {};
     await _getYearList();
     //利用學號預設學年度
     if (graduationInformation.selectYear!.isEmpty) {
@@ -282,14 +286,13 @@ class _GraduationPickerWidget extends State<GraduationPickerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    print(buildDivisionList());
     width = MediaQuery.of(context).size.width;
     width = width * 0.8;
 
-    List<Widget> Row1 = [];
+    List<Widget> row1 = [];
 
     if(buildYearList().isNotEmpty) {
-      Row1.add(Expanded(
+      row1.add(Expanded(
         child: DropdownButton(
           isExpanded: true, //裡面元素是否要Expanded
           value: _selectedYear,
@@ -306,7 +309,7 @@ class _GraduationPickerWidget extends State<GraduationPickerWidget> {
 
     if(buildDivisionList().isNotEmpty) {
       try {
-        Row1.add(Expanded(
+        row1.add(Expanded(
           child: DropdownButton(
             isExpanded: true,
             value: _selectedDivision,
@@ -324,11 +327,11 @@ class _GraduationPickerWidget extends State<GraduationPickerWidget> {
       }
     }
 
-    List<Widget> Row2 = [];
+    List<Widget> row2 = [];
 
     if(buildDepartmentList().isNotEmpty) {
       try {
-        Row2.add(Expanded(
+        row2.add(Expanded(
           child: DropdownButton(
             isExpanded: true,
             value: _selectedDepartment,
@@ -368,11 +371,11 @@ class _GraduationPickerWidget extends State<GraduationPickerWidget> {
               Row(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: Row1,
+                children: row1,
               ),
               Row(
                 mainAxisSize: MainAxisSize.min,
-                children: Row2,
+                children: row2,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,

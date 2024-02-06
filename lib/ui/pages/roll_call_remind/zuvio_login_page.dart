@@ -168,7 +168,7 @@ class _ZuvioLoginPageState extends State<ZuvioLoginPage> {
             child: LayoutBuilder(
               builder: (context, constraints) => SingleChildScrollView(
                 child: MediaQuery(
-                  data: MediaQuery.of(context).copyWith(textScaleFactor: 1),
+                  data: MediaQuery.of(context).copyWith(textScaler: const TextScaler.linear(1)),
                   child: ConstrainedBox(
                     constraints: BoxConstraints.tightForFinite(
                       /// To avoid overlapping with the close button,

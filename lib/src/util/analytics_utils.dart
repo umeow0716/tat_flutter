@@ -9,7 +9,7 @@ class AnalyticsUtils {
   }
 
   static Future<void> setScreenName(String name) async {
-    await analytics.setCurrentScreen(
+    await analytics.logScreenView(
       screenName: name,
     );
   }

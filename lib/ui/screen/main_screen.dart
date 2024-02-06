@@ -1,8 +1,5 @@
 // ignore_for_file: import_of_legacy_library_into_null_safe
 
-import 'dart:isolate';
-import 'dart:ui';
-
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/debug/log/log.dart';
@@ -33,7 +30,6 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> with RouteAware {
   final _pageController = PageController();
   int _currentIndex = 0;
-  int _closeAppCount = 0;
   List<Widget> _pageList = [];
 
   @override
@@ -79,10 +75,10 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
 
     setState(() {
       _pageList = [];
-      _pageList.add(CourseTablePage());
-      _pageList.add(NotificationPage());
-      _pageList.add(CalendarPage());
-      _pageList.add(ScoreViewerPage());
+      _pageList.add(const CourseTablePage());
+      _pageList.add(const NotificationPage());
+      _pageList.add(const CalendarPage());
+      _pageList.add(const ScoreViewerPage());
       _pageList.add(OtherPage(_pageController));
     });
   }
@@ -108,8 +104,9 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
   @override
   Widget build(BuildContext context) => Consumer<AppProvider>(
         builder: (context, appProvider, child) {
-          return WillPopScope(
-            onWillPop: _onWillPop,
+          return PopScope(
+            canPop: false,
+            onPopInvoked: _onWillPop,
             child: Scaffold(
               backgroundColor: Theme.of(context).colorScheme.background,
               body: _buildPageView(),
@@ -119,19 +116,16 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
         },
       );
 
-  Future<bool> _onWillPop() async {
+  void _onWillPop(bool_) async {
     final canPop = Navigator.of(context).canPop();
     if (canPop) {
       Navigator.of(context).pop();
-      _closeAppCount = 0;
     } else {
-      _closeAppCount++;
       MyToast.show(R.current.closeOnce);
       Future.delayed(const Duration(seconds: 2)).then((_) {
-        _closeAppCount = 0;
       });
     }
-    return (_closeAppCount >= 2);
+    return;
   }
 
   Widget _buildPageView() => PageView(

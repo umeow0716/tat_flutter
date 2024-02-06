@@ -172,7 +172,7 @@ class _TATApp extends StatelessWidget {
               GlobalMaterialLocalizations.delegate
             ],
             builder: (context, child) => MediaQuery(
-              data: MediaQuery.of(context).copyWith(textScaleFactor: 1),
+              data: MediaQuery.of(context).copyWith(textScaler: const TextScaler.linear(1)),
               child: BotToastInit().call(context, child),
             ),
             navigatorObservers: [BotToastNavigatorObserver(), AnalyticsUtils.observer],

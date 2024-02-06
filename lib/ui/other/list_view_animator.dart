@@ -52,7 +52,7 @@ class _AnimatorState extends State<Animator> with SingleTickerProviderStateMixin
   }
 }
 
-Timer timer = Timer(const Duration(microseconds: 120), () {
+Timer? timer = Timer(const Duration(microseconds: 120), () {
   duration = const Duration();
 });
 Duration duration = const Duration();
