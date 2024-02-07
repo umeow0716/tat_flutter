@@ -49,7 +49,7 @@ class _VideoPlayer extends State<ClassVideoPlayer> {
   final _videoNames = <_VideoInfo>[];
   VideoPlayerController? _playerController;
   ChewieController? _chewieController;
-  late final _VideoInfo _selectedVideoInfo;
+  _VideoInfo? _selectedVideoInfo;
 
   @override
   void initState() {
@@ -144,7 +144,7 @@ class _VideoPlayer extends State<ClassVideoPlayer> {
     bool externalPlayerHasLaunched = false;
 
     if (LocalStorage.instance.getOtherSetting()!.useExternalVideoPlayer!) {
-      final name = "${widget.name}_${_selectedVideoInfo.name}.mp4";
+      final name = "${widget.name}_${_selectedVideoInfo?.name}.mp4";
       externalPlayerHasLaunched = await MXPlayerUtil.launch(url: urlStr as String, name: name);
     }
 
@@ -193,7 +193,7 @@ class _VideoPlayer extends State<ClassVideoPlayer> {
                   }
 
                   final courseName = widget.courseInfo.main!.course!.name;
-                  final saveName = "${widget.name}_${_selectedVideoInfo.name}.mp4";
+                  final saveName = "${widget.name}_${_selectedVideoInfo?.name}.mp4";
                   final subDir = (LanguageUtil.getLangIndex() == LangEnum.zh) ? "上課錄影" : "video";
                   final dirName = path.join(courseName!, subDir);
 

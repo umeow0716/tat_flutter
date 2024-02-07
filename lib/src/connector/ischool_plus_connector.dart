@@ -319,7 +319,7 @@ class ISchoolPlusConnector {
         if (totalRows > 0) {
           for (String keyName in json.decode(result)['data'].keys.toList()) {
             ISchoolPlusAnnouncementJson courseInfo = ISchoolPlusAnnouncementJson.fromJson(jsonData[keyName]);
-            courseInfo.subject = HtmlUtils.clean(courseInfo.subject); //處理HTM特殊字
+            courseInfo.subject = HtmlUtils.clean(courseInfo.subject as String); //處理HTM特殊字
             courseInfo.token = data['token']!;
             courseInfo.bid = keyName.split("|").first;
             courseInfo.nid = keyName.split("|").last;
@@ -344,7 +344,7 @@ class ISchoolPlusConnector {
       html.Document tagNode;
       List<html.Element> nodes;
       html.Element node;
-      Map<String, String> data = {
+      Map<String, String?> data = {
         'token': value.token,
         'cid': value.cid,
         'bid': value.bid,

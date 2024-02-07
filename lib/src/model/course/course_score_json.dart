@@ -174,12 +174,12 @@ class CourseScoreCreditJson {
 
 @JsonSerializable()
 class GraduationInformationJson {
-  late String? selectYear;
-  late String? selectDivision;
-  late String? selectDepartment;
-  late int? lowCredit; //最低畢業門檻
-  late int? outerDepartmentMaxCredit; //外系最多承認學分
-  late Map<String, int>? courseTypeMinCredit;
+  String? selectYear;
+  String? selectDivision;
+  String? selectDepartment;
+  int? lowCredit; //最低畢業門檻
+  int? outerDepartmentMaxCredit; //外系最多承認學分
+  Map<String, int>? courseTypeMinCredit;
 
   GraduationInformationJson({
     this.lowCredit,

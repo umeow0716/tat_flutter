@@ -35,7 +35,7 @@ class _ScoreViewerPageState extends State<ScoreViewerPage> with TickerProviderSt
   static bool appExpansionInitiallyExpanded = false;
 
   TabController? _tabController;
-  late CourseScoreCreditJson courseScoreCredit;
+  CourseScoreCreditJson? courseScoreCredit;
 
   final List<SemesterCourseScoreJson> courseScoreList = [];
   final ScrollController _scrollController = ScrollController();
@@ -48,8 +48,8 @@ class _ScoreViewerPageState extends State<ScoreViewerPage> with TickerProviderSt
   Widget get _summaryTile {
     final titleWidget = _buildTile(sprintf("%s %d/%d", [
       R.current.creditSummary,
-      courseScoreCredit.getTotalCourseCredit(),
-      courseScoreCredit.graduationInformation!.lowCredit,
+      courseScoreCredit?.getTotalCourseCredit(),
+      courseScoreCredit?.graduationInformation?.lowCredit,
     ]));
 
     final widgetList = [
@@ -69,12 +69,12 @@ class _ScoreViewerPageState extends State<ScoreViewerPage> with TickerProviderSt
   }
 
   Widget get _generalLessonItemTile {
-    final generalLesson = courseScoreCredit.getGeneralLesson();
+    final generalLesson = courseScoreCredit?.getGeneralLesson();
     final List<Widget> widgetList = [];
     int selectCredit = 0;
     int coreCredit = 0;
 
-    for (final courseScoreInfoList in generalLesson.values) {
+    for (final courseScoreInfoList in generalLesson!.values) {
       for (final course in courseScoreInfoList) {
         if (course.isCoreGeneralLesson) {
           coreCredit += course.credit!.toInt();
@@ -103,14 +103,14 @@ class _ScoreViewerPageState extends State<ScoreViewerPage> with TickerProviderSt
   }
 
   Widget get _otherDepartmentItemTile {
-    final department = LocalStorage.instance.getGraduationInformation()!.selectDepartment!.substring(0, 2);
-    final otherDepartmentMaxCredit = courseScoreCredit.graduationInformation!.outerDepartmentMaxCredit;
+    final department = LocalStorage.instance.getGraduationInformation()?.selectDepartment?.substring(0, 2);
+    final otherDepartmentMaxCredit = courseScoreCredit?.graduationInformation?.outerDepartmentMaxCredit;
 
-    final generalLesson = courseScoreCredit.getOtherDepartmentCourse(department);
+    final generalLesson = courseScoreCredit?.getOtherDepartmentCourse(department!);
     final List<Widget> widgetList = [];
     int otherDepartmentCredit = 0;
 
-    for (final courseScoreInfoList in generalLesson.values) {
+    for (final courseScoreInfoList in generalLesson!.values) {
       for (final course in courseScoreInfoList) {
         otherDepartmentCredit += course.credit!.toInt();
         final courseItemWidget = _buildOneLineCourse(course.name, course.openClass!);
@@ -164,18 +164,18 @@ class _ScoreViewerPageState extends State<ScoreViewerPage> with TickerProviderSt
 
     if (courseScoreList.isNotEmpty) {
       await LocalStorage.instance.setSemesterCourseScore(courseScoreList);
-      int total = courseScoreCredit.getCourseInfoList().length;
-      final courseInfoList = courseScoreCredit.getCourseInfoList();
+      int? total = courseScoreCredit?.getCourseInfoList().length;
+      final courseInfoList = courseScoreCredit?.getCourseInfoList();
       // ignore: use_build_context_synchronously
       final progressRateDialog = ProgressRateDialog(context);
 
       progressRateDialog.update(message: R.current.searchingCredit, nowProgress: 0, progressString: "0/0");
       progressRateDialog.show();
 
-      for (int i = 0; i < total; i++) {
-        final courseInfo = courseInfoList[i];
-        final courseId = courseInfo.courseId;
-        if (courseInfo.category!.isEmpty) {
+      for (int i = 0; i < total!; i++) {
+        final courseInfo = courseInfoList?[i];
+        final courseId = courseInfo?.courseId;
+        if (courseInfo!.category!.isEmpty) {
           final task = CourseCategoryInfoTask(courseId!);
           task.openLoadingDialog = false;
           if (courseId.isNotEmpty) {
@@ -191,9 +191,9 @@ class _ScoreViewerPageState extends State<ScoreViewerPage> with TickerProviderSt
       taskFlow.callback = (task) async {
         if(done) return;
         rate++;
-        progressRateDialog.update(nowProgress: rate / total, progressString: sprintf("%d/%d", [rate, total]));
+        progressRateDialog.update(nowProgress: rate / total!, progressString: sprintf("%d/%d", [rate, total]));
         final categoryInfo = task.result;
-        final courseScoreInfo = courseScoreCredit.getCourseByCourseId(categoryInfo['courseId']);
+        final courseScoreInfo = courseScoreCredit?.getCourseByCourseId(categoryInfo['courseId']);
         courseScoreInfo!.category = categoryInfo['category'];
         courseScoreInfo.openClass = categoryInfo['openClass'].replaceAll("\n", " ");
 
@@ -221,7 +221,7 @@ class _ScoreViewerPageState extends State<ScoreViewerPage> with TickerProviderSt
   void _onSelectFinish(GraduationInformationJson? value) {
     Log.d(value.toString());
     if (value != null) {
-      courseScoreCredit.graduationInformation = value;
+      courseScoreCredit?.graduationInformation = value;
       LocalStorage.instance.setCourseScoreCredit(courseScoreCredit);
       LocalStorage.instance.saveCourseScoreCredit();
     }
@@ -283,7 +283,7 @@ class _ScoreViewerPageState extends State<ScoreViewerPage> with TickerProviderSt
     tabChildList.clear();
 
     try {
-      if (courseScoreCredit.graduationInformation!.isSelect) {
+      if (courseScoreCredit!.graduationInformation!.isSelect) {
         tabLabelList.add(_buildTabLabel(R.current.creditSummary));
         tabChildList.add(
           AnimationLimiter(
@@ -350,8 +350,8 @@ class _ScoreViewerPageState extends State<ScoreViewerPage> with TickerProviderSt
       );
 
   Widget _buildType(String type, String title) {
-    final nowCredit = courseScoreCredit.getCreditByType(type);
-    final minCredit = courseScoreCredit.graduationInformation!.courseTypeMinCredit![type];
+    final nowCredit = courseScoreCredit?.getCreditByType(type);
+    final minCredit = courseScoreCredit?.graduationInformation?.courseTypeMinCredit?[type];
 
     return InkWell(
       child: Padding(
@@ -371,10 +371,10 @@ class _ScoreViewerPageState extends State<ScoreViewerPage> with TickerProviderSt
         ),
       ),
       onTap: () {
-        final result = courseScoreCredit.getCourseByType(type);
+        final result = courseScoreCredit?.getCourseByType(type);
         final List<String> courseInfoList = [];
 
-        for (final courseScoreInfoEntry in result.entries) {
+        for (final courseScoreInfoEntry in result!.entries) {
           courseInfoList.add(courseScoreInfoEntry.key);
           for (final course in courseScoreInfoEntry.value) {
             courseInfoList.add(sprintf("     %s", [course.name]));

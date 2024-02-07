@@ -62,7 +62,7 @@ class EarlyInterceptorAdapter implements HttpClientAdapter {
           type: DioErrorType.connectTimeout,
         );
 
-    late final HttpClientRequest request;
+    late HttpClientRequest request;
     try {
       request = options.connectTimeout > 0
           ? await reqFuture.timeout(Duration(milliseconds: options.connectTimeout))

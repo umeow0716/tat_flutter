@@ -16,34 +16,34 @@ class _AnimatorState extends State<Animator> with SingleTickerProviderStateMixin
   Timer timer = Timer(const Duration(microseconds: 120), () {
     duration = const Duration();
   });
-  late AnimationController animationController;
-  late Animation animation;
+  AnimationController? animationController;
+  Animation? animation;
 
   @override
   void initState() {
     super.initState();
     animationController = AnimationController(duration: const Duration(milliseconds: 290), vsync: this);
-    animation = CurvedAnimation(parent: animationController, curve: Curves.easeInOut);
-    timer = Timer(widget.time, animationController.forward);
+    animation = CurvedAnimation(parent: animationController!, curve: Curves.easeInOut);
+    timer = Timer(widget.time, animationController!.forward);
   }
 
   @override
   void dispose() {
     timer.cancel();
-    animationController.dispose();
+    animationController?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: animation,
+      animation: animation!,
       child: widget.child,
       builder: (BuildContext context, Widget? child) {
         return Opacity(
-          opacity: animation.value,
+          opacity: animation?.value,
           child: Transform.translate(
-            offset: Offset(0.0, (1 - animation.value) * 20),
+            offset: Offset(0.0, (1 - animation?.value) * 20),
             child: child,
           ),
         );

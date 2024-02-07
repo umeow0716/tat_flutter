@@ -143,7 +143,7 @@ class _IPlusAnnouncementPage extends State<IPlusAnnouncementPage> with Automatic
                         children: <Widget>[
                           Expanded(
                             child: Text(
-                              data.subject,
+                              data.subject as String,
                               overflow: TextOverflow.visible,
                               style: TextStyle(fontWeight: fontWeight, fontSize: 17.0),
                             ),
@@ -154,11 +154,11 @@ class _IPlusAnnouncementPage extends State<IPlusAnnouncementPage> with Automatic
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           Text(
-                            data.realname,
+                            data.realname as String,
                             style: TextStyle(fontWeight: fontWeight, fontSize: 15.5),
                           ),
                           Text(
-                            data.postdate,
+                            data.postdate as String,
                             style: TextStyle(fontWeight: fontWeight, fontSize: 13.5),
                           ),
                         ],

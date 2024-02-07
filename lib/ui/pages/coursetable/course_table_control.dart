@@ -43,7 +43,7 @@ class CourseTableControl {
   List<String> sectionStringList = ["1", "2", "3", "4", "N", "5", "6", "7", "8", "9", "A", "B", "C", "D"];
   static int dayLength = 8;
   static int sectionLength = 14;
-  late Map<String, Color>? colorMap;
+  Map<String, Color>? colorMap;
 
   void set(CourseTableJson value) {
     courseTable = value;

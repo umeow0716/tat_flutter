@@ -5,25 +5,25 @@ part 'ischool_plus_announcement_json.g.dart';
 @JsonSerializable()
 class ISchoolPlusAnnouncementInfoJson {
   @JsonKey(name: 'total')
-  late int total;
+  int? total;
 
   @JsonKey(name: 'code')
-  late int code;
+  int? code;
 
   @JsonKey(name: 'total_rows')
-  late String totalRows;
+  String? totalRows;
 
   @JsonKey(name: 'limit_rows')
-  late int limitRows;
+  int? limitRows;
 
   @JsonKey(name: 'current_page')
-  late String currentPage;
+  String? currentPage;
 
   @JsonKey(name: 'editEnable')
-  late String editEnable;
+  String? editEnable;
 
   @JsonKey(name: 'data')
-  late String data;
+  String? data;
 
   ISchoolPlusAnnouncementInfoJson(
       this.total, this.code, this.totalRows, this.limitRows, this.currentPage, this.editEnable, this.data);
@@ -34,81 +34,81 @@ class ISchoolPlusAnnouncementInfoJson {
 
 @JsonSerializable()
 class ISchoolPlusAnnouncementJson {
-  late String token;
-  late String bid;
-  late String nid;
+  String? token;
+  String? bid;
+  String? nid;
 
   @JsonKey(name: 'boardid')
-  late String boardid;
+  String? boardid;
 
   @JsonKey(name: 'encbid')
-  late String encbid;
+  String? encbid;
 
   @JsonKey(name: 'node')
-  late String node;
+  String? node;
 
   @JsonKey(name: 'encnid')
-  late String encnid;
+  String? encnid;
 
   @JsonKey(name: 'cid')
-  late String cid;
+  String? cid;
 
   @JsonKey(name: 'enccid')
-  late String enccid;
+  String? enccid;
 
   @JsonKey(name: 'poster')
-  late String poster;
+  String? poster;
 
   @JsonKey(name: 'realname')
-  late String realname;
+  String? realname;
 
   @JsonKey(name: 'cpic')
-  late String cpic;
+  String? cpic;
 
   @JsonKey(name: 'subject')
-  late String subject;
+  String? subject;
 
   @JsonKey(name: 'postdate')
-  late String postdate;
+  String? postdate;
 
   @JsonKey(name: 'postdatelen')
-  late String postdatelen;
+  String? postdatelen;
 
   @JsonKey(name: 'postcontent')
-  late String postcontent;
+  String? postcontent;
 
   @JsonKey(name: 'postcontenttext')
-  late String postcontenttext;
+  String? postcontenttext;
 
   @JsonKey(name: 'hit')
-  late String hit;
+  String? hit;
 
   @JsonKey(name: 'qrcode_url')
-  late String qrcodeUrl;
+  String? qrcodeUrl;
 
   @JsonKey(name: 'floor')
-  late int floor;
+  int? floor;
 
   @JsonKey(name: 'attach')
-  late String attach;
+  String? attach;
 
   @JsonKey(name: 'postfilelink')
-  late String postfilelink;
+  String? postfilelink;
 
   @JsonKey(name: 'attachment')
-  late String attachment;
+  String? attachment;
 
   @JsonKey(name: 'n')
-  late String n;
+  String? n;
 
   @JsonKey(name: 's')
-  late String s;
+  String? s;
 
   @JsonKey(name: 'readflag')
-  late int readflag;
+  int? readflag;
 
   @JsonKey(name: 'postRoles')
-  late String postRoles;
+  String? postRoles;
 
   ISchoolPlusAnnouncementJson(
     this.boardid,

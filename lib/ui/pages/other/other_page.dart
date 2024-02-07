@@ -172,7 +172,7 @@ class _OtherPageState extends State<OtherPage> {
         const TextStyle itemStyle = TextStyle(color: Color(0xFFE3E2E6), fontFamily: 'TATFont', fontWeight: FontWeight.w400);
 
         List<SemesterJson?>? semesterList = [];
-        String studentId = LocalStorage.instance.getUserData().account!;
+        String studentId = LocalStorage.instance.getUserData()?.account as String;
         String studentName = LocalStorage.instance.getUserInfo()!.givenName!;
 
         Future<void> export(List<SemesterJson> values) async {

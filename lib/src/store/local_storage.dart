@@ -39,13 +39,13 @@ class LocalStorage {
 
   final _httpClientInterceptors = <Interceptor>[];
 
-  late SharedPreferences _pref;
-  late UserDataJson _userData;
-  late CourseScoreCreditJson _courseScoreList;
-  late SettingJson _setting;
+  SharedPreferences? _pref;
+  UserDataJson? _userData;
+  CourseScoreCreditJson? _courseScoreList;
+  SettingJson? _setting;
   List<SemesterJson?>? _courseSemesterList = [];
 
-  bool? get autoCheckAppUpdate => _setting.other!.autoCheckAppUpdate;
+  bool? get autoCheckAppUpdate => _setting?.other?.autoCheckAppUpdate;
 
   bool? getFirstUse(String key, {int? timeOut}) {
     if (timeOut != null) {
@@ -84,19 +84,19 @@ class LocalStorage {
     _userData = (readJson != null) ? UserDataJson.fromJson(json.decode(readJson)) : UserDataJson();
   }
 
-  void setAccount(String account) => _userData.account = account;
+  void setAccount(String account) => _userData?.account = account;
 
-  String? getAccount() => _userData.account;
+  String? getAccount() => _userData?.account;
 
-  void setPassword(String password) => _userData.password = password;
+  void setPassword(String password) => _userData?.password = password;
 
-  String? getPassword() => _userData.password;
+  String? getPassword() => _userData?.password;
 
-  void setUserInfo(UserInfoJson value) => _userData.info = value;
+  void setUserInfo(UserInfoJson value) => _userData?.info = value;
 
-  UserInfoJson? getUserInfo() => _userData.info;
+  UserInfoJson? getUserInfo() => _userData?.info;
 
-  UserDataJson getUserData() => _userData;
+  UserDataJson? getUserData() => _userData;
 
   Future<void> saveCourseTableList() => _save(_courseTableJsonKey, _courseTableList);
 
@@ -170,25 +170,25 @@ class LocalStorage {
 
   Future<void> saveCourseScoreCredit() => _save(_scoreCreditJsonKey, _courseScoreList);
 
-  List<SemesterCourseScoreJson>? getSemesterCourseScore() => _courseScoreList.semesterCourseScoreList;
+  List<SemesterCourseScoreJson>? getSemesterCourseScore() => _courseScoreList?.semesterCourseScoreList;
 
-  GraduationInformationJson? getGraduationInformation() => _courseScoreList.graduationInformation;
+  GraduationInformationJson? getGraduationInformation() => _courseScoreList?.graduationInformation;
 
-  CourseScoreCreditJson getCourseScoreCredit() => _courseScoreList;
+  CourseScoreCreditJson? getCourseScoreCredit() => _courseScoreList;
 
   Future<void> _clearCourseScoreCredit() {
     _courseScoreList = CourseScoreCreditJson();
     return saveCourseScoreCredit();
   }
 
-  Future<void> setCourseScoreCredit(CourseScoreCreditJson value) {
+  Future<void> setCourseScoreCredit(CourseScoreCreditJson? value) {
     _courseScoreList = value;
     return saveCourseScoreCredit();
   }
 
   Future<void> setSemesterCourseScore(List<SemesterCourseScoreJson> value) {
-    _courseScoreList.graduationInformation = GraduationInformationJson();
-    _courseScoreList.semesterCourseScoreList = value;
+    _courseScoreList?.graduationInformation = GraduationInformationJson();
+    _courseScoreList?.semesterCourseScoreList = value;
     return saveCourseScoreCredit();
   }
 
@@ -201,22 +201,22 @@ class LocalStorage {
   Future<void> saveCourseSetting() => _saveSetting();
 
   Future<void> clearCourseSetting() {
-    _setting.course = CourseSettingJson();
+    _setting?.course = CourseSettingJson();
     return saveCourseSetting();
   }
 
-  CourseSettingJson? getCourseSetting() => _setting.course;
+  CourseSettingJson? getCourseSetting() => _setting?.course;
 
   Future<void> saveOtherSetting() => _saveSetting();
 
-  void setOtherSetting(OtherSettingJson value) => _setting.other = value;
+  void setOtherSetting(OtherSettingJson value) => _setting?.other = value;
 
-  OtherSettingJson? getOtherSetting() => _setting.other;
+  OtherSettingJson? getOtherSetting() => _setting?.other;
 
   Future<void> _saveAnnouncementSetting() => _saveSetting();
 
   Future<void> _clearAnnouncementSetting() {
-    _setting.announcement = AnnouncementSettingJson();
+    _setting?.announcement = AnnouncementSettingJson();
     return _saveAnnouncementSetting();
   }
 
@@ -303,15 +303,21 @@ class LocalStorage {
     await _writeStringList(key, jsonList);
   }
 
-  Future<void> _writeString(String key, String value) => _pref.setString(key, value);
+  Future<void> _writeString(String key, String value) async {
+    await _pref?.setString(key, value);
+  }
 
-  Future<void> _writeInt(String key, int value) => _pref.setInt(key, value);
+  Future<void> _writeInt(String key, int value) async {
+    await _pref?.setInt(key, value);
+  }
 
-  int? _readInt(String key) => _pref.getInt(key);
+  int? _readInt(String key) => _pref?.getInt(key);
 
-  Future<void> _writeStringList(String key, List<String> value) => _pref.setStringList(key, value);
+  Future<void> _writeStringList(String key, List<String> value) async {
+    await _pref?.setStringList(key, value);
+  }
 
-  String? _readString(String key) => _pref.getString(key);
+  String? _readString(String key) => _pref?.getString(key);
 
-  List<String>? _readStringList(String key) => _pref.getStringList(key);
+  List<String>? _readStringList(String key) => _pref?.getStringList(key);
 }

@@ -173,9 +173,9 @@ class _CourseTablePageState extends State<CourseTablePage> {
 
   void _getCourseTable({SemesterJson? semesterSetting, String? studentId, bool refresh = false}) async {
     await Future.delayed(const Duration(microseconds: 100)); //等待頁面刷新
-    UserDataJson userData = LocalStorage.instance.getUserData();
+    UserDataJson? userData = LocalStorage.instance.getUserData();
     studentId = studentId?.trim() ?? '';
-    studentId = (studentId.isEmpty ? null : studentId) ?? userData.account;
+    studentId = (studentId.isEmpty ? null : studentId) ?? userData?.account;
     if (courseTableData?.studentId != studentId) {
       LocalStorage.instance.clearSemesterJsonList(); //需重設因為更換了studentId
     }

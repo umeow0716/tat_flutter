@@ -3,8 +3,8 @@ import 'package:flutter/cupertino.dart';
 import '../generated/l10n.dart';
 
 class R {
-  static late BuildContext _context;
-  static S current = S.of(_context);
+  static BuildContext? _context;
+  static S current = S.of(_context as BuildContext);
 
   static set(BuildContext setContext) {
     _context = setContext;
