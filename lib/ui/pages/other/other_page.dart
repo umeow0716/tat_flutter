@@ -43,7 +43,7 @@ enum OnListViewPress {
 class OtherPage extends StatefulWidget {
   final PageController pageController;
 
-  const OtherPage(this.pageController, {Key? key}) : super(key: key);
+  const OtherPage(this.pageController, {super.key});
 
   @override
   State<OtherPage> createState() => _OtherPageState();

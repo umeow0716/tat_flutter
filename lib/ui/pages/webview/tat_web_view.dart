@@ -41,7 +41,7 @@ class _TATWebViewState extends State<TATWebView> {
 
     for (final cookie in cookies) {
       await cookieManager.setCookie(
-        url: widget._initialUrl,
+        url: WebUri.uri(widget._initialUrl),
         name: cookie.name,
         value: cookie.value,
         domain: cookie.domain,
@@ -202,15 +202,13 @@ class _TATWebViewCore extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => InAppWebView(
-        initialUrlRequest: URLRequest(url: _initialUrl),
+        initialUrlRequest: URLRequest(url: WebUri.uri(_initialUrl)),
         onWebViewCreated: _onWebViewCreated,
         onProgressChanged: _onProgressChanged,
         onReceivedServerTrustAuthRequest: _onReceivedTrustAuthReqCallBack,
         onDownloadStartRequest: _onDownload,
-        initialOptions: InAppWebViewGroupOptions(
-          crossPlatform: InAppWebViewOptions(
-            useOnDownloadStart: true,
-          )
-        )
+        initialSettings: InAppWebViewSettings(
+          useOnDownloadStart: true,
+        ),
   );
 }

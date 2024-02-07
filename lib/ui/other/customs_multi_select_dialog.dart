@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 
 class CustomMultiSelectDialog<T> extends MultiSelectDialog<T> {
-  CustomMultiSelectDialog({
+  CustomMultiSelectDialog({ 
     required super.items,
     required super.initialValue,
     super.title,
@@ -27,7 +27,6 @@ class CustomMultiSelectDialog<T> extends MultiSelectDialog<T> {
     super.selectedItemsTextStyle,
     super.separateSelectedItems = false,
     super.checkColor,
-    Key? key,
   });
 
   @override

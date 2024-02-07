@@ -247,7 +247,7 @@ class ISchoolPlusConnector {
             return [realUrl, url]; //PDF需要有referer不然會無法下載
           }
         }
-      } else if (response.isRedirect! || result.isEmpty) {
+      } else if (response.isRedirect || result.isEmpty) {
         //發生跳轉 出現檔案下載預覽頁面
         url = response.headers[HttpHeaders.locationHeader]![0];
         url = "${_iSchoolPlusUrl}learn/path/$url";

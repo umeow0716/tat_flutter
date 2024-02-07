@@ -56,7 +56,7 @@ class EarlyInterceptorAdapter implements HttpClientAdapter {
     final httpClient = _configHttpClient(cancelFuture, options.connectTimeout);
     final reqFuture = httpClient.openUrl(options.method, options.uri);
 
-    void throwConnectingTimeout() => throw DioError(
+    void throwConnectingTimeout() => throw DioException(
           requestOptions: options,
           error: 'Connecting timed out [${options.connectTimeout}ms]',
           type: DioExceptionType.receiveTimeout,

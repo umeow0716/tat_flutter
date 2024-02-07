@@ -76,7 +76,6 @@ class DioConnector {
     try {
       await _cookieJar.deleteAll();
     } catch (_, stackTrace) {
-      print("delete error!");
       stackTrace.printError();
     }
   }

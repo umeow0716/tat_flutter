@@ -1,6 +1,6 @@
 // ignore_for_file: import_of_legacy_library_into_null_safe
 
-import 'package:connectivity/connectivity.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_app/debug/log/log.dart';
 import 'package:flutter_app/src/r.dart';
 import 'package:flutter_app/src/task/course/course_system_task.dart';

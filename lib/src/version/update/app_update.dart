@@ -10,7 +10,7 @@ import 'package:flutter_app/src/connector/core/connector_parameter.dart';
 import 'package:flutter_app/src/model/remoteconfig/remote_config_version_info.dart';
 import 'package:flutter_app/src/r.dart';
 import 'package:get/get.dart';
-import 'package:package_info/package_info.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:version/version.dart';
 import 'package:flutter_install_app/flutter_install_app.dart';
@@ -94,7 +94,7 @@ class DynamicButton extends StatefulWidget {
   const DynamicButton(this.latest, {super.key});
 
   @override
-  _DynamicButton createState() => _DynamicButton();
+  createState() => _DynamicButton();
 }
 
 class _DynamicButton extends State<StatefulWidget> {

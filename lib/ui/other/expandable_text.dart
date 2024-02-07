@@ -9,7 +9,7 @@ class ExpandableText extends StatefulWidget {
 
   final bool? expand;
 
-  const ExpandableText({Key? key, this.text, this.maxLines, this.style, this.expand}) : super(key: key);
+  const ExpandableText({super.key, this.text, this.maxLines, this.style, this.expand});
 
   @override
   State<StatefulWidget> createState() => _ExpandableTextState();

@@ -87,7 +87,7 @@ class GraduationPicker {
 }
 
 class GraduationPickerWidget extends StatefulWidget {
-  const GraduationPickerWidget({Key? key}) : super(key: key);
+  const GraduationPickerWidget({super.key});
 
   @override
   State<GraduationPickerWidget> createState() => _GraduationPickerWidget();

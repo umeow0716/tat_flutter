@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import 'package:local_auth/local_auth.dart';
 
 class CheckPasswordDialog extends StatefulWidget {
-  const CheckPasswordDialog({Key? key}) : super(key: key);
+  const CheckPasswordDialog({super.key});
 
   @override
   State<CheckPasswordDialog> createState() => _CheckPasswordDialogState();

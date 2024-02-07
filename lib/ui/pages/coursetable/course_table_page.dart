@@ -28,7 +28,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sprintf/sprintf.dart';
 
 class CourseTablePage extends StatefulWidget {
-  const CourseTablePage({Key? key}) : super(key: key);
+  const CourseTablePage({super.key});
 
   @override
   State<CourseTablePage> createState() => _CourseTablePageState();

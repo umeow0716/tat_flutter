@@ -18,7 +18,7 @@ class CourseInfoPage extends StatefulWidget {
   final CourseInfoJson courseInfo;
   final String studentId;
 
-  const CourseInfoPage(this.studentId, this.courseInfo, {Key? key}) : super(key: key);
+  const CourseInfoPage(this.studentId, this.courseInfo, {super.key});
 
   final int courseInfoWithAlpha = 0x44;
 
