@@ -12,8 +12,7 @@ import 'package:flutter_app/ui/other/msg_dialog.dart';
 import 'package:flutter_app/ui/other/route_utils.dart';
 import 'package:get/get.dart';
 import 'package:tat_core/tat_core.dart';
-
-import '../dialog_task.dart';
+import 'package:flutter_app/src/task/dialog_task.dart';
 
 class NTUTTask<T> extends DialogTask<T> {
   static bool _isLogin = false;

@@ -13,7 +13,6 @@ import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/debug/log/log.dart';
-import 'package:flutter_app/src/config/app_config.dart';
 import 'package:flutter_app/src/connector/ntut_connector.dart';
 import 'package:flutter_app/src/file/file_store.dart';
 import 'package:flutter_app/src/r.dart';
@@ -151,18 +150,6 @@ class _OtherPageState extends State<OtherPage> {
             'position': 'other_page',
           },
         );
-
-        if (await AppConfig.zuvioRollCallFeatureEnabled) {
-          RouteUtils.launchRollCallDashBoardPageAfterLogin();
-        } else {
-          MsgDialog(MsgDialogParameter(
-            desc: R.current.zuvioAutoRollCallFeatureReleaseNotice,
-            title: R.current.comingSoon,
-            dialogType: DialogType.info,
-            removeCancelButton: true,
-            okButtonText: R.current.sure,
-          )).show();
-        }
 
         break;
 

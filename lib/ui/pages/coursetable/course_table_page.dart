@@ -80,13 +80,15 @@ class _CourseTablePageState extends State<CourseTablePage> {
     task.openLoadingDialog = false;
     taskFlow.addTask(task);
     if (await taskFlow.start()) {
-      List<String> v = task.result!;
+      List<String>? v = task.result;
       List<String> value = [];
-      for (int i = 0; i < v.length; i++) {
-        String courseName = v[i];
-        CourseInfoJson? courseInfo = courseTableData?.getCourseInfoByCourseName(courseName);
-        if (courseInfo != null) {
-          value.add(courseName);
+      if(v != null) {
+        for (int i = 0; i < v.length; i++) {
+          String courseName = v[i];
+          CourseInfoJson? courseInfo = courseTableData?.getCourseInfoByCourseName(courseName);
+          if (courseInfo != null) {
+            value.add(courseName);
+          }
         }
       }
       if (value.isNotEmpty) {

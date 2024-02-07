@@ -26,9 +26,9 @@ class DioConnector {
   Alice getAlice({required GlobalKey<NavigatorState> navigatorKey}) => _alice..setNavigatorKey(navigatorKey);
 
   static final dioOptions = BaseOptions(
-    connectTimeout: 5000,
-    receiveTimeout: 60000,
-    sendTimeout: 5000,
+    connectTimeout: const Duration(seconds: 5),
+    receiveTimeout: const Duration(minutes: 1),
+    sendTimeout: const Duration(seconds: 5),
     headers: _headers,
     responseType: ResponseType.json,
     contentType: "application/x-www-form-urlencoded",
@@ -72,10 +72,11 @@ class DioConnector {
     dio.interceptors.add(getAlice(navigatorKey: Get.key).getDioInterceptor());
   }
 
-  void deleteCookies() {
+  Future<void> deleteCookies() async {
     try {
-      _cookieJar.deleteAll();
+      await _cookieJar.deleteAll();
     } catch (_, stackTrace) {
+      print("delete error!");
       stackTrace.printError();
     }
   }
@@ -160,7 +161,7 @@ class DioConnector {
       onReceiveProgress: progressCallback,
       cancelToken: cancelToken,
       options: Options(
-        receiveTimeout: 0,
+        receiveTimeout: null,
         headers: header,
       ),
     )

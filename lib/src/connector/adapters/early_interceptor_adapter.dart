@@ -59,13 +59,13 @@ class EarlyInterceptorAdapter implements HttpClientAdapter {
     void throwConnectingTimeout() => throw DioError(
           requestOptions: options,
           error: 'Connecting timed out [${options.connectTimeout}ms]',
-          type: DioErrorType.connectTimeout,
+          type: DioExceptionType.receiveTimeout,
         );
 
     late HttpClientRequest request;
     try {
-      request = options.connectTimeout > 0
-          ? await reqFuture.timeout(Duration(milliseconds: options.connectTimeout))
+      request = (options.connectTimeout?.inMilliseconds ?? 0) > 0
+          ? await reqFuture.timeout(options.connectTimeout!)
           : await reqFuture;
 
       options.headers.forEach((k, v) {
@@ -87,17 +87,17 @@ class EarlyInterceptorAdapter implements HttpClientAdapter {
     if (requestStream != null) {
       // Transform the request data
       var future = request.addStream(requestStream);
-      if (options.sendTimeout > 0) {
-        future = future.timeout(Duration(milliseconds: options.sendTimeout));
+      if ((options.sendTimeout?.inMilliseconds ?? 0) > 0) {
+        future = future.timeout(options.sendTimeout!);
       }
       try {
         await future;
       } on TimeoutException {
         request.abort();
-        throw DioError(
+        throw DioException(
           requestOptions: options,
           error: 'Sending timeout[${options.sendTimeout}ms]',
-          type: DioErrorType.sendTimeout,
+          type: DioExceptionType.sendTimeout,
         );
       }
     }
@@ -107,31 +107,31 @@ class EarlyInterceptorAdapter implements HttpClientAdapter {
     final receiveStart = DateTime.now().millisecondsSinceEpoch;
 
     var future = request.close();
-    if (options.receiveTimeout > 0) {
-      future = future.timeout(Duration(milliseconds: options.receiveTimeout));
+    if ((options.receiveTimeout?.inMilliseconds ?? 0) > 0) {
+      future = future.timeout(options.receiveTimeout!);
     }
 
     late HttpClientResponse responseStream;
     try {
       responseStream = await future;
     } on TimeoutException {
-      throw DioError(
+      throw DioException(
         requestOptions: options,
         error: 'Receiving data timeout[${options.receiveTimeout}ms]',
-        type: DioErrorType.receiveTimeout,
+        type: DioExceptionType.receiveTimeout,
       );
     }
 
     final stream = responseStream.transform<Uint8List>(
       StreamTransformer.fromHandlers(
         handleData: (data, sink) {
-          if (options.receiveTimeout > 0 &&
-              DateTime.now().millisecondsSinceEpoch - receiveStart > options.receiveTimeout) {
+          if ((options.receiveTimeout?.inMilliseconds ?? 0) > 0 &&
+              DateTime.now().millisecondsSinceEpoch - receiveStart > (options.receiveTimeout?.inMilliseconds ?? 0)) {
             sink.addError(
-              DioError(
+              DioException(
                 requestOptions: options,
                 error: 'Receiving data timeout[${options.receiveTimeout}ms]',
-                type: DioErrorType.receiveTimeout,
+                type: DioExceptionType.receiveTimeout,
               ),
             );
             responseStream.detachSocket().then((socket) => socket.destroy());
@@ -167,8 +167,8 @@ class EarlyInterceptorAdapter implements HttpClientAdapter {
     );
   }
 
-  HttpClient _configHttpClient(Future? cancelFuture, int connectionTimeout) {
-    final configuredConnectionTimeout = connectionTimeout > 0 ? Duration(milliseconds: connectionTimeout) : null;
+  HttpClient _configHttpClient(Future? cancelFuture, Duration? connectionTimeout) {
+    final configuredConnectionTimeout = (connectionTimeout?.inMicroseconds ?? 0) > 0 ? connectionTimeout : null;
 
     if (cancelFuture != null) {
       final httpClient = HttpClient()

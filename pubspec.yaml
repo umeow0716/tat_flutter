@@ -3,7 +3,7 @@ description: NTUT Life TAT, convenient, concise, fast, powerful, enrich your NTU
 publish_to: 'none'
 
 # CHECK THE BUILD CODE BEFORE DISTRIBUTION!!
-version: 1.0.5
+version: 1.0.6
 
 environment:
   flutter: ">=3.7.12 <4.0.0"
@@ -20,7 +20,7 @@ dependencies:
   tat_core:
     git:
       url: git@github.com:NTUT-NPC/TAT-Core.git
-      ref: e5a9259946f1139fa61a784916192915831fe2c5 # restricted by dart language version. (<3)
+      ref: 24ec4a1614758f1646c2271db7e495a0362486ee # restricted by dart language version. (<3)
 
   path: ^1.8.2 # restricted by flutter sdk.
   path_provider: ^2.0.15
@@ -38,9 +38,9 @@ dependencies:
   version: ^3.0.2
   shared_preferences: ^2.2.2
   flutter_cache_manager: ^3.3.1
-  dio: ^4.0.6 # restricted by feature. Upgrade pending for manually migration.
-  dio_cookie_manager: ^2.0.0 # restricted by dio 4.0.6
-  cookie_jar: ^3.0.1 # restricted by dio 4.0.6
+  dio: ^5.4.0 # restricted by feature. Upgrade pending for manually migration.
+  dio_cookie_manager: ^3.1.1 # restricted by dio 4.0.6
+  cookie_jar: ^4.0.8 # restricted by dio 4.0.6
   html: ^0.15.4
   connectivity: ^3.0.6
   github: ^9.19.0

@@ -21,10 +21,10 @@ packages:
     dependency: "direct main"
     description:
       name: alice_lightweight
-      sha256: caac73b9adfb93d6c52d36ced851ad1284ef8b127a6b638f466bee4f2f3f44e9
+      sha256: "873b80b4ee98747c2ec4db1e432b98b5f6f1910a77cbedaa8048aa97dd92c741"
       url: "https://pub.dev"
     source: hosted
-    version: "3.3.0"
+    version: "3.4.0"
   analyzer:
     dependency: transitive
     description:
@@ -325,10 +325,10 @@ packages:
     dependency: "direct main"
     description:
       name: cookie_jar
-      sha256: d1cc6516a190ba667941f722b6365d202caff3dacb38de24268b8d6ff1ec8a1d
+      sha256: a6ac027d3ed6ed756bfce8f3ff60cb479e266f3b0fdabd6242b804b6765e52de
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.1"
+    version: "4.0.8"
   cross_file:
     dependency: transitive
     description:
@@ -413,18 +413,18 @@ packages:
     dependency: "direct main"
     description:
       name: dio
-      sha256: "7d328c4d898a61efc3cd93655a0955858e29a0aa647f0f9e02d59b3bb275e2e8"
+      sha256: "797e1e341c3dd2f69f2dad42564a6feff3bfb87187d05abb93b9609e6f1645c3"
       url: "https://pub.dev"
     source: hosted
-    version: "4.0.6"
+    version: "5.4.0"
   dio_cookie_manager:
     dependency: "direct main"
     description:
       name: dio_cookie_manager
-      sha256: ed7ee3ba6cdb54599c8984d5a4ce09675c553ead6c28608eb54e38eec5b4f954
+      sha256: e79498b0f632897ff0c28d6e8178b4bc6e9087412401f618c31fa0904ace050d
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.0"
+    version: "3.1.1"
   email_validator:
     dependency: "direct main"
     description:
@@ -1511,11 +1511,11 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: e5a9259946f1139fa61a784916192915831fe2c5
-      resolved-ref: e5a9259946f1139fa61a784916192915831fe2c5
+      ref: "24ec4a1614758f1646c2271db7e495a0362486ee"
+      resolved-ref: "24ec4a1614758f1646c2271db7e495a0362486ee"
       url: "git@github.com:NTUT-NPC/TAT-Core.git"
     source: git
-    version: "1.0.0+202302180400"
+    version: "1.0.0+20230620"
   term_glyph:
     dependency: transitive
     description:
