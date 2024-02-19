@@ -7,7 +7,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/src/connector/core/connector.dart';
 import 'package:flutter_app/src/connector/core/connector_parameter.dart';
-import 'package:flutter_app/src/model/remoteconfig/remote_config_version_info.dart';
 import 'package:flutter_app/src/r.dart';
 import 'package:get/get.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -20,7 +19,7 @@ import 'dart:developer' as developer;
 class AppUpdate {
   static const String _versionsURL = "https://tat.umeow.eu.org/versions.json";
 
-  static Future<bool> checkUpdate({RemoteConfigVersionInfo? versionConfig}) async {
+  static Future<bool> checkUpdate() async {
     try {
       final latestVersionData = await getLatestVersionData();
       final latestVersion = Version.parse(latestVersionData['latest']);

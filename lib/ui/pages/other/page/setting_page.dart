@@ -4,7 +4,6 @@ import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/src/config/app_config.dart';
 import 'package:flutter_app/src/config/app_themes.dart';
 import 'package:flutter_app/src/file/file_store.dart';
 import 'package:flutter_app/src/providers/app_provider.dart';
@@ -13,7 +12,6 @@ import 'package:flutter_app/src/store/local_storage.dart';
 import 'package:flutter_app/src/util/language_util.dart';
 import 'package:flutter_app/ui/other/list_view_animator.dart';
 import 'package:flutter_app/ui/other/my_toast.dart';
-import 'package:flutter_app/ui/other/route_utils.dart';
 import "package:flutter_feather_icons/flutter_feather_icons.dart";
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -215,18 +213,6 @@ class _SettingPageState extends State<SettingPage> {
               style: textBody,
             ),
           ],
-        ),
-        onTap: () async {
-          final guidePageUrl = await AppConfig.androidChromeIncognitoFlagSetupPageUrl;
-          if (guidePageUrl.isEmpty) {
-            return;
-          }
-
-          final parsedGuidePageUrl = Uri.tryParse(guidePageUrl);
-
-          if (parsedGuidePageUrl != null) {
-            RouteUtils.toWebViewPage(initialUrl: parsedGuidePageUrl);
-          }
-        },
+        )
       );
 }

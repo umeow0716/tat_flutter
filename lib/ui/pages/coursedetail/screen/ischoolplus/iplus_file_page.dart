@@ -6,13 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/src/connector/ischool_plus_connector.dart';
 import 'package:flutter_app/src/file/file_download.dart';
 import 'package:flutter_app/src/file/file_store.dart';
-import 'package:flutter_app/src/model/coursetable/course_table_json.dart';
+import 'package:flutter_app/src/model/course/course_json.dart';
 import 'package:flutter_app/src/model/ischoolplus/course_file_json.dart';
 import 'package:flutter_app/src/r.dart';
 import 'package:flutter_app/src/store/local_storage.dart';
 import 'package:flutter_app/src/task/iplus/iplus_course_file_task.dart';
 import 'package:flutter_app/src/task/task_flow.dart';
-import 'package:flutter_app/src/util/analytics_utils.dart';
 import 'package:flutter_app/ui/icon/my_icons.dart';
 import 'package:flutter_app/ui/other/msg_dialog.dart';
 import 'package:flutter_app/ui/other/my_toast.dart';
@@ -21,12 +20,12 @@ import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class IPlusFilePage extends StatefulWidget {
-  final CourseInfoJson courseInfo;
+  final Course course;
   final String studentId;
 
   const IPlusFilePage(
     this.studentId,
-    this.courseInfo, {
+    this.course, {
     super.key,
   });
 
@@ -71,10 +70,10 @@ class _IPlusFilePage extends State<IPlusFilePage> with AutomaticKeepAliveClientM
 
   void _addTask() async {
     await Future.delayed(const Duration(microseconds: 500));
-    final courseId = widget.courseInfo.main!.course!.id;
+    final courseId = widget.course.snum;
 
     final taskFlow = TaskFlow();
-    final task = IPlusCourseFileTask(courseId!);
+    final task = IPlusCourseFileTask(courseId);
     taskFlow.addTask(task);
 
     if (await taskFlow.start()) {
@@ -229,11 +228,10 @@ class _IPlusFilePage extends State<IPlusFilePage> with AutomaticKeepAliveClientM
   Future<void> _downloadOneFile(int index, [showToast = true]) async {
     final courseFile = courseFileList[index];
     final fileType = courseFile.fileType![0];
-    final dirName = widget.courseInfo.main!.course!.name;
+    final dirName = widget.course.name;
     String url = "";
     String referer = "";
 
-    await AnalyticsUtils.logDownloadFileEvent();
     if (showToast) {
       MyToast.show(R.current.downloadWillStart);
     }
@@ -265,7 +263,7 @@ class _IPlusFilePage extends State<IPlusFilePage> with AutomaticKeepAliveClientM
       errorDialogParameter.dialogType = DialogType.info;
       errorDialogParameter.okButtonText = R.current.sure;
       errorDialogParameter.onOkButtonClicked =
-          () => RouteUtils.toVideoPlayer(urlParse.toString(), widget.courseInfo, courseFile.name!);
+          () => RouteUtils.toVideoPlayer(urlParse.toString(), widget.course, courseFile.name!);
       MsgDialog(errorDialogParameter).show();
     } else {
       await FileDownload.download(url, dirName, courseFile.name!, referer);

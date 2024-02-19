@@ -144,9 +144,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "getCourseSemester": MessageLookupByLibrary.simpleMessage("取得學期清單中..."),
         "getCourseSemesterError":
             MessageLookupByLibrary.simpleMessage("取得學期清單錯誤"),
-        "getCourseStudentList":
+        "getCourseClassmateList":
             MessageLookupByLibrary.simpleMessage("取得同學名單中..."),
-        "getCourseStudentListError":
+        "getCourseClassmateListError":
             MessageLookupByLibrary.simpleMessage("名單取得失敗"),
         "getISchoolCourseAnnouncement":
             MessageLookupByLibrary.simpleMessage("取得課程公告..."),
@@ -318,7 +318,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "sortBy": MessageLookupByLibrary.simpleMessage("排序"),
         "startClass": MessageLookupByLibrary.simpleMessage("開課班級"),
         "studentId": MessageLookupByLibrary.simpleMessage("學號"),
-        "studentList": MessageLookupByLibrary.simpleMessage("學生清單"),
+        "ClassmateList": MessageLookupByLibrary.simpleMessage("學生清單"),
         "subscribe": MessageLookupByLibrary.simpleMessage("訂閱"),
         "sure": MessageLookupByLibrary.simpleMessage("確定"),
         "syllabus": MessageLookupByLibrary.simpleMessage("教學大綱"),

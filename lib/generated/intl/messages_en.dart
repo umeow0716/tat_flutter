@@ -183,9 +183,9 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Get semester list..."),
         "getCourseSemesterError":
             MessageLookupByLibrary.simpleMessage("Getting semester list error"),
-        "getCourseStudentList":
+        "getCourseClassmateList":
             MessageLookupByLibrary.simpleMessage("Getting student list..."),
-        "getCourseStudentListError":
+        "getCourseClassmateListError":
             MessageLookupByLibrary.simpleMessage("Unable get student list"),
         "getISchoolCourseAnnouncement":
             MessageLookupByLibrary.simpleMessage("Get course announcement..."),
@@ -418,7 +418,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "sortBy": MessageLookupByLibrary.simpleMessage("Sort by"),
         "startClass": MessageLookupByLibrary.simpleMessage("Start class"),
         "studentId": MessageLookupByLibrary.simpleMessage("Student Number"),
-        "studentList": MessageLookupByLibrary.simpleMessage("Student list"),
+        "ClassmateList": MessageLookupByLibrary.simpleMessage("Student list"),
         "subscribe": MessageLookupByLibrary.simpleMessage("Subscribe"),
         "sure": MessageLookupByLibrary.simpleMessage("Sure"),
         "syllabus": MessageLookupByLibrary.simpleMessage("Syllabus"),

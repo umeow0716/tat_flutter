@@ -3,12 +3,11 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_app/src/connector/core/dio_connector.dart';
+import 'package:flutter_app/src/model/course/course_json.dart';
 import 'package:flutter_app/src/model/course/course_score_json.dart';
-import 'package:flutter_app/src/model/coursetable/course_table_json.dart';
 import 'package:flutter_app/src/model/setting/setting_json.dart';
 import 'package:flutter_app/src/model/userdata/user_data_json.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../model/course/course_class_json.dart';
@@ -27,12 +26,10 @@ class LocalStorage {
   final cacheManager = DefaultCacheManager();
 
   final _userDataJsonKey = "UserDataJsonKey";
-  final _courseTableJsonKey = "CourseTableJsonListKey";
   final _courseSemesterJsonKey = "CourseSemesterListJson";
   final _scoreCreditJsonKey = "ScoreCreditJsonKey";
   final _settingJsonKey = "SettingJsonKey";
   final _firstRun = <String, bool>{};
-  final _courseTableList = <CourseTableJson>[];
 
   final _httpClientInterceptors = <Interceptor>[];
 
@@ -41,6 +38,7 @@ class LocalStorage {
   CourseScoreCreditJson? _courseScoreList;
   SettingJson? _setting;
   List<SemesterJson?>? _courseSemesterList = [];
+  List<Course> courses = [];
 
   bool? get autoCheckAppUpdate => _setting?.other?.autoCheckAppUpdate;
 
@@ -95,67 +93,9 @@ class LocalStorage {
 
   UserDataJson? getUserData() => _userData;
 
-  Future<void> saveCourseTableList() => _save(_courseTableJsonKey, _courseTableList);
-
-  Future<void> clearCourseTableList() {
-    _courseTableList.clear();
-    return saveCourseTableList();
-  }
-
-  void _loadCourseTableList() {
-    final readJsonList = _readStringList(_courseTableJsonKey);
-    _courseTableList.clear();
-    if (readJsonList != null) {
-      for (final readJson in readJsonList) {
-        _courseTableList.add(CourseTableJson.fromJson(json.decode(readJson)));
-      }
-    }
-  }
-
   String? getCourseNameByCourseId(String courseId) {
-    for (final courseDetail in _courseTableList) {
-      final name = courseDetail.getCourseNameByCourseId(courseId);
-      if (name != null) {
-        return name;
-      }
-    }
-
-    return null;
-  }
-
-  void removeCourseTable(CourseTableJson addCourseTable) {
-    _courseTableList.removeWhere(
-      (courseTable) =>
-          courseTable.courseSemester == addCourseTable.courseSemester &&
-          courseTable.studentId == addCourseTable.studentId,
-    );
-  }
-
-  void addCourseTable(CourseTableJson? addCourseTable) {
-    if(addCourseTable == null) return;
-
-    removeCourseTable(addCourseTable);
-    _courseTableList.add(addCourseTable);
-  }
-
-  List<CourseTableJson> getCourseTableList() {
-    _courseTableList.sort((a, b) {
-      if (a.studentId == b.studentId) {
-        return b.courseSemester.toString().compareTo(a.courseSemester.toString());
-      }
-      return a.studentId!.compareTo(b.studentId!);
-    });
-    return _courseTableList;
-  }
-
-  CourseTableJson? getCourseTable(String? studentId, SemesterJson? courseSemester) {
-    if (courseSemester == null || studentId == null || studentId.isEmpty) {
-      return null;
-    }
-
-    return _courseTableList.firstWhereOrNull(
-      (courseTable) => courseTable.courseSemester == courseSemester && courseTable.studentId == studentId,
-    );
+    final name = courses.where((course) => course.snum == courseId).firstOrNull?.name;
+    return name;
   }
 
   Future<void> _saveSetting() => _save(_settingJsonKey, _setting);
@@ -196,13 +136,6 @@ class LocalStorage {
   }
 
   Future<void> saveCourseSetting() => _saveSetting();
-
-  Future<void> clearCourseSetting() {
-    _setting?.course = CourseSettingJson();
-    return saveCourseSetting();
-  }
-
-  CourseSettingJson? getCourseSetting() => _setting?.course;
 
   Future<void> saveOtherSetting() => _saveSetting();
 
@@ -247,7 +180,6 @@ class LocalStorage {
     _httpClientInterceptors.addAll(httpClientInterceptors);
     _courseSemesterList = _courseSemesterList;
     _loadUserData();
-    _loadCourseTableList();
     _loadSetting();
     _loadCourseScoreCredit();
     _loadSemesterJsonList();
@@ -256,10 +188,8 @@ class LocalStorage {
   Future<void> logout() async {
     await clearUserData();
     clearSemesterJsonList();
-    await clearCourseTableList();
     await _clearCourseScoreCredit();
     await _clearAnnouncementSetting();
-    await clearCourseSetting();
     await cacheManager.emptyCache();
     _setFirstUse(courseNotice, true);
     await init();

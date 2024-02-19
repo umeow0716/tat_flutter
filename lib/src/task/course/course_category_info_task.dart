@@ -6,7 +6,7 @@ import 'package:flutter_app/src/r.dart';
 import '../task.dart';
 import 'course_system_task.dart';
 
-class CourseCategoryInfoTask extends CourseSystemTask<Map<String, String>> {
+class CourseCategoryInfoTask extends CourseSystemTask<String> {
   final String id;
 
   CourseCategoryInfoTask(this.id) : super("CourseCategoryInfoTask");

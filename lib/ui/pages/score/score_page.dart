@@ -209,6 +209,8 @@ class _ScoreViewerPageState extends State<ScoreViewerPage> with TickerProviderSt
 
       taskFlow.startWithoutAsync();
       Future.delayed(const Duration(seconds: 5)).then((_) {
+        progressRateDialog.hide();
+        
         done = true;
         _buildTabBar();
         setState(() => _isLoading = false);

@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/src/config/app_colors.dart';
-import 'package:flutter_app/src/model/coursetable/course_table_json.dart';
+import 'package:flutter_app/src/model/course/course_json.dart';
 import 'package:flutter_app/src/r.dart';
 
 class CourseTableControl {
   bool isHideSaturday = false;
   bool isHideSunday = false;
-  bool isHideUnKnown = false;
+  bool isHideUnKnown = true;
   bool isHideN = false;
   bool isHideA = false;
   bool isHideB = false;
   bool isHideC = false;
   bool isHideD = false;
-  CourseTableJson? courseTable;
+  List<Course>? courseTable;
   List<String> dayStringList = [
     R.current.Monday,
     R.current.Tuesday,
@@ -45,16 +45,15 @@ class CourseTableControl {
   static int sectionLength = 14;
   Map<String, Color>? colorMap;
 
-  void set(CourseTableJson value) {
+  void set(List<Course>? value) {
     courseTable = value;
-    isHideSaturday = !courseTable!.isDayInCourseTable(Day.Saturday);
-    isHideSunday = !courseTable!.isDayInCourseTable(Day.Sunday);
-    isHideUnKnown = !courseTable!.isDayInCourseTable(Day.UnKnown);
-    isHideN = !courseTable!.isSectionNumberInCourseTable(SectionNumber.T_N);
-    isHideA = !(courseTable!.isSectionNumberInCourseTable(SectionNumber.T_A));
-    isHideB = !(courseTable!.isSectionNumberInCourseTable(SectionNumber.T_B));
-    isHideC = !(courseTable!.isSectionNumberInCourseTable(SectionNumber.T_C));
-    isHideD = !(courseTable!.isSectionNumberInCourseTable(SectionNumber.T_D));
+    isHideSaturday = courseTable?.where((course) => course.time.containsKey('六')).isEmpty ?? true;
+    isHideSunday = courseTable?.where((course) => course.time.containsKey('日')).isEmpty ?? true;
+    isHideN = courseTable?.where((course) => course.time.values.where((ele) => ele.contains('N')).isNotEmpty).isEmpty ?? true;
+    isHideA = courseTable?.where((course) => course.time.values.where((ele) => ele.contains('A')).isNotEmpty).isEmpty ?? true;
+    isHideB = courseTable?.where((course) => course.time.values.where((ele) => ele.contains('B')).isNotEmpty).isEmpty ?? true;
+    isHideC = courseTable?.where((course) => course.time.values.where((ele) => ele.contains('C')).isNotEmpty).isEmpty ?? true;
+    isHideD = courseTable?.where((course) => course.time.values.where((ele) => ele.contains('D')).isNotEmpty).isEmpty ?? true;
     isHideA &= (isHideB & isHideC & isHideD);
     isHideB &= (isHideC & isHideD);
     isHideC &= isHideD;
@@ -72,27 +71,32 @@ class CourseTableControl {
     return intList;
   }
 
-  CourseInfoJson? getCourseInfo(int intDay, int intNumber) {
-    final day = Day.values[intDay];
-    final number = SectionNumber.values[intNumber];
+  final dayList = ['一', '二', '三', '四', '五', '六', '日', null];
+  final sectionList = ['1', '2', '3', '4', 'N', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D'];
+  Course? getCourseInfo(int intDay, int intNumber) {
+    final day = dayList[intDay];
+    final section = sectionList[intNumber];
 
     if (courseTable == null) {
       return null;
     }
 
-    return courseTable!.courseInfoMap![day]![number];
+    final result = courseTable?.where((course) => course.time[day]?.contains(section) ?? false).toList();
+    if(result == null || result.isEmpty) return null;
+
+    return result.first;
   }
 
   Color? getCourseInfoColor(int intDay, int intNumber) {
-    final courseInfo = getCourseInfo(intDay, intNumber);
+    final course = getCourseInfo(intDay, intNumber);
 
     if (colorMap == null) {
       return Colors.white;
     }
 
     for (final key in colorMap!.keys) {
-      if (courseInfo != null) {
-        if (key == courseInfo.main!.course!.id) {
+      if (course != null) {
+        if (key == course.code) {
           return colorMap![key];
         }
       }
@@ -103,16 +107,15 @@ class CourseTableControl {
 
   void _initColorList() {
     colorMap = {};
-    List<String>? courseInfoList = courseTable?.getCourseIdList();
-    int? colorCount = courseInfoList?.length;
-    if(colorCount == null) return;
+    List<String>? courseInfoList = courseTable?.map((course) => course.code).toList() ?? [];
+    int colorCount = courseInfoList.length;
 
     colorCount = (colorCount == 0) ? 1 : colorCount;
 
     final colors = AppColors.courseTableColors.toList()..shuffle();
 
     for (int i = 0; i < colorCount; i++) {
-      colorMap![courseInfoList![i]] = colors[i % colors.length];
+      colorMap![courseInfoList[i]] = colors[i % colors.length];
     }
   }
 

@@ -2,7 +2,7 @@ import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/debug/log/log.dart';
 import 'package:flutter_app/src/file/file_download.dart';
-import 'package:flutter_app/src/model/coursetable/course_table_json.dart';
+import 'package:flutter_app/src/model/course/course_json.dart';
 import 'package:flutter_app/src/r.dart';
 import 'package:flutter_app/src/util/html_utils.dart';
 import 'package:flutter_app/ui/other/list_view_animator.dart';
@@ -13,9 +13,9 @@ import 'package:url_launcher/url_launcher.dart';
 
 class IPlusAnnouncementDetailPage extends StatefulWidget {
   final Map data;
-  final CourseInfoJson courseInfo;
+  final Course course;
 
-  const IPlusAnnouncementDetailPage(this.courseInfo, this.data, {super.key});
+  const IPlusAnnouncementDetailPage(this.course, this.data, {super.key});
 
   @override
   State<IPlusAnnouncementDetailPage> createState() => _IPlusAnnouncementDetailPage();
@@ -48,7 +48,7 @@ class _IPlusAnnouncementDetailPage extends State<IPlusAnnouncementDetailPage> {
         leading: BackButton(
           onPressed: () => Get.back(),
         ),
-        title: Text(widget.courseInfo.main!.course!.name!),
+        title: Text(widget.course.name),
         actions: <Widget>[
           PopupMenuButton<int>(
             onSelected: (result) {
@@ -189,7 +189,7 @@ class _IPlusAnnouncementDetailPage extends State<IPlusAnnouncementDetailPage> {
   }
 
   void _downloadFile(String url, String name) async {
-    String courseName = widget.courseInfo.main!.course!.name!;
+    String courseName = widget.course.name;
     await FileDownload.download(url, courseName, name);
   }
 

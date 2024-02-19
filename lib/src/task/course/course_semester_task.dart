@@ -27,9 +27,9 @@ class CourseSemesterTask extends CourseSystemTask<List<SemesterJson?>?> {
       } else {
         super.onStart(R.current.getCourseSemester);
         if(id != LocalStorage.instance.getAccount()) {
-          List<SemesterJson?> localSemesters = LocalStorage.instance.getCourseTableList()
-            .where((courseTable) => courseTable.studentId == id)
-            .map((courseTable) => courseTable.courseSemester)
+          List<SemesterJson?> localSemesters = LocalStorage.instance.courses
+            .where((course) => course.studentId == id)
+            .map((course) => SemesterJson(year: course.year, semester: course.sem))
             .toList();
           value = localSemesters;
         } else {

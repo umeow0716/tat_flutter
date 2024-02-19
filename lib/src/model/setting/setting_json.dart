@@ -1,4 +1,3 @@
-import 'package:flutter_app/src/model/coursetable/course_table_json.dart';
 import 'package:flutter_app/src/model/json_init.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sprintf/sprintf.dart';
@@ -7,52 +6,28 @@ part 'setting_json.g.dart';
 
 @JsonSerializable()
 class SettingJson {
-  CourseSettingJson? course;
   OtherSettingJson? other;
   AnnouncementSettingJson? announcement;
 
-  SettingJson({this.course, this.other, this.announcement}) {
-    course = course ?? CourseSettingJson();
+  SettingJson({this.other, this.announcement}) {
     other = other ?? OtherSettingJson();
     announcement = announcement ?? AnnouncementSettingJson();
   }
 
   bool get isEmpty {
-    return course!.isEmpty && other!.isEmpty && announcement!.isEmpty;
+    return other!.isEmpty && announcement!.isEmpty;
   }
 
   @override
   String toString() {
     return sprintf(
-        "---------course--------        \n%s \n---------other--------         \n%s \n---------announcement--------  \n%s \n",
-        [course.toString(), other.toString(), announcement.toString()]);
+        "---------other--------         \n%s \n---------announcement--------  \n%s \n",
+        [other.toString(), announcement.toString()]);
   }
 
   factory SettingJson.fromJson(Map<String, dynamic> json) => _$SettingJsonFromJson(json);
 
   Map<String, dynamic> toJson() => _$SettingJsonToJson(this);
-}
-
-@JsonSerializable()
-class CourseSettingJson {
-  CourseTableJson? info;
-
-  CourseSettingJson({this.info}) {
-    info = info ?? CourseTableJson();
-  }
-
-  bool get isEmpty {
-    return info!.isEmpty;
-  }
-
-  @override
-  String toString() {
-    return sprintf("---------courseInfo--------       :\n%s \n", [info.toString()]);
-  }
-
-  factory CourseSettingJson.fromJson(Map<String, dynamic> json) => _$CourseSettingJsonFromJson(json);
-
-  Map<String, dynamic> toJson() => _$CourseSettingJsonToJson(this);
 }
 
 @JsonSerializable()

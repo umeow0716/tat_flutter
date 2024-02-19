@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter_app/debug/log/log.dart';
 import 'package:flutter_app/src/connector/core/connector.dart';
 import 'package:flutter_app/src/model/ischoolplus/course_file_json.dart';
@@ -33,7 +32,7 @@ class ISchoolPlusConnector {
   static const String _getCourseName = "${_iSchoolPlusUrl}learn/mooc_sysbar.php";
   static const _ssoLoginUrl = "${NTUTConnector.host}ssoIndex.do";
   
-  static const String _getStudentList = "${_iSchoolPlusUrl}learn/learn_ranking.php";
+  static const String _getClassmateList = "${_iSchoolPlusUrl}learn/learn_ranking.php";
 
   /// The Authorization Step of ISchool (2023-10-21)
   /// 1. GET https://app.ntut.edu.tw/ssoIndex.do
@@ -102,10 +101,7 @@ class ISchoolPlusConnector {
           break;
         }
       } while ((retryTimes--) > 0);
-
-      await FirebaseAnalytics.instance.logLogin(
-        loginMethod: 'ntut_iplus',
-      );
+      
       return ISchoolPlusConnectorStatus.loginSuccess;
     } catch (e, stack) {
       Log.eWithStack(e.toString(), stack);
@@ -531,7 +527,7 @@ class ISchoolPlusConnector {
     }
   }
 
-  static Future<List<ClassmateJson>?> getCourseStudentList(String courseId) async {
+  static Future<List<ClassmateJson>?> getCourseClasmateList(String courseId) async {
     ConnectorParameter parameter;
     html.Document tagNode;
     html.Element node;
@@ -544,7 +540,7 @@ class ISchoolPlusConnector {
         return null;
       }
 
-      parameter = ConnectorParameter(_getStudentList);
+      parameter = ConnectorParameter(_getClassmateList);
       response = await Connector.getDataByGet(parameter);
       tagNode = html.parse(response);
       table = tagNode.querySelectorAll('table')[1];

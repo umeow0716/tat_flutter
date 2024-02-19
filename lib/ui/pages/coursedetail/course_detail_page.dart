@@ -1,8 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
-import 'package:flutter_app/src/model/course/course_class_json.dart';
-import 'package:flutter_app/src/model/coursetable/course_table_json.dart';
+import 'package:flutter_app/src/model/course/course_json.dart';
 import 'package:flutter_app/src/providers/app_provider.dart';
 import 'package:flutter_app/src/r.dart';
 import 'package:flutter_app/src/store/local_storage.dart';
@@ -14,10 +13,10 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 class ISchoolPage extends StatefulWidget {
-  final CourseInfoJson courseInfo;
+  final Course course;
   final String studentId;
 
-  const ISchoolPage(this.studentId, this.courseInfo, {super.key});
+  const ISchoolPage(this.studentId, this.course, {super.key});
 
   @override
   State<ISchoolPage> createState() => _ISchoolPageState();
@@ -33,12 +32,12 @@ class _ISchoolPageState extends State<ISchoolPage> with SingleTickerProviderStat
   void initState() {
     super.initState();
     tabPageList = TabPageList();
-    tabPageList.add(TabPage(R.current.course, Icons.info, CourseInfoPage(widget.studentId, widget.courseInfo)));
+    tabPageList.add(TabPage(R.current.course, Icons.info, CourseInfoPage(widget.studentId, widget.course)));
     if (widget.studentId == LocalStorage.instance.getAccount()) {
       tabPageList.add(TabPage(
-          R.current.announcement, Icons.announcement, IPlusAnnouncementPage(widget.studentId, widget.courseInfo)));
+          R.current.announcement, Icons.announcement, IPlusAnnouncementPage(widget.studentId, widget.course)));
       tabPageList.add(
-          TabPage(R.current.fileAndVideo, Icons.file_download, IPlusFilePage(widget.studentId, widget.courseInfo)));
+          TabPage(R.current.fileAndVideo, Icons.file_download, IPlusFilePage(widget.studentId, widget.course)));
     }
 
     _tabController = TabController(vsync: this, length: tabPageList.length);
@@ -63,7 +62,7 @@ class _ISchoolPageState extends State<ISchoolPage> with SingleTickerProviderStat
   }
 
   Widget tabPageView() {
-    CourseMainJson? course = widget.courseInfo.main?.course;
+    final course = widget.course;
 
     return DefaultTabController(
       length: tabPageList.length,
@@ -72,7 +71,7 @@ class _ISchoolPageState extends State<ISchoolPage> with SingleTickerProviderStat
           leading: BackButton(
             onPressed: () => Get.back(),
           ),
-          title: FittedBox(child: Text(course?.name as String)),
+          title: FittedBox(child: Text(course.name)),
           bottom: TabBar(
             indicatorPadding: const EdgeInsets.all(0),
             labelPadding: const EdgeInsets.all(0),

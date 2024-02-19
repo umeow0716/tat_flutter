@@ -7,17 +7,17 @@ import 'package:flutter_app/src/r.dart';
 import '../task.dart';
 import 'iplus_system_task.dart';
 
-class IPlusCourseStudentList extends IPlusSystemTask<List<ClassmateJson>> {
+class IPlusCourseClassmateList extends IPlusSystemTask<List<ClassmateJson>> {
   final String id;
 
-  IPlusCourseStudentList(this.id) : super("IPlusCourseFileTask");
+  IPlusCourseClassmateList(this.id) : super("IPlusCourseFileTask");
 
   @override
   Future<TaskStatus> execute() async {
     final status = await super.execute();
     if (status == TaskStatus.success) {
-      super.onStart(R.current.getCourseStudentList);
-      final value = await ISchoolPlusConnector.getCourseStudentList(id);
+      super.onStart(R.current.getCourseClassmateList);
+      final value = await ISchoolPlusConnector.getCourseClasmateList(id);
       super.onEnd();
 
       result = value;
@@ -25,7 +25,7 @@ class IPlusCourseStudentList extends IPlusSystemTask<List<ClassmateJson>> {
       if(result != null) {
         return TaskStatus.success;
       } else {
-        return super.onError(R.current.getCourseStudentListError);
+        return super.onError(R.current.getCourseClassmateListError);
       }
     }
     return status;

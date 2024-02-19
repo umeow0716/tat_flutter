@@ -32,8 +32,6 @@ class LanguageUtil {
         otherSetting.lang = lang;
         LocalStorage.instance.setOtherSetting(otherSetting);
         await LocalStorage.instance.saveOtherSetting();
-        await LocalStorage.instance.clearCourseTableList();
-        await LocalStorage.instance.clearCourseSetting();
       }
     } else {
       Log.e("no any locale load");

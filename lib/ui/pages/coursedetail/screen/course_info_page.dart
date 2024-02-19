@@ -2,8 +2,7 @@ import 'dart:async';
 
 import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/src/model/course/course_main_extra_json.dart';
-import 'package:flutter_app/src/model/coursetable/course_table_json.dart';
+import 'package:flutter_app/src/model/course/course_json.dart';
 import 'package:flutter_app/src/r.dart';
 import 'package:flutter_app/src/task/course/course_extra_info_task.dart';
 import 'package:flutter_app/src/task/task_flow.dart';
@@ -11,14 +10,13 @@ import 'package:flutter_app/ui/other/route_utils.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:get/get.dart';
 import 'package:sprintf/sprintf.dart';
-import 'package:flutter_app/src/task/iplus/iplus_course_student_list.dart';
 import 'package:flutter_app/src/model/course/course_class_json.dart';
 
 class CourseInfoPage extends StatefulWidget {
-  final CourseInfoJson courseInfo;
+  final Course course;
   final String studentId;
 
-  const CourseInfoPage(this.studentId, this.courseInfo, {super.key});
+  const CourseInfoPage(this.studentId, this.course, {super.key});
 
   final int courseInfoWithAlpha = 0x44;
 
@@ -27,8 +25,6 @@ class CourseInfoPage extends StatefulWidget {
 }
 
 class _CourseInfoPageState extends State<CourseInfoPage> with AutomaticKeepAliveClientMixin {
-  late CourseMainInfoJson courseMainInfo;
-  late CourseExtraInfoJson courseExtraInfo;
   bool isLoading = true;
   final List<Widget> courseData = [];
   final List<Widget> listItem = [];
@@ -58,48 +54,44 @@ class _CourseInfoPageState extends State<CourseInfoPage> with AutomaticKeepAlive
   }
 
   void _addTask() async {
-    courseMainInfo = widget.courseInfo.main!;
-    final courseId = courseMainInfo.course!.id;
+    final course = widget.course;
     final taskFlow = TaskFlow();
-    final task = CourseExtraInfoTask(courseId!);
-    taskFlow.addTask(task);
-    if (await taskFlow.start()) {
-      courseExtraInfo = task.result!;
-    }
+    final extraTask = CourseExtraInfoTask(course);
+    taskFlow.addTask(extraTask);
 
-    final studentTask = IPlusCourseStudentList(courseId);
-    taskFlow.addTask(studentTask);
-    if(await taskFlow.start()) {
-      courseExtraInfo.classmate = studentTask.result!;
-    }
-    widget.courseInfo.extra = courseExtraInfo;
-    courseData.add(_buildCourseInfo(sprintf("%s: %s", [R.current.courseId, courseMainInfo.course!.id])));
-    courseData.add(_buildCourseInfo(sprintf("%s: %s", [R.current.courseName, courseMainInfo.course!.name])));
-    courseData.add(_buildCourseInfo(sprintf("%s: %s    ", [R.current.credit, courseMainInfo.course!.credits])));
-    courseData.add(_buildCourseInfo(sprintf("%s: %s    ", [R.current.category, courseExtraInfo.course!.category])));
+    await taskFlow.start();
+
+    courseData.add(_buildCourseInfo(sprintf("%s: %s", [R.current.courseId, course.snum])));
+    courseData.add(_buildCourseInfo(sprintf("%s: %s", [R.current.courseName, course.name])));
+    courseData.add(_buildCourseInfo(sprintf("%s: %s    ", [R.current.credit, course.credits])));
+    courseData.add(_buildCourseInfo(sprintf("%s: %s    ", [R.current.category, course.category])));
     courseData.add(
       _buildCourseInfoWithButton(
-        sprintf("%s: %s", [R.current.instructor, courseMainInfo.getTeacherName()]),
+        sprintf("%s: %s", [R.current.instructor, course.teacher]),
         R.current.syllabus,
-        courseMainInfo.course!.scheduleHref!,
+        course.snum,
+        course.code
       ),
     );
-    courseData.add(_buildCourseInfo(sprintf("%s: %s", [R.current.startClass, courseMainInfo.getOpenClassName()])));
+
+    courseData.add(_buildCourseInfo(sprintf("%s: %s", [R.current.startClass, course.openClass])));
     courseData.add(_buildMultiButtonInfo(
       sprintf("%s: ", [R.current.classroom]),
       R.current.classroomUse,
-      courseMainInfo.getClassroomNameList(),
-      courseMainInfo.getClassroomHrefList(),
+      course.classroomList,
+      course.year,
+      course.sem,
+      course.classroomCodeList
     ));
 
-    courseData.add(_buildCourseInfo(sprintf("%s: %s", [R.current.numberOfStudent, courseExtraInfo.course!.selectNumber])));
-    courseData.add(_buildCourseInfo(sprintf("%s: %s", [R.current.numberOfWithdraw, courseExtraInfo.course!.withdrawNumber])));
+    courseData.add(_buildCourseInfo(sprintf("%s: %s", [R.current.numberOfStudent, course.classmateNum])));
+    courseData.add(_buildCourseInfo(sprintf("%s: %s", [R.current.numberOfWithdraw,course.leaveNum])));
 
     listItem.removeRange(0, listItem.length);
     listItem.add(_buildInfoTitle(R.current.courseData));
     listItem.addAll(courseData);
 
-    if(courseExtraInfo.classmate != null) {
+    if(course.classmateList.isNotEmpty) {
       listItem.add(
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 0),
@@ -107,8 +99,8 @@ class _CourseInfoPageState extends State<CourseInfoPage> with AutomaticKeepAlive
         ),
       );
 
-      for (int i = 0; i < courseExtraInfo.classmate!.length; i++) {
-        ClassmateJson classmate = widget.courseInfo.extra!.classmate![i];
+      for (int i = 0; i < course.classmateList.length; i++) {
+        ClassmateJson classmate = course.classmateList[i];
         listItem.add(
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 0),
@@ -240,7 +232,7 @@ class _CourseInfoPageState extends State<CourseInfoPage> with AutomaticKeepAlive
     }
   }
 
-  Widget _buildCourseInfoWithButton(String text, String buttonText, String url) {
+  Widget _buildCourseInfoWithButton(String text, String buttonText, String snum, String code) {
     return Container(
       padding: const EdgeInsets.only(bottom: 5),
       child: Row(
@@ -252,10 +244,10 @@ class _CourseInfoPageState extends State<CourseInfoPage> with AutomaticKeepAlive
               style: const TextStyle(fontSize: 18),
             ),
           ),
-          (url.isNotEmpty)
+          (snum.isNotEmpty && code.isNotEmpty)
               ? ElevatedButton(
                   child: Text(buttonText),
-                  onPressed: () => _launchWebView(buttonText, url),
+                  onPressed: () => _launchWebView(buttonText, 'https://aps.ntut.edu.tw/course/tw/ShowSyllabus.jsp?snum=${snum}&code=${code}'),
                 )
               : const SizedBox.shrink(),
         ],
@@ -278,7 +270,7 @@ class _CourseInfoPageState extends State<CourseInfoPage> with AutomaticKeepAlive
     );
   }
 
-  Widget _buildMultiButtonInfo(String title, String buttonText, List<String> textList, List<String> urlList) {
+  Widget _buildMultiButtonInfo(String title, String buttonText, List<String> textList, String year, String sem, List<String> idList) {
     const textStyle = TextStyle(fontSize: 18);
     final classroomItemList = <Widget>[];
 
@@ -294,10 +286,10 @@ class _CourseInfoPageState extends State<CourseInfoPage> with AutomaticKeepAlive
                 style: textStyle,
               ),
               const SizedBox(width: 4),
-              urlList[i].isNotEmpty
+              idList[i].isNotEmpty
                   ? FittedBox(
                       child: ElevatedButton(
-                        onPressed: () => _launchWebView(buttonText, urlList[i]),
+                        onPressed: () => _launchWebView(buttonText, 'https://aps.ntut.edu.tw/course/tw/Croom.jsp?format=-3&year=${year}&sem=${sem}&code=${idList[i]}'),
                         child: Text(buttonText),
                       ),
                     )

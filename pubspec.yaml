@@ -79,14 +79,6 @@ dependencies:
   weekday_selector: ^1.1.0
   device_info_plus: ^9.1.2
 
-  firebase_core: ^2.25.4
-  firebase_analytics: ^10.8.5
-  firebase_crashlytics: ^3.4.14
-  firebase_remote_config: ^4.3.13
-  firebase_messaging: ^14.7.15
-  cloud_firestore: ^4.15.4
-  firebase_auth: ^4.17.4
-
   meta: ^1.10.0
   uuid: ^4.3.3
   intl_utils: ^2.8.7

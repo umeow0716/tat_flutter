@@ -209,6 +209,7 @@ class _TATWebViewCore extends StatelessWidget {
         onDownloadStartRequest: _onDownload,
         initialSettings: InAppWebViewSettings(
           useOnDownloadStart: true,
+  
         ),
   );
 }

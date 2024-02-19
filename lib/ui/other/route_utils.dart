@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_app/src/connector/core/dio_connector.dart';
-import 'package:flutter_app/src/model/coursetable/course_table_json.dart';
+import 'package:flutter_app/src/model/course/course_json.dart';
 import 'package:flutter_app/ui/pages/coursedetail/course_detail_page.dart';
 import 'package:flutter_app/ui/pages/coursedetail/screen/ischoolplus/iplus_announcement_detail_page.dart';
 import 'package:flutter_app/ui/pages/fileviewer/file_viewer_page.dart';
@@ -63,9 +63,9 @@ class RouteUtils {
     );
   }
 
-  static Future? toISchoolPage(String studentId, CourseInfoJson courseInfo) {
+  static Future? toISchoolPage(String studentId, Course course) {
     return Get.to(
-      () => ISchoolPage(studentId, courseInfo),
+      () => ISchoolPage(studentId, course),
       transition: transition,
     );
   }
@@ -118,15 +118,15 @@ class RouteUtils {
     DioConnector.instance.getAlice(navigatorKey: Get.key).showInspector();
   }
 
-  static Future? toIPlusAnnouncementDetailPage(CourseInfoJson courseInfo, Map detail) {
+  static Future? toIPlusAnnouncementDetailPage(Course course, Map detail) {
     return Get.to(
-      () => IPlusAnnouncementDetailPage(courseInfo, detail),
+      () => IPlusAnnouncementDetailPage(course, detail),
       transition: transition,
     );
   }
 
-  static Future? toVideoPlayer(String url, CourseInfoJson courseInfo, String name) => Get.to(
-        () => ClassVideoPlayer(url, courseInfo, name),
+  static Future? toVideoPlayer(String url, Course course, String name) => Get.to(
+        () => ClassVideoPlayer(url, course, name),
         transition: transition,
       );
 }

@@ -9,7 +9,6 @@ import 'package:flutter_app/src/providers/app_provider.dart';
 import 'package:flutter_app/src/r.dart';
 import 'package:flutter_app/src/task/ntut/ntut_task.dart';
 import 'package:flutter_app/src/task/task.dart';
-import 'package:flutter_app/src/util/analytics_utils.dart';
 import 'package:flutter_app/src/util/language_util.dart';
 import 'package:flutter_app/src/version/app_version.dart';
 import 'package:flutter_app/ui/other/my_toast.dart';
@@ -41,15 +40,10 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final modalRoute = ModalRoute.of(context);
-    if (modalRoute != null) {
-      AnalyticsUtils.observer.subscribe(this, modalRoute);
-    }
   }
 
   @override
   void dispose() {
-    AnalyticsUtils.observer.unsubscribe(this);
     super.dispose();
   }
 
@@ -171,12 +165,6 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
           ),
         ],
       );
-
-  void _onPageChange(int index) {
-    final screenName = _pageList[index].toString();
-    AnalyticsUtils.setScreenName(screenName);
-  }
-
   void _onTap(int index) {
     _pageController.jumpToPage(index);
   }
@@ -184,7 +172,6 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
   void _onPageChanged(int index) {
     setState(() {
       _currentIndex = index;
-      _onPageChange(_currentIndex);
     });
   }
 }

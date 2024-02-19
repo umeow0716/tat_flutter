@@ -1,16 +1,7 @@
-import 'dart:convert';
-import 'dart:io';
 
-import 'package:file_picker/file_picker.dart';
-import 'package:flutter_app/src/model/course/course_class_json.dart';
-import 'package:flutter_app/src/model/coursetable/course_table_json.dart';
-import 'package:flutter_app/src/task/course/course_semester_task.dart';
-import 'package:flutter_app/src/task/course/course_table_task.dart';
-import 'package:flutter_app/ui/other/customs_multi_select_dialog.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/debug/log/log.dart';
 import 'package:flutter_app/src/connector/ntut_connector.dart';
@@ -20,12 +11,10 @@ import 'package:flutter_app/src/store/local_storage.dart';
 import 'package:flutter_app/src/task/ntut/ntut_task.dart';
 import 'package:flutter_app/src/task/task_flow.dart';
 import 'package:flutter_app/ui/other/msg_dialog.dart';
-import 'package:flutter_app/ui/other/my_toast.dart';
 import 'package:flutter_app/ui/other/route_utils.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:get/get.dart';
-import 'package:multi_select_flutter/util/multi_select_item.dart';
 
 enum OnListViewPress {
   setting,
@@ -142,145 +131,19 @@ class _OtherPageState extends State<OtherPage> {
       case OnListViewPress.setting:
         RouteUtils.toSettingPage(widget.pageController);
         break;
-      case OnListViewPress.rollCallRemind:
-        // TODO(TU): update this log to the real feature log.
-        await FirebaseAnalytics.instance.logEvent(
-          name: 'z_roll_call_pre_msg_clicked',
-          parameters: {
-            'position': 'other_page',
-          },
-        );
-
-        break;
 
       case OnListViewPress.exportCourseTable:
-
-        const TextStyle textStyle = TextStyle(color: Color(0xFFE3E2E6), fontFamily: 'TATFont', fontWeight: FontWeight.w700);
-        const TextStyle itemStyle = TextStyle(color: Color(0xFFE3E2E6), fontFamily: 'TATFont', fontWeight: FontWeight.w400);
-
-        List<SemesterJson?>? semesterList = [];
-        String studentId = LocalStorage.instance.getUserData()?.account as String;
-        String studentName = LocalStorage.instance.getUserInfo()!.givenName!;
-
-        Future<void> export(List<SemesterJson> values) async {
-          List<String> courseTableList = [];
-
-          for(final value in values) {
-            TaskFlow taskFlow = TaskFlow();
-            var task = CourseTableTask(studentId, value);
-            taskFlow.addTask(task);
-            if (await taskFlow.start()) {
-              task.result!.courseInfoMap!.forEach((key, value) {
-                value.forEach((key, T) {
-                  T.main!.course!.scheduleHref = '';
-                });
-              });
-              courseTableList.add(const JsonEncoder().convert(task.result!.toJson()));
-            }
-          }
-
-          String exportData = const JsonEncoder().convert(courseTableList);
-
-          String path = await FileStore.findLocalPath();
-          String filename = '$studentId$studentName-TATCourseTable.json';
-          File file = File("$path/$filename");
-          
-          file.writeAsStringSync(exportData);
-
-          MsgDialog(MsgDialogParameter(
-            desc: "$filename\n至 「下載項目」 查看",
-            title: R.current.exportSuccess,
-            removeCancelButton: true,
-            dialogType: DialogType.success,
-          )).show();
-        }
-
-        final taskFlow = TaskFlow();
-        final task = CourseSemesterTask(studentId);
-        taskFlow.addTask(task);
-        if (!await taskFlow.start()) break;
-        
-        semesterList = task.result?.toList();
-        // ignore: use_build_context_synchronously
-        await showDialog(
-          context: context,
-          builder: (ctx) {
-            return  CustomMultiSelectDialog(
-              unselectedColor: Colors.white,
-              selectedColor: Colors.blueAccent,
-              title: Text(R.current.exportCourseTable, style: textStyle,),
-              checkColor: Colors.white,
-              cancelText: Text(R.current.cancel, style: textStyle,),
-              confirmText: Text(R.current.confirm, style: textStyle,),
-              itemsTextStyle: itemStyle,
-              selectedItemsTextStyle: itemStyle,
-              items: semesterList!.map((d) => MultiSelectItem<SemesterJson>(d!, '${d.year}-${d.semester}')).toList(),
-              initialValue: semesterList as List<SemesterJson>,
-              onConfirm: (values) async { await export(values); },
-            );
-          },
-        );
-
+        //TODO: modify to new class
         break;
 
       case OnListViewPress.importCourseTable:
-        FilePickerResult? result = await FilePicker.platform.pickFiles(
-          type: FileType.custom,
-          allowedExtensions: ['json'],
-        );
-        if(result == null) break;
-        try{
-          File file = result.paths.map((path) => File(path!)).toList().first;
-          List<CourseTableJson> courseTableList = [];
-          
-          String data = await file.readAsString();
-          List<dynamic> strList = jsonDecode(data);
-
-          for(final str in strList) {
-            Map<String, dynamic> table = jsonDecode(str);
-            CourseTableJson courseTable = CourseTableJson.fromJson(table);
-
-            if(courseTable.studentId == LocalStorage.instance.getAccount()) {
-              await MsgDialog(MsgDialogParameter(
-                desc: R.current.importErrorSelf,
-                title: R.current.error,
-                dialogType: DialogType.error,
-                removeCancelButton: true,
-                okButtonText: R.current.sure,
-              )).show();
-
-              break;
-            }
-
-            courseTableList.add(courseTable);
-          }
-
-          for(int i = 0 ; i < courseTableList.length ; i++) {
-            final courseTable = courseTableList[i];
-            LocalStorage.instance.addCourseTable(courseTable);
-
-            if(i == courseTableList.length - 1) {
-              await LocalStorage.instance.saveCourseTableList();
-              LocalStorage.instance.getCourseSetting()?.info = courseTableList[0];
-              LocalStorage.instance.getSemesterList()?.clear();
-              widget.pageController.jumpToPage(0);
-              MyToast.show(R.current.importSuccess);
-            }
-          }
-        } catch(e, stack) {
-          Log.eWithStack(e, stack);
-          await MsgDialog(MsgDialogParameter(
-            desc: R.current.importErrorWrongFile,
-            title: R.current.error,
-            dialogType: DialogType.error,
-            removeCancelButton: true,
-            okButtonText: R.current.sure,
-          )).show();
-        }
+        //TODO: modify to new class
         break;
-
-      default:
-        MyToast.show(R.current.noFunction);
+      case OnListViewPress.report:
+        // TODO: Handle this case.
+        break;
+      case OnListViewPress.rollCallRemind:
+        // TODO: Handle this case.
         break;
     }
   }

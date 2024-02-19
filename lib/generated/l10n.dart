@@ -1650,11 +1650,11 @@ class S {
     );
   }
 
-  /// `Student list`
-  String get studentList {
+  /// `Classmate list`
+  String get classmateList {
     return Intl.message(
-      'Student list',
-      name: 'studentList',
+      'Classmate list',
+      name: 'classmateList',
       desc: '',
       args: [],
     );
@@ -2620,21 +2620,21 @@ class S {
     );
   }
 
-  /// `Getting student list...`
-  String get getCourseStudentList {
+  /// `Getting classmate list...`
+  String get getCourseClassmateList {
     return Intl.message(
-      'Getting student list...',
-      name: 'getCourseStudentList',
+      'Getting classmate list...',
+      name: 'getCourseClassmateList',
       desc: '',
       args: [],
     );
   }
 
-  /// `Unable get student list`
-  String get getCourseStudentListError {
+  /// `Unable get classmate list`
+  String get getCourseClassmateListError {
     return Intl.message(
-      'Unable get student list',
-      name: 'getCourseStudentListError',
+      'Unable get classmate list',
+      name: 'getCourseClassmateListError',
       desc: '',
       args: [],
     );
