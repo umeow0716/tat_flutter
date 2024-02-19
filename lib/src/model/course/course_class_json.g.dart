@@ -16,16 +16,3 @@ Map<String, dynamic> _$SemesterJsonToJson(SemesterJson instance) =>
       'year': instance.year,
       'semester': instance.semester,
     };
-
-ClassmateJson _$ClassmateJsonFromJson(Map<String, dynamic> json) =>
-    ClassmateJson(
-      studentName: json['studentName'] as String?,
-      studentId: json['studentId'] as String?,
-    )..departmentName = json['departmentName'] as String?;
-
-Map<String, dynamic> _$ClassmateJsonToJson(ClassmateJson instance) =>
-    <String, dynamic>{
-      'departmentName': instance.departmentName,
-      'studentName': instance.studentName,
-      'studentId': instance.studentId,
-    };

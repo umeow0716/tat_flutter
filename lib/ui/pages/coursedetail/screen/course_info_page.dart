@@ -6,11 +6,11 @@ import 'package:flutter_app/src/model/course/course_json.dart';
 import 'package:flutter_app/src/r.dart';
 import 'package:flutter_app/src/task/course/course_extra_info_task.dart';
 import 'package:flutter_app/src/task/task_flow.dart';
+import 'package:flutter_app/src/util/language_util.dart';
 import 'package:flutter_app/ui/other/route_utils.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:get/get.dart';
 import 'package:sprintf/sprintf.dart';
-import 'package:flutter_app/src/model/course/course_class_json.dart';
 
 class CourseInfoPage extends StatefulWidget {
   final Course course;
@@ -100,11 +100,11 @@ class _CourseInfoPageState extends State<CourseInfoPage> with AutomaticKeepAlive
       );
 
       for (int i = 0; i < course.classmateList.length; i++) {
-        ClassmateJson classmate = course.classmateList[i];
+        final classmate = course.classmateList[i];
         listItem.add(
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 0),
-            child: _buildClassmateInfo(i, classmate.departmentName!, classmate.studentId!, classmate.getName()!),
+            child: _buildClassmateInfo(i, classmate[LanguageUtil.getLangIndex() == LangEnum.zh ? "departmentCN" : "departmentEN"] ?? R.current.unknownName, classmate["studentId"]!, classmate["name"]!),
           ),
         );
       }

@@ -55,7 +55,7 @@ Course _$CourseFromJson(Map<String, dynamic> json) => Course(
       ..classmateNum = json['classmateNum'] as String
       ..leaveNum = json['leaveNum'] as String
       ..classmateList = (json['classmateList'] as List<dynamic>)
-          .map((e) => ClassmateJson.fromJson(e as Map<String, dynamic>))
+          .map((e) => Map<String, String>.from(e as Map))
           .toList();
 
 Map<String, dynamic> _$CourseToJson(Course instance) => <String, dynamic>{

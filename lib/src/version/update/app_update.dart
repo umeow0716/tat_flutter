@@ -124,7 +124,7 @@ class _DynamicButton extends State<StatefulWidget> {
       final dio = Dio();
 
       final response = await dio.get(
-        'https://tat.umeow.eu.org/$latest/$filename', 
+        'https://tat.umeow.eu.org/$latest/$filename',
         onReceiveProgress: (int count, int total) {
           setState(() {
             _data = '${count ~/ 1024}/${total ~/ 1024} KB';

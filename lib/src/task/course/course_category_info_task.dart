@@ -1,12 +1,9 @@
-// ignore_for_file: import_of_legacy_library_into_null_safe
-
 import 'package:flutter_app/src/connector/course_connector.dart';
 import 'package:flutter_app/src/r.dart';
+import 'package:flutter_app/src/task/task.dart';
+import 'package:flutter_app/src/task/course/course_system_task.dart';
 
-import '../task.dart';
-import 'course_system_task.dart';
-
-class CourseCategoryInfoTask extends CourseSystemTask<String> {
+class CourseCategoryInfoTask extends CourseSystemTask<Map<String, String>> {
   final String id;
 
   CourseCategoryInfoTask(this.id) : super("CourseCategoryInfoTask");

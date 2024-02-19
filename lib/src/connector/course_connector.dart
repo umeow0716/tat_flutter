@@ -28,9 +28,9 @@ class CourseConnector {
   static Future<CourseConnectorStatus> login() async {
     final ssoHtml = await loginSSO();
     if(ssoHtml == null) return CourseConnectorStatus.unknownError;
-    
+
     final ssoInputs = ssoHtml.getElementsByTagName("input");
-    
+
     final jumpUrl = ssoHtml.getElementsByTagName("form")[0].attributes["action"];
     if(jumpUrl == null) return CourseConnectorStatus.loginFail;
 
@@ -144,13 +144,13 @@ class CourseConnector {
         'year': year,
         'sem': sem,
       };
-      
+
       final responseBody = await Connector.getDataByPost(parameter);
       final html = parse(responseBody);
 
       final courseTable = html.getElementsByTagName('table')[1];
       final courseElementList = courseTable.getElementsByTagName('tr');
-      
+
       for(int i = 1 ; i < courseElementList.length-1 ; i++) {
         final course = courseParser(courseElementList[i], studentId, year, sem);
         if(course == null) continue;
@@ -274,7 +274,7 @@ class CourseConnector {
         data['time'][ dayEnum[i-8] ] = tdList[i].innerHtml.trim().split(' ');
       }
     }
-        
+
     return Course(
       nameCN: courseNameElement.innerHtml.trim(),
       time: data['time'],
@@ -559,7 +559,7 @@ class CourseConnector {
     }
   }
 
-  static Future<String?> getCourseCategoryInfo(String courseId) async {
+  static Future<Map<String, String>?> getCourseCategoryInfo(String courseId) async {
     try {
       Map<String, String> result = <String, String>{
         'courseId': courseId
@@ -579,13 +579,21 @@ class CourseConnector {
       tagNode = parse(response);
       courseNodes = tagNode.getElementsByTagName("td");
 
-      result['category'] = courseNodes[6].innerHtml;
-      result['openClass'] = courseNodes[8].innerHtml;
+      result['category'] = courseNodes[6].innerHtml.trim();
+      result['openClass'] = courseNodes[8].innerHtml.trim();
 
-      return result['category'];
+      return {
+        "courseId": courseId,
+        "category": result["category"] ?? '',
+        "openClass": result["openClass"] ?? '',
+      };
     } catch (e, stack) {
       Log.eWithStack(e.toString(), stack);
-      return 'Unknown';
+      return {
+        "courseId": courseId,
+        "category": '',
+        "openClass": ''
+      };
     }
   }
 }

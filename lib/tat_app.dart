@@ -35,7 +35,7 @@ const String _kVersion = 'version';
 
 Future<void> runTATApp() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   final appDocDir = (await getApplicationDocumentsDirectory()).path;
   final CookieJar cookieJar = PersistCookieJar(storage: FileStorage('$appDocDir/.cookies'));
 

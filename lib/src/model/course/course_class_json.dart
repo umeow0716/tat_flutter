@@ -1,7 +1,6 @@
 import 'package:flutter_app/src/model/json_init.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sprintf/sprintf.dart';
-import 'package:flutter_app/src/util/language_util.dart';
 import 'package:flutter_app/src/r.dart';
 
 part 'course_class_json.g.dart';
@@ -45,15 +44,7 @@ class SemesterJson {
   int get hashCode => Object.hashAll([semester.hashCode, year.hashCode]);
 }
 
-@JsonSerializable()
-class ClassmateJson {
-  String? departmentName; //電機系
-  //String studentEnglishName;
-  String? studentName;
-  String? studentId;
-  //String href;
-  //bool isSelect; //是否撤選
-
+class Classmate {
   static const List<Map<String, String>> studentIdData = [
     {
       "code": "01",
@@ -337,50 +328,33 @@ class ClassmateJson {
     }
   ];
 
-  ClassmateJson({/*this.className, this.studentEnglishName,*/ this.studentName, this.studentId/*, this.isSelect, this.href*/}) {
-    departmentName = JsonInit.stringInit(departmentName);
-    // studentEnglishName = JsonInit.stringInit(studentEnglishName);
-    studentName = JsonInit.stringInit(studentName);
-    studentId = JsonInit.stringInit(studentId);
-    // href = JsonInit.stringInit(href);
-    // isSelect = isSelect ?? false;
+  static String getDepartmentCN(String? studentId) {
+    if(studentId == null) return R.current.unknownName;
+
+    String? result;
 
     for(int i = 0 ; i < studentIdData.length ; i++) {
-      if(studentIdData[i]['code'] == studentId!.substring(3, 5)) {
-        departmentName = studentIdData[i][
-          LanguageUtil.getLangIndex() == LangEnum.zh ? 'tw' : 'en'
-        ]!;
+      if(studentIdData[i]['code'] == studentId.substring(3, 5)) {
+        result = studentIdData[i]['tw'];
         break;
       }
+    }
 
-      if(i == studentIdData.length - 1) {
-        departmentName = R.current.unknownName;
+    return result ?? R.current.unknownName;
+  }
+
+  static String getDepartmentEN(String? studentId) {
+    if(studentId == null) return R.current.unknownName;
+
+    String? result;
+
+    for(int i = 0 ; i < studentIdData.length ; i++) {
+      if(studentIdData[i]['code'] == studentId.substring(3, 5)) {
+        result = studentIdData[i]['en'];
+        break;
       }
     }
+
+    return result ?? R.current.unknownName;
   }
-
-  bool get isEmpty {
-    return studentName!.isEmpty && studentId!.isEmpty /* && href.isEmpty && className.isEmpty && studentEnglishName.isEmpty */;
-  }
-
-  @override
-  String toString() {
-    return sprintf(
-        "departmentName         : %s \nstudentName         : %s \nstudentId           : %s",
-        [departmentName, /*studentEnglishName,*/ studentName, studentId, /*href, isSelect.toString()*/]);
-  }
-
-  String? getName() {
-    String? name;
-    // if (LanguageUtil.getLangIndex() == LangEnum.en) {
-    //   name = studentEnglishName;
-    // }
-    name = name ?? studentName;
-    name = (name!.contains(RegExp(r"\w"))) ? name : studentName;
-    return name;
-  }
-
-  factory ClassmateJson.fromJson(Map<String, dynamic> json) => _$ClassmateJsonFromJson(json);
-
-  Map<String, dynamic> toJson() => _$ClassmateJsonToJson(this);
 }

@@ -1,5 +1,4 @@
 import 'package:flutter_app/debug/log/log.dart';
-import 'package:flutter_app/src/model/course/course_class_json.dart';
 import 'package:flutter_app/src/util/language_util.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -24,7 +23,7 @@ class Course {
   String hours = '';
 
   String currCode = ''; // use for Curr.jsp query: code
-  
+
   String teacherCN = '';
   String teacherEN = '';
   String teacherCode = ''; // use for Teach.jsp query: code
@@ -45,13 +44,13 @@ class Course {
   List<String> classroomCNList = [];
   List<String> classroomENList = [];
   List<String> classroomCodeList = [];
-  
+
   bool hasExtra = false;
 
   String category = '';
   String classmateNum = '';
   String leaveNum = '';
-  List<ClassmateJson> classmateList = [];
+  List<Map<String, String>> classmateList = [];
 
   Course({
     String? studentId,
@@ -101,14 +100,14 @@ class Course {
     String? category,
     String? classmateNum,
     String? leaveNum,
-    List<ClassmateJson>? classmateList
+    List<Map<String, String>>? classmateList
   }) {
     try {
       this.category = category ?? this.category;
       this.classmateNum = classmateNum ?? this.classmateNum;
       this.leaveNum = leaveNum ?? this.leaveNum;
       this.classmateList = classmateList ?? this.classmateList;
-      
+
       hasExtra = true;
       return true;
     } catch(e, stack) {

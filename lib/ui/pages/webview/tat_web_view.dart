@@ -138,7 +138,7 @@ class _TATWebViewState extends State<TATWebView> {
       hasPop = true;
       return Navigator.of(context).pop();
     }
-    
+
     _controller?.canGoBack().then((bool result) {
       if(result) {
         _controller?.goBack();
@@ -157,7 +157,7 @@ class _TATWebViewState extends State<TATWebView> {
             onPressed: () {
               onPop(true);
             },
-          ), 
+          ),
           title: Text(widget._title ?? ''),
         ),
         body: PopScope(
@@ -209,7 +209,7 @@ class _TATWebViewCore extends StatelessWidget {
         onDownloadStartRequest: _onDownload,
         initialSettings: InAppWebViewSettings(
           useOnDownloadStart: true,
-  
+
         ),
   );
 }

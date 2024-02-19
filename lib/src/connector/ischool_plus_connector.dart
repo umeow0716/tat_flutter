@@ -31,7 +31,7 @@ class ISchoolPlusConnector {
   //static final String _iSchoolPlusIndexUrl = _iSchoolPlusUrl + "mooc/index.php";
   static const String _getCourseName = "${_iSchoolPlusUrl}learn/mooc_sysbar.php";
   static const _ssoLoginUrl = "${NTUTConnector.host}ssoIndex.do";
-  
+
   static const String _getClassmateList = "${_iSchoolPlusUrl}learn/learn_ranking.php";
 
   /// The Authorization Step of ISchool (2023-10-21)
@@ -101,7 +101,7 @@ class ISchoolPlusConnector {
           break;
         }
       } while ((retryTimes--) > 0);
-      
+
       return ISchoolPlusConnectorStatus.loginSuccess;
     } catch (e, stack) {
       Log.eWithStack(e.toString(), stack);
@@ -527,44 +527,40 @@ class ISchoolPlusConnector {
     }
   }
 
-  static Future<List<ClassmateJson>?> getCourseClasmateList(String courseId) async {
-    ConnectorParameter parameter;
-    html.Document tagNode;
-    html.Element node;
-    html.Element table;
-    List<html.Element> nodes;
-    String response;
-    List<ClassmateJson> result = [];
+  static Future<List<Map<String, String>>?> getCourseClasmateList(String courseId) async {
+    List<Map<String, String>> result = [];
+    
     try {
       if (!await _selectCourse(courseId)) {
         return null;
       }
 
-      parameter = ConnectorParameter(_getClassmateList);
-      response = await Connector.getDataByGet(parameter);
-      tagNode = html.parse(response);
-      table = tagNode.querySelectorAll('table')[1];
-      nodes = table.querySelectorAll('tr');
-      
+      final parameter = ConnectorParameter(_getClassmateList);
+      final response = await Connector.getDataByGet(parameter);
+      final tagNode = html.parse(response);
+      final table = tagNode.querySelectorAll('table')[1];
+      final nodes = table.querySelectorAll('tr');
+
       for(int i = 0 ; i < nodes.length ; i++) {
-        node = nodes[i].querySelectorAll('td')[1];
+        final node = nodes[i].querySelectorAll('td')[1];
 
         String information = node.querySelector('div')!.innerHtml;
         int splitIndex = information.indexOf(' ');
-        
+
         String studentId = information.substring(0, splitIndex);
         String studentName = information.substring(splitIndex + 2, information.length-1);
 
         if(studentId == 'istudyoaa') continue; //過濾掉校務人士 如有多身分考慮枚舉或過濾Email
 
-        ClassmateJson student = ClassmateJson(
-          studentName: studentName, 
-          studentId: studentId
-        );
-        result.add(student);
+        result.add({
+          "name": studentName,
+          "studentId": studentId,
+          "departmentCN": Classmate.getDepartmentCN(studentId),
+          "departmentEN": Classmate.getDepartmentEN(studentId)
+        });
       }
 
-      result.sort((a, b) => a.studentId!.compareTo(b.studentId!));
+      result.sort((a, b) => a["studentId"]!.compareTo(b["studentId"]!));
 
       return result.isNotEmpty ? result : null;
     } catch (e, stack) {

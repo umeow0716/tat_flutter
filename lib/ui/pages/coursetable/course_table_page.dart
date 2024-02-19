@@ -170,7 +170,7 @@ class _CourseTablePageState extends State<CourseTablePage> {
 
     List<Course>? courseTable;
     if (!refresh) {
-      courseTable = LocalStorage.instance.courses.where((course) => 
+      courseTable = LocalStorage.instance.courses.where((course) =>
         course.studentId == studentId &&
         course.year == year &&
         course.sem == sem
@@ -190,7 +190,7 @@ class _CourseTablePageState extends State<CourseTablePage> {
         courseTable = task.result;
       }
     }
-    
+
     if (courseTable != null && courseTable.isNotEmpty) {
       _showCourseTable(courseTable);
     }
@@ -552,6 +552,9 @@ class _CourseTablePageState extends State<CourseTablePage> {
   }
 
   Widget _buildCourseTable(int index) {
+    final renderObject = _key.currentContext?.findRenderObject();
+    courseHeight = (renderObject!.semanticBounds.size.height - studentIdHeight - dayHeight) / showCourseTableNum;
+    
     final section = courseTableControl.getSectionIntList[index];
     final color = index % 2 == 1
         ? Theme.of(context).colorScheme.surface
@@ -619,6 +622,7 @@ class _CourseTablePageState extends State<CourseTablePage> {
         ),
       );
     }
+
     return Container(
       color: color,
       height: courseHeight,
