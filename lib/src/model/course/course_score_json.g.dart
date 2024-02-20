@@ -55,9 +55,9 @@ Map<String, dynamic> _$GraduationInformationJsonToJson(
 SemesterCourseScoreJson _$SemesterCourseScoreJsonFromJson(
         Map<String, dynamic> json) =>
     SemesterCourseScoreJson(
-      semester: json['semester'] == null
-          ? null
-          : SemesterJson.fromJson(json['semester'] as Map<String, dynamic>),
+      semester: (json['semester'] as Map<String, dynamic>?)?.map(
+        (k, e) => MapEntry(k, e as String),
+      ),
       now: json['now'] == null
           ? null
           : RankJson.fromJson(json['now'] as Map<String, dynamic>),

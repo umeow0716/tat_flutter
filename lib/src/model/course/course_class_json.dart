@@ -1,48 +1,4 @@
-import 'package:flutter_app/src/model/json_init.dart';
-import 'package:json_annotation/json_annotation.dart';
-import 'package:sprintf/sprintf.dart';
 import 'package:flutter_app/src/r.dart';
-
-part 'course_class_json.g.dart';
-
-@JsonSerializable()
-class SemesterJson {
-  String? year;
-  String? semester;
-
-  SemesterJson({this.year, this.semester}) {
-    year = JsonInit.stringInit(year);
-    semester = JsonInit.stringInit(semester);
-  }
-
-  bool get isEmpty {
-    return year!.isEmpty && semester!.isEmpty;
-  }
-
-  @override
-  String toString() {
-    return sprintf("year     : %s \n" "semester : %s \n", [year, semester]);
-  }
-
-  @override
-  bool operator ==(dynamic other) {
-    if (other is! SemesterJson) {
-      return false;
-    }
-
-    final isSemesterSame = int.tryParse(other.semester!) == int.tryParse(semester!);
-    final isYearSame = int.tryParse(other.year!) == int.tryParse(year!);
-
-    return isSemesterSame && isYearSame;
-  }
-
-  factory SemesterJson.fromJson(Map<String, dynamic> json) => _$SemesterJsonFromJson(json);
-
-  Map<String, dynamic> toJson() => _$SemesterJsonToJson(this);
-
-  @override
-  int get hashCode => Object.hashAll([semester.hashCode, year.hashCode]);
-}
 
 class Classmate {
   static const List<Map<String, String>> studentIdData = [

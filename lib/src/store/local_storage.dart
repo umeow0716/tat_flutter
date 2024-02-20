@@ -10,8 +10,6 @@ import 'package:flutter_app/src/model/userdata/user_data_json.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../model/course/course_class_json.dart';
-
 class LocalStorage {
   LocalStorage._();
 
@@ -37,7 +35,7 @@ class LocalStorage {
   UserDataJson? _userData;
   CourseScoreCreditJson? _courseScoreList;
   SettingJson? _setting;
-  List<SemesterJson?>? _courseSemesterList = [];
+  List<Map<String, String>?>? _courseSemesterList = [];
   List<Course> courses = [];
 
   bool? get autoCheckAppUpdate => _setting?.other?.autoCheckAppUpdate;
@@ -158,17 +156,17 @@ class LocalStorage {
 
     if (readJsonList != null) {
       for (final readJson in readJsonList) {
-        _courseSemesterList?.add(SemesterJson.fromJson(json.decode(readJson)));
+        _courseSemesterList?.add(json.decode(readJson));
       }
     }
   }
 
-  void setSemesterJsonList(List<SemesterJson?>? value) => _courseSemesterList = value;
+  void setSemesterJsonList(List<Map<String, String>?>? value) => _courseSemesterList = value;
 
-  SemesterJson? getSemesterJsonItem(int index) =>
+  Map<String, String>? getSemesterJsonItem(int index) =>
       ((_courseSemesterList?.length ?? -1) > index) ? _courseSemesterList![index] : null;
 
-  List<SemesterJson?>? getSemesterList() => _courseSemesterList;
+  List<Map<String, String>?>? getSemesterList() => _courseSemesterList;
 
   String? getVersion() => _readString("version");
 

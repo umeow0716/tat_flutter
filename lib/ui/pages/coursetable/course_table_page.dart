@@ -8,7 +8,6 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_app/debug/log/log.dart';
 import 'package:flutter_app/src/config/app_config.dart';
-import 'package:flutter_app/src/model/course/course_class_json.dart';
 import 'package:flutter_app/src/model/course/course_json.dart';
 import 'package:flutter_app/src/model/userdata/user_data_json.dart';
 import 'package:flutter_app/src/r.dart';
@@ -181,8 +180,8 @@ class _CourseTablePageState extends State<CourseTablePage> {
       TaskFlow taskFlow = TaskFlow();
       if((year?.isEmpty ?? true) || (sem?.isEmpty ?? true)) {
         final semester = LocalStorage.instance.getSemesterList()?.first;
-        year = semester?.year;
-        sem = semester?.semester;
+        year = semester?["year"];
+        sem = semester?["sem"];
       }
       final task = CourseTableTask(year, sem);
       taskFlow.addTask(task);
@@ -196,13 +195,13 @@ class _CourseTablePageState extends State<CourseTablePage> {
     }
   }
 
-  Widget _getSemesterItem(SemesterJson? semester) {
-    final semesterString = "${semester?.year}-${semester?.semester}";
+  Widget _getSemesterItem(Map<String, String>? semester) {
+    final semesterString = "${semester?["year"] ?? ''}-${semester?["sem"] ?? ''}";
     return TextButton(
       child: Text(semesterString),
       onPressed: () {
         Get.back();
-        _getCourseTable(year: semester!.year, sem: semester.semester, studentId: _studentIdControl.text); //取得課表
+        _getCourseTable(year: semester?["year"], sem: semester?["sem"], studentId: _studentIdControl.text); //取得課表
       },
     );
   }
@@ -218,7 +217,7 @@ class _CourseTablePageState extends State<CourseTablePage> {
       }
     }
 
-    final List<SemesterJson?>? semesterList = LocalStorage.instance.getSemesterList();
+    final semesterList = LocalStorage.instance.getSemesterList();
 
     if (semesterList == null) {
       return;
@@ -353,9 +352,9 @@ class _CourseTablePageState extends State<CourseTablePage> {
 
   @override
   Widget build(BuildContext context) {
-    final semesterSetting = SemesterJson();
+    final semesterSetting = {};
     final semesterString = (courseTableData == null || (courseTableData ?? []).isEmpty) ?
-      "${semesterSetting.year}-${semesterSetting.semester}" :
+      "${semesterSetting["year"] ?? ''}-${semesterSetting["sem"] ?? ''}" :
       "${courseTableData!.first.year}-${courseTableData!.first.sem}";
 
     return Scaffold(

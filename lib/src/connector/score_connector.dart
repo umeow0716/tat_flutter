@@ -1,6 +1,5 @@
 import 'package:flutter_app/debug/log/log.dart';
 import 'package:flutter_app/src/connector/ntut_connector.dart';
-import 'package:flutter_app/src/model/course/course_class_json.dart';
 import 'package:flutter_app/src/model/course/course_score_json.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
@@ -96,9 +95,12 @@ class ScoreConnector {
 
         SemesterCourseScoreJson courseScore = SemesterCourseScoreJson();
 
-        SemesterJson semester = SemesterJson();
-        semester.year = h3Node.text.split(" ")[0];
-        semester.semester = h3Node.text.split(" ")[3];
+        final h3TextList = h3Node.text.split(" ");
+
+        final semester = {
+          "year": h3TextList[0],
+          "sem": h3TextList[3],
+        };
         courseScore.semester = semester;
         //取得課程名稱與分數
         scoreNodes = tableNode.getElementsByTagName("tr");
@@ -154,10 +156,11 @@ class ScoreConnector {
               .where((row) => row.getElementsByTagName("td").length >= 7)
               .toList(growable: false);
           for (int i = 0; i < (rankNodes.length / 3).floor(); i++) {
-            SemesterJson semester = SemesterJson();
-            String semesterString = rankNodes[i * 3 + 2].getElementsByTagName("td")[0].innerHtml.split("<br>").first;
-            semester.year = semesterString.split(" ")[0];
-            semester.semester = semesterString.split(" ").reversed.toList()[0];
+            final semesterString = rankNodes[i * 3 + 2].getElementsByTagName("td")[0].innerHtml.split("<br>").first;
+            Map<String, String> semester = {
+              "year": semesterString.split(" ")[0].trim(),
+              "sem": semesterString.split(" ").reversed.toList()[0].trim(),
+            };
             //取得學期成績排名
             RankJson rankNow = RankJson();
             RankItemJson rankItemCourse = RankItemJson();

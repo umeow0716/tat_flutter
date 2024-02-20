@@ -1,4 +1,3 @@
-import 'package:flutter_app/src/model/course/course_class_json.dart';
 import 'package:flutter_app/src/model/json_init.dart';
 import 'package:flutter_app/src/util/language_util.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -26,9 +25,9 @@ class CourseScoreCreditJson {
   }
 
   //利用學期取得課程資訊
-  SemesterCourseScoreJson? getCourseBySemester(SemesterJson semesterJson) {
-    for (final i in semesterCourseScoreList!) {
-      if (i.semester == semesterJson) {
+  SemesterCourseScoreJson? getCourseBySemester(Map<String, String> semester) {
+    for (final i in semesterCourseScoreList ?? []) {
+      if (i["year"] == semester["year"] && i["sem"] == semester["sem"]) {
         return i;
       }
     }
@@ -72,11 +71,11 @@ class CourseScoreCreditJson {
   }
 
   //取得所有學期
-  List<SemesterJson> getSemesterList() {
-    final value = <SemesterJson>[];
+  List<Map<String, String>> getSemesterList() {
+    final value = <Map<String, String>>[];
 
-    for (final i in semesterCourseScoreList!) {
-      value.add(i.semester!);
+    for (final i in semesterCourseScoreList ?? []) {
+      if(i.semester?.isNotEmpty ?? false) value.add(i.semester!);
     }
 
     return value;
@@ -103,8 +102,8 @@ class CourseScoreCreditJson {
   Map<String, List<CourseScoreInfoJson>> getCourseByType(String type) {
     final result = <String, List<CourseScoreInfoJson>>{};
 
-    for (final i in semesterCourseScoreList!) {
-      final semester = sprintf("%s-%s", [i.semester!.year, i.semester!.semester]);
+    for (final i in semesterCourseScoreList ?? []) {
+      final semester = getSemesterString(i.semester ?? {});
       result[semester] = [];
       for (final j in i.courseScoreList!) {
         if (j.category!.contains(type) && j.isPass) {
@@ -115,7 +114,7 @@ class CourseScoreCreditJson {
     return result;
   }
 
-  String getSemesterString(SemesterJson semester) => sprintf("%s-%s", [semester.year, semester.semester]);
+  String getSemesterString(Map<String, String> semester) => sprintf("%s-%s", [semester["year"] ?? '', semester["sem"] ?? '']);
 
   /*
   key
@@ -224,7 +223,7 @@ class GraduationInformationJson {
 
 @JsonSerializable()
 class SemesterCourseScoreJson {
-  SemesterJson? semester;
+  Map<String, String>? semester = {};
   RankJson? now;
   RankJson? history;
   List<CourseScoreInfoJson>? courseScoreList;
@@ -246,7 +245,7 @@ class SemesterCourseScoreJson {
     now = now ?? RankJson();
     history = history ?? RankJson();
     courseScoreList = courseScoreList ?? [];
-    semester = semester ?? SemesterJson();
+    semester = semester ?? {};
     averageScore = averageScore ?? 0;
     performanceScore = performanceScore ?? 0;
     totalCredit = totalCredit ?? 0;

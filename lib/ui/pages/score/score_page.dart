@@ -312,7 +312,7 @@ class _ScoreViewerPageState extends State<ScoreViewerPage> with TickerProviderSt
 
     for (int i = 0; i < courseScoreList.length; i++) {
       final courseScore = courseScoreList[i];
-      tabLabelList.add(_buildTabLabel("${courseScore.semester!.year}-${courseScore.semester!.semester}"));
+      tabLabelList.add(_buildTabLabel("${courseScore.semester?["year"] ?? ''}-${courseScore.semester?["sem"] ?? ''}"));
       tabChildList.add(_buildSemesterScores(courseScore));
     }
 

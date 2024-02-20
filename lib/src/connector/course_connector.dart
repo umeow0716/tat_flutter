@@ -1,9 +1,7 @@
-import 'package:dio/dio.dart';
 import 'package:flutter_app/debug/log/log.dart';
 import 'package:flutter_app/src/connector/core/connector.dart';
 import 'package:flutter_app/src/connector/core/connector_parameter.dart';
 import 'package:flutter_app/src/connector/ntut_connector.dart';
-import 'package:flutter_app/src/model/course/course_class_json.dart';
 import 'package:flutter_app/src/model/course/course_json.dart';
 import 'package:flutter_app/src/model/course/course_score_json.dart';
 import 'package:flutter_app/src/store/local_storage.dart';
@@ -81,32 +79,31 @@ class CourseConnector {
     }
   }
 
-  static Future<List<SemesterJson>?> getCourseSemester(String studentId) async {
+  static Future<List<Map<String, String>>?> getCourseSemester(String studentId) async {
     try {
-      ConnectorParameter parameter;
-      Document tagNode;
-      Element node;
-      List<Element> nodes;
-
       Map<String, String> data = {
         "code": studentId,
         "format": "-3",
       };
-      parameter = ConnectorParameter(_postCourseCNUrl);
+      final parameter = ConnectorParameter(_postCourseCNUrl);
       parameter.data = data;
-      Response response = await Connector.getDataByPostResponse(parameter);
-      tagNode = parse(response.toString());
-      node = tagNode.getElementsByTagName("table")[0];
-      nodes = node.getElementsByTagName("tr");
-      List<SemesterJson> semesterJsonList = [];
-      for (int i = 1; i < nodes.length; i++) {
-        node = nodes[i];
-        String year, semester;
-        year = node.getElementsByTagName("a")[0].text.split(" ")[0];
-        semester = node.getElementsByTagName("a")[0].text.split(" ")[2];
-        semesterJsonList.add(SemesterJson(year: year, semester: semester));
+      
+      final response = await Connector.getDataByPostResponse(parameter);
+      final tagNode = parse(response.toString());
+      final table = tagNode.getElementsByTagName("table")[0];
+      final nodes = table.getElementsByTagName("tr").skip(1).toList();
+      
+      List<Map<String, String>> semesterList = [];
+      for (final node in nodes) {
+        final year = node.getElementsByTagName("a")[0].text.split(" ")[0];
+        final semester = node.getElementsByTagName("a")[0].text.split(" ")[2];
+        semesterList.add({
+          "year": year,
+          "sem": semester
+        });
       }
-      return semesterJsonList;
+      
+      return semesterList;
     } catch (e, stack) {
       Log.eWithStack(e.toString(), stack);
       return null;
@@ -540,10 +537,6 @@ class CourseConnector {
       final leaveNum = courseNodes[10].innerHtml.trim();
 
       final classmateList = await ISchoolPlusConnector.getCourseClasmateList(course.snum);
-
-      if(LanguageUtil.getLangIndex() == LangEnum.en) {
-
-      }
 
       course.setExtra(
         category: category,
