@@ -27,6 +27,7 @@ class LocalStorage {
   final _courseSemesterJsonKey = "CourseSemesterListJson";
   final _scoreCreditJsonKey = "ScoreCreditJsonKey";
   final _settingJsonKey = "SettingJsonKey";
+  final _courseTableSettingJsonKey = "CourseTableSettingJson";
   final _firstRun = <String, bool>{};
 
   final _httpClientInterceptors = <Interceptor>[];
@@ -37,6 +38,7 @@ class LocalStorage {
   SettingJson? _setting;
   List<Map<String, String>?>? _courseSemesterList = [];
   List<Course> courses = [];
+  Map<String, String?> _courseTableSetting = {};
 
   bool? get autoCheckAppUpdate => _setting?.other?.autoCheckAppUpdate;
 
@@ -75,6 +77,11 @@ class LocalStorage {
   void _loadUserData() {
     final readJson = _readString(_userDataJsonKey);
     _userData = (readJson != null) ? UserDataJson.fromJson(json.decode(readJson)) : UserDataJson();
+  }
+
+  void _loadCourseTableSetting() {
+    final readJson = _readString(_courseTableSettingJsonKey);
+    _courseTableSetting = Map.castFrom(json.decode(readJson ?? '{}'));
   }
 
   void setAccount(String account) => _userData?.account = account;
@@ -133,7 +140,15 @@ class LocalStorage {
         (readJson != null) ? CourseScoreCreditJson.fromJson(json.decode(readJson)) : CourseScoreCreditJson();
   }
 
-  Future<void> saveCourseSetting() => _saveSetting();
+  Future<void> saveCourseSetting() async {
+    await _saveSetting();
+  } 
+
+  Map<String, String?> getCourseTableSetting () => _courseTableSetting;
+
+  Future<void> saveCourseTableSetting() async {
+    await _save(_courseTableSettingJsonKey, _courseTableSetting);
+  }
 
   Future<void> saveOtherSetting() => _saveSetting();
 
@@ -178,6 +193,7 @@ class LocalStorage {
     _httpClientInterceptors.addAll(httpClientInterceptors);
     _courseSemesterList = _courseSemesterList;
     _loadUserData();
+    _loadCourseTableSetting();
     _loadSetting();
     _loadCourseScoreCredit();
     _loadSemesterJsonList();

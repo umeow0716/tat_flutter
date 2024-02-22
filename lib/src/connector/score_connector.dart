@@ -74,12 +74,11 @@ class ScoreConnector {
     List<Element> scoreNodes;
     List<SemesterCourseScoreJson> courseScoreList = [];
     try {
-      Map<String, String> data = {"format": "-2"};
       parameter = ConnectorParameter(_scoreAllScoreUrl);
-      parameter.data = data;
+      parameter.data = {"format": "-2"};
       result = await Connector.getDataByGet(parameter);
       
-      final List<String> evalQuestionnaireCheckTexts = ['教學評量', 'Course Evaluation Questionnaire'];
+      final evalQuestionnaireCheckTexts = ['教學評量', 'Course Evaluation Questionnaire'];
       if (evalQuestionnaireCheckTexts.any((text) => result.contains(text))) {
         throw const FormatException(
             "[TAT] score_connector.dart: evalQuestionnaireCheckTexts was found in request result");
@@ -142,7 +141,7 @@ class ScoreConnector {
 
       try {
           parameter = ConnectorParameter(_scoreRankUrl);
-          parameter.data = data;
+          parameter.data = {"format": "-2"};
           parameter.charsetName = "big5";
           result = await Connector.getDataByGet(parameter);
           tagNode = parse(result);

@@ -9,7 +9,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_app/debug/log/log.dart';
 import 'package:flutter_app/src/config/app_config.dart';
 import 'package:flutter_app/src/model/course/course_json.dart';
-import 'package:flutter_app/src/model/userdata/user_data_json.dart';
 import 'package:flutter_app/src/r.dart';
 import 'package:flutter_app/src/store/local_storage.dart';
 import 'package:flutter_app/src/task/course/course_semester_task.dart';
@@ -158,9 +157,12 @@ class _CourseTablePageState extends State<CourseTablePage> {
 
   void _getCourseTable({String? year, String? sem, String? studentId, bool refresh = false}) async {
     await Future.delayed(const Duration(microseconds: 100)); //等待頁面刷新
-    UserDataJson? userData = LocalStorage.instance.getUserData();
-    studentId = studentId?.trim() ?? '';
-    studentId = (studentId.isEmpty ? null : studentId) ?? userData?.account;
+    
+    final setting = LocalStorage.instance.getCourseTableSetting();
+    year = year ?? setting["year"];
+    sem = sem ?? setting["sem"];
+    
+    studentId = setting["studentId"] ?? LocalStorage.instance.getAccount();
     if (courseTableData?.firstOrNull?.studentId != studentId) {
       LocalStorage.instance.clearSemesterJsonList(); //需重設因為更換了studentId
     }
@@ -193,6 +195,10 @@ class _CourseTablePageState extends State<CourseTablePage> {
     if (courseTable != null && courseTable.isNotEmpty) {
       _showCourseTable(courseTable);
     }
+
+    setting["year"] = year;
+    setting["sem"] = sem;
+    LocalStorage.instance.saveCourseTableSetting();
   }
 
   Widget _getSemesterItem(Map<String, String>? semester) {
