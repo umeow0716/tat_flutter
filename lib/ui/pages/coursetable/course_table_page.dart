@@ -179,7 +179,6 @@ class _CourseTablePageState extends State<CourseTablePage> {
       LocalStorage.instance.clearSemesterJsonList(); //需重設因為更換了studentId
     }
     SemesterJson semesterJson;
-    print(studentId);
     if ((semesterSetting.isEmpty || semesterSetting.semester.isEmpty || semesterSetting.year.isEmpty) && studentId == LocalStorage.instance.getAccount()) {
       await _getSemesterList(studentId);
       semesterJson = LocalStorage.instance.getSemesterJsonItem(0);

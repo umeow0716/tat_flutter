@@ -33,35 +33,38 @@ class CourseConnector {
   static const String _coutseInfoCNUrl = "${_courseCNHost}ShowSyllabus.jsp";
 
   static Future<CourseConnectorStatus> login() async {
-    String result;
     try {
-      ConnectorParameter parameter;
-      Document tagNode;
-      List<Element> nodes;
-      Map<String, String> data = {
+      final authParameter = ConnectorParameter(_ssoLoginUrl);
+      authParameter.data = {
         "apUrl": "https://aps.ntut.edu.tw/course/tw/courseSID.jsp",
-        "apOu": "aa_0010-",
+        "apOu": "aa_0010-oauth",
         "sso": "true",
         "datetime1": DateTime.now().millisecondsSinceEpoch.toString()
       };
-      parameter = ConnectorParameter(_ssoLoginUrl);
-      parameter.data = data;
-      result = await Connector.getDataByGet(parameter);
-      tagNode = parse(result);
-      nodes = tagNode.getElementsByTagName("input");
-      data = {};
-      for (Element node in nodes) {
-        String name = node.attributes['name'];
-        String value = node.attributes['value'];
+      final authResponse = await Connector.getDataByGet(authParameter);
+      final Map<String, String> data = {};
+
+      final tagNode = parse(authResponse);
+      final nodes = tagNode.getElementsByTagName("input");
+      for(final node in nodes) {
+        final name = node.attributes['name'];
+        final value = node.attributes['value'];
         data[name] = value;
       }
-      String jumpUrl = tagNode.getElementsByTagName("form")[0].attributes["action"];
-      parameter = ConnectorParameter(jumpUrl);
-      parameter.data = data;
-      await Connector.getDataByPostResponse(parameter);
+
+      final oauthUrl = tagNode.getElementsByTagName("form")[0].attributes["action"];
+      final oauthParameter = ConnectorParameter("https://app.ntut.edu.tw/$oauthUrl");
+      oauthParameter.data = data;
+      final oauthResponse = await Connector.getDataByPostResponse(oauthParameter);
+      final oauthDocument = parse(oauthResponse.data);
+
+      final loginParameter = ConnectorParameter(oauthDocument.getElementsByTagName("a").first.attributes["href"]);
+      final loginResponse = await Connector.getDataByPostResponse(loginParameter);
+      if(loginResponse.statusCode != 302) return CourseConnectorStatus.loginFail;
+
       return CourseConnectorStatus.loginSuccess;
-    } catch (e, stack) {
-      Log.eWithStack(e.toString(), stack);
+    } catch(err, stack) {
+      Log.eWithStack(err, stack);
       return CourseConnectorStatus.loginFail;
     }
   }
