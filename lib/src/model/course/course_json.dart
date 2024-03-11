@@ -15,6 +15,7 @@ class Course {
   late DateTime mainCreateTimeStamp;
 
   String studentId = '';
+  String studentName = '';
 
   String year = '';
   String sem = '';
@@ -40,10 +41,6 @@ class Course {
 
   Map<String, List<String>> time = {};
 
-  bool hasExtraInfo = false;
-
-  late DateTime extraCreateTimeStamp;
-
   String courseYear = '';
   String courseSem = '';
 
@@ -51,6 +48,7 @@ class Course {
   List<String> classroomENList = [];
   List<String> classroomCodeList = [];
 
+  DateTime extraCreateTimeStamp = DateTime(2000, 1, 1);
   bool hasExtra = false;
 
   String category = '';
@@ -60,6 +58,7 @@ class Course {
 
   Course({
     String? studentId,
+    String? studentName,
     String? year,
     String? sem,
     String? snum,
@@ -80,6 +79,7 @@ class Course {
     Map<String, List<String>>? time,
   }) {
     this.studentId = studentId ?? this.studentId;
+    this.studentName = studentName ?? this.studentName;
     this.year = year ?? this.year;
     this.sem = sem ?? this.sem;
     this.snum = snum ?? this.snum;
@@ -114,6 +114,7 @@ class Course {
       this.leaveNum = leaveNum ?? this.leaveNum;
       this.classmateList = classmateList ?? this.classmateList;
 
+      extraCreateTimeStamp = DateTime.now();
       hasExtra = true;
       return true;
     } catch(e, stack) {
@@ -160,6 +161,18 @@ class Course {
 
   bool get isNotEmpty {
     return !isEmpty;
+  }
+
+  bool needUpdate() {
+    if( DateTime.now().millisecondsSinceEpoch - extraCreateTimeStamp.millisecondsSinceEpoch > 1000 * 60 * 10) {
+      return true;
+    }
+    
+    if( classmateList.isEmpty ) {
+      return true;
+    }
+    
+    return false;
   }
 
   factory Course.fromJson(Map<String, dynamic> json) => _$CourseFromJson(json);

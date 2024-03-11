@@ -1,5 +1,7 @@
 // ignore_for_file: import_of_legacy_library_into_null_safe
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_app/src/connector/course_connector.dart';
 import 'package:flutter_app/src/r.dart';
@@ -19,7 +21,7 @@ class CourseSemesterTask extends CourseSystemTask<List<Map<String, String>?>?> {
   Future<TaskStatus> execute() async {
     final status = await super.execute();
     if (status == TaskStatus.success) {
-      List<Map<String, String>?>? value;
+      List<Map<String, String>?> value = [];
 
       if (id.length == 5) {
         value = await _selectSemesterDialog();
@@ -28,14 +30,22 @@ class CourseSemesterTask extends CourseSystemTask<List<Map<String, String>?>?> {
         if(id != LocalStorage.instance.getAccount()) {
           final localSemesters = LocalStorage.instance.courses
             .where((course) => course.studentId == id)
-            .map((course) => ({
+            .map((course) => {
               "year": course.year, 
-              "semester": course.sem
-            }))
+              "sem": course.sem
+            })
             .toList();
-          value = localSemesters;
+
+          for(final semester in localSemesters) {
+            final fileted = value.where((target) => 
+              target?["year"] == semester["year"] &&
+              target?["sem"] == semester["sem"]
+            );
+
+            if(fileted.isEmpty) value.add(semester);
+          }
         } else {
-          value = await CourseConnector.getCourseSemester(id);
+          value = await CourseConnector.getCourseSemester(id) ?? [];
         }
         super.onEnd();
       }

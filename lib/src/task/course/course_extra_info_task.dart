@@ -18,7 +18,14 @@ class CourseExtraInfoTask extends CourseSystemTask<bool> {
 
     if (status == TaskStatus.success) {
       super.onStart(R.current.getCourseDetail);
-      final value = await CourseConnector.getCourseExtraInfo(course);
+      late final bool value;
+
+      if(!course.needUpdate()) {
+        value = true;
+      } else {
+        value = await CourseConnector.getCourseExtraInfo(course);
+      }
+
       super.onEnd();
 
       if (value) {

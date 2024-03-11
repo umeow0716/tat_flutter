@@ -1,4 +1,7 @@
 
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
@@ -6,15 +9,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/debug/log/log.dart';
 import 'package:flutter_app/src/connector/ntut_connector.dart';
 import 'package:flutter_app/src/file/file_store.dart';
+import 'package:flutter_app/src/model/course/course_json.dart';
 import 'package:flutter_app/src/r.dart';
 import 'package:flutter_app/src/store/local_storage.dart';
+import 'package:flutter_app/src/task/course/course_semester_task.dart';
+import 'package:flutter_app/src/task/course/course_table_task.dart';
 import 'package:flutter_app/src/task/ntut/ntut_task.dart';
 import 'package:flutter_app/src/task/task_flow.dart';
+import 'package:flutter_app/ui/other/customs_multi_select_dialog.dart';
 import 'package:flutter_app/ui/other/msg_dialog.dart';
+import 'package:flutter_app/ui/other/my_toast.dart';
 import 'package:flutter_app/ui/other/route_utils.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:get/get.dart';
+import 'package:multi_select_flutter/util/multi_select_item.dart';
+import 'package:file_picker/file_picker.dart';
 
 enum OnListViewPress {
   setting,
@@ -133,11 +143,92 @@ class _OtherPageState extends State<OtherPage> {
         break;
 
       case OnListViewPress.exportCourseTable:
-        //TODO: modify to new class
-        break;
+        const TextStyle textStyle = TextStyle(color: Color(0xFFE3E2E6), fontFamily: 'TATFont', fontWeight: FontWeight.w700);
+        const TextStyle itemStyle = TextStyle(color: Color(0xFFE3E2E6), fontFamily: 'TATFont', fontWeight: FontWeight.w400);
 
+        List<Map<String, String>> semesterList = [];
+        String? studentId = LocalStorage.instance.getUserData()?.account;
+
+        final taskFlow = TaskFlow();
+        final task = CourseSemesterTask(studentId!);
+        taskFlow.addTask(task);
+        if (!await taskFlow.start()) break;
+        
+        semesterList = task.result as List<Map<String, String>>;
+        // ignore: use_build_context_synchronously
+        await showDialog(
+          context: context,
+          builder: (ctx) {
+            return  CustomMultiSelectDialog(
+              unselectedColor: Colors.white,
+              selectedColor: Colors.blueAccent,
+              title: Text(R.current.exportCourseTable, style: textStyle,),
+              checkColor: Colors.white,
+              cancelText: Text(R.current.cancel, style: textStyle,),
+              confirmText: Text(R.current.confirm, style: textStyle,),
+              itemsTextStyle: itemStyle,
+              selectedItemsTextStyle: itemStyle,
+              items: semesterList.map((d) => MultiSelectItem<Map<String, String>>(d, '${d["year"]}-${d["sem"]}')).toList(),
+              initialValue: semesterList,
+              onConfirm: (values) async { 
+                await exportCourseTable(values); 
+              },
+            );
+          },
+        );
+        break;
       case OnListViewPress.importCourseTable:
-        //TODO: modify to new class
+        await FilePicker.platform.clearTemporaryFiles();
+
+        FilePickerResult? result = await FilePicker.platform.pickFiles(
+          type: FileType.custom,
+          allowedExtensions: ['json'],
+        );
+        if(result == null) break;
+        
+        try {
+          if(result.paths[0] == null) return;
+          String path = result.paths[0] as String;
+
+          File file = File(path);
+          List<Course> courseList = [];
+          
+          String data = await file.readAsString();
+          List<dynamic> courseJsonList = jsonDecode(data);
+
+          for(final courseJson in courseJsonList) {
+            Course course = Course.fromJson( courseJson );
+
+            if(course.studentId == LocalStorage.instance.getAccount()) {
+              await MsgDialog(MsgDialogParameter(
+                desc: R.current.importErrorSelf,
+                title: R.current.error,
+                dialogType: DialogType.error,
+                removeCancelButton: true,
+                okButtonText: R.current.sure,
+              )).show();
+
+              break;
+            }
+
+            courseList.add(course);
+          }
+
+          LocalStorage.instance.addAllCourse(courseList);
+
+          LocalStorage.instance.getSemesterList()?.clear();
+          widget.pageController.jumpToPage(0);
+          MyToast.show(R.current.importSuccess);
+        } catch(e, stack) {
+          Log.eWithStack(e, stack);
+          await MsgDialog(MsgDialogParameter(
+            desc: R.current.importErrorWrongFile,
+            title: R.current.error,
+            dialogType: DialogType.error,
+            removeCancelButton: true,
+            okButtonText: R.current.sure,
+          )).show();
+        }
         break;
       case OnListViewPress.report:
         // TODO: Handle this case.
@@ -146,6 +237,40 @@ class _OtherPageState extends State<OtherPage> {
         // TODO: Handle this case.
         break;
     }
+  }
+
+  Future<void> exportCourseTable(List<Map<String, String>> values) async {
+    List<Map<String, dynamic>> courseList = [];
+
+    String? studentId = LocalStorage.instance.getAccount();
+    String? studentName = LocalStorage.instance.getUserInfo()?.givenName;
+
+    for(final value in values) {
+      TaskFlow taskFlow = TaskFlow();
+      final task = CourseTableTask(value["year"], value["sem"]);
+      taskFlow.addTask(task);
+      if(await taskFlow.start()) {
+        task.result?.forEach((course) { 
+          final courseClone = Course.fromJson( course.toJson() );
+          courseClone.classmateList = [];
+          courseList.add(courseClone.toJson());
+        });
+      }
+    }
+
+    String exportData = const JsonEncoder().convert(courseList);
+    String filename = '$studentId$studentName-TATCourseTable.json';
+    String path = await FileStore.findLocalPath();
+    File file = File("$path/$filename");
+          
+    file.writeAsStringSync(exportData);
+
+    MsgDialog(MsgDialogParameter(
+      desc: "$filename\n至 「下載項目」 查看",
+      title: R.current.exportSuccess,
+      removeCancelButton: true,
+      dialogType: DialogType.success,
+    )).show();
   }
 
   @override

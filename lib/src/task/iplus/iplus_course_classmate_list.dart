@@ -6,17 +6,17 @@ import 'package:flutter_app/src/r.dart';
 import '../task.dart';
 import 'iplus_system_task.dart';
 
-class IPlusCourseClassmateList extends IPlusSystemTask<List<Map<String, String>>> {
+class IPlusCourseClassmateListTask extends IPlusSystemTask<List<Map<String, String>>> {
   final String id;
 
-  IPlusCourseClassmateList(this.id) : super("IPlusCourseFileTask");
+  IPlusCourseClassmateListTask(this.id) : super("IPlusCourseFileTask");
 
   @override
   Future<TaskStatus> execute() async {
     final status = await super.execute();
     if (status == TaskStatus.success) {
       super.onStart(R.current.getCourseClassmateList);
-      final value = await ISchoolPlusConnector.getCourseClasmateList(id);
+      final value = await ISchoolPlusConnector.getCourseClassmateList(id);
       super.onEnd();
 
       result = value;

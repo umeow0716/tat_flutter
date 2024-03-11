@@ -19,6 +19,7 @@ import 'package:flutter_app/ui/other/my_toast.dart';
 import 'package:flutter_app/ui/other/route_utils.dart';
 import 'package:flutter_app/ui/pages/coursetable/course_table_control.dart';
 import 'package:flutter_app/ui/pages/coursetable/over_repaint_boundary.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
@@ -155,7 +156,7 @@ class _CourseTablePageState extends State<CourseTablePage> {
     }
   }
 
-  void _getCourseTable({String? year, String? sem, String? studentId, bool refresh = false}) async {
+  void _getCourseTable({ String? year, String? sem, String? studentId, bool refresh = false }) async {
     await Future.delayed(const Duration(microseconds: 100)); //等待頁面刷新
     
     final setting = LocalStorage.instance.getCourseTableSetting();
@@ -167,8 +168,6 @@ class _CourseTablePageState extends State<CourseTablePage> {
       LocalStorage.instance.clearSemesterJsonList(); //需重設因為更換了studentId
     }
 
-    await _getSemesterList(studentId);
-
     List<Course>? courseTable;
     if (!refresh) {
       courseTable = LocalStorage.instance.courses.where((course) =>
@@ -179,6 +178,8 @@ class _CourseTablePageState extends State<CourseTablePage> {
     }
 
     if (courseTable == null || courseTable.isEmpty) {
+      await _getSemesterList(studentId);
+
       TaskFlow taskFlow = TaskFlow();
       if((year?.isEmpty ?? true) || (sem?.isEmpty ?? true)) {
         final semester = LocalStorage.instance.getSemesterList()?.first;
@@ -253,7 +254,7 @@ class _CourseTablePageState extends State<CourseTablePage> {
         }
         break;
       case 1:
-        //_loadFavorite();
+        _loadFavorite();
         break;
       case 2:
         screenshot();
@@ -280,81 +281,78 @@ class _CourseTablePageState extends State<CourseTablePage> {
   //   LocalStorage.instance.saveCourseTableList();
   // }
 
-  // void _loadFavorite() async {
-  //   List<CourseTableJson> values = LocalStorage.instance.getCourseTableList();
-  //   List<CourseTableJson> value = [];
-  //   List<String> studentIdList = [];
-  //   for(int i = 0 ; i < values.length ; i++) {
-  //     if (!studentIdList.contains(values[i].studentId)) {
-  //       value.add(values[i]);
-  //       studentIdList.add(values[i].studentId!);
-  //     }
-  //   }
-  //   if (value.isEmpty) {
-  //     MyToast.show(R.current.noAnyFavorite);
-  //     return;
-  //   }
-  //   Get.dialog(
-  //     StatefulBuilder(
-  //       builder: (BuildContext context, void Function(void Function()) setState) {
-  //         return AlertDialog(
-  //           content: SizedBox(
-  //             width: double.minPositive,
-  //             child: ListView.builder(
-  //               itemCount: value.length,
-  //               shrinkWrap: true, //使清單最小化
-  //               itemBuilder: (BuildContext context, int index) {
-  //                 return Slidable(
-  //                   startActionPane: const ActionPane(
-  //                     motion: ScrollMotion(),
-  //                     children: [],
-  //                   ),
-  //                   endActionPane: ActionPane(
-  //                     motion: const ScrollMotion(),
-  //                     children: [
-  //                       SlidableAction(
-  //                         label: R.current.delete,
-  //                         foregroundColor: Colors.red,
-  //                         icon: Icons.delete_forever,
-  //                         onPressed: (_) {
-  //                           LocalStorage.instance.removeCourseTable(value[index]);
-  //                           value.removeAt(index);
-  //                           LocalStorage.instance.saveCourseTableList().then((_) => setState(() {}));
-  //                         },
-  //                       ),
-  //                     ],
-  //                   ),
-  //                   child: SizedBox(
-  //                     height: 50,
-  //                     child: Center(
-  //                       child: TextButton(
-  //                         child: Text(sprintf("%s %s", [
-  //                           value[index].studentId,
-  //                           value[index].studentName
-  //                         ])),
-  //                         onPressed: () {
-  //                           LocalStorage.instance.getCourseSetting()!.info = value[index]; //儲存課表
-  //                           LocalStorage.instance.saveCourseSetting();
-  //                           _showCourseTable(value[index]);
-  //                           LocalStorage.instance.clearSemesterJsonList(); //須清除已儲存學期
-  //                           Get.back();
-  //                         },
-  //                       )
-  //                     ),
-  //                   ),
-  //                 );
-  //               },
-  //             ),
-  //           ),
-  //         );
-  //       },
-  //     ),
-  //     barrierDismissible: true,
-  //   );
-  //   setState(() {
-  //     favorite = (LocalStorage.instance.getCourseTableList().contains(courseTableData));
-  //   });
-  // }
+  void _loadFavorite() async {
+    final studentIdList = LocalStorage.instance.getStudentIdListFromCourse();
+    final value = studentIdList.map((studentId) => ({
+      "studentId": studentId,
+      "studentName": LocalStorage.instance.getStudentNameFromCourse(studentId)
+    })).toList();
+    
+    if (value.isEmpty) {
+      MyToast.show(R.current.noAnyFavorite);
+      return;
+    }
+    Get.dialog(
+      StatefulBuilder(
+        builder: (BuildContext context, void Function(void Function()) setState) {
+          return AlertDialog(
+            content: SizedBox(
+              width: double.minPositive,
+              child: ListView.builder(
+                itemCount: value.length,
+                shrinkWrap: true, //使清單最小化
+                itemBuilder: (BuildContext context, int index) {
+                  return Slidable(
+                    startActionPane: const ActionPane(
+                      motion: ScrollMotion(),
+                      children: [],
+                    ),
+                    endActionPane: ActionPane(
+                      motion: const ScrollMotion(),
+                      children: [
+                        SlidableAction(
+                          label: R.current.delete,
+                          foregroundColor: Colors.red,
+                          icon: Icons.delete_forever,
+                          onPressed: (_) {
+                          },
+                        ),
+                      ],
+                    ),
+                    child: SizedBox(
+                      height: 50,
+                      child: Center(
+                        child: TextButton(
+                          child: Text(sprintf("%s %s", [
+                            value[index]["studentId"],
+                            value[index]["studentName"]
+                          ])),
+                          onPressed: () async {
+                            final setting = LocalStorage.instance.getCourseTableSetting();
+                            final course = LocalStorage.instance.courses
+                              .where((course) => course.studentId == value[index]["studentId"])
+                              .first;
+
+                            setting["studentId"] = value[index]["studentId"];
+                            setting["year"] = course.year;
+                            setting["sem"] = course.sem;
+
+                            await LocalStorage.instance.saveCourseTableSetting();
+                            Get.back();
+                          },
+                        )
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          );
+        },
+      ),
+      barrierDismissible: true,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

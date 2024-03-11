@@ -8,6 +8,7 @@ part of 'course_json.dart';
 
 Course _$CourseFromJson(Map<String, dynamic> json) => Course(
       studentId: json['studentId'] as String?,
+      studentName: json['studentName'] as String?,
       year: json['year'] as String?,
       sem: json['sem'] as String?,
       snum: json['snum'] as String?,
@@ -42,14 +43,13 @@ Course _$CourseFromJson(Map<String, dynamic> json) => Course(
     )
       ..mainCreateTimeStamp =
           DateTime.parse(json['mainCreateTimeStamp'] as String)
-      ..hasExtraInfo = json['hasExtraInfo'] as bool
-      ..extraCreateTimeStamp =
-          DateTime.parse(json['extraCreateTimeStamp'] as String)
       ..courseYear = json['courseYear'] as String
       ..courseSem = json['courseSem'] as String
       ..classroomENList = (json['classroomENList'] as List<dynamic>)
           .map((e) => e as String)
           .toList()
+      ..extraCreateTimeStamp =
+          DateTime.parse(json['extraCreateTimeStamp'] as String)
       ..hasExtra = json['hasExtra'] as bool
       ..category = json['category'] as String
       ..classmateNum = json['classmateNum'] as String
@@ -61,6 +61,7 @@ Course _$CourseFromJson(Map<String, dynamic> json) => Course(
 Map<String, dynamic> _$CourseToJson(Course instance) => <String, dynamic>{
       'mainCreateTimeStamp': instance.mainCreateTimeStamp.toIso8601String(),
       'studentId': instance.studentId,
+      'studentName': instance.studentName,
       'year': instance.year,
       'sem': instance.sem,
       'snum': instance.snum,
@@ -77,13 +78,12 @@ Map<String, dynamic> _$CourseToJson(Course instance) => <String, dynamic>{
       'openClassENList': instance.openClassENList,
       'openClassCodeList': instance.openClassCodeList,
       'time': instance.time,
-      'hasExtraInfo': instance.hasExtraInfo,
-      'extraCreateTimeStamp': instance.extraCreateTimeStamp.toIso8601String(),
       'courseYear': instance.courseYear,
       'courseSem': instance.courseSem,
       'classroomCNList': instance.classroomCNList,
       'classroomENList': instance.classroomENList,
       'classroomCodeList': instance.classroomCodeList,
+      'extraCreateTimeStamp': instance.extraCreateTimeStamp.toIso8601String(),
       'hasExtra': instance.hasExtra,
       'category': instance.category,
       'classmateNum': instance.classmateNum,

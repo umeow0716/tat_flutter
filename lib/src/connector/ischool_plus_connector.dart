@@ -527,7 +527,7 @@ class ISchoolPlusConnector {
     }
   }
 
-  static Future<List<Map<String, String>>?> getCourseClasmateList(String courseId) async {
+  static Future<List<Map<String, String>>?> getCourseClassmateList(String courseId) async {
     List<Map<String, String>> result = [];
     
     try {

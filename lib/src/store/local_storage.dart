@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:flutter_app/debug/log/log.dart';
 import 'package:flutter_app/src/connector/core/dio_connector.dart';
 import 'package:flutter_app/src/model/course/course_json.dart';
 import 'package:flutter_app/src/model/course/course_score_json.dart';
@@ -28,6 +29,7 @@ class LocalStorage {
   final _scoreCreditJsonKey = "ScoreCreditJsonKey";
   final _settingJsonKey = "SettingJsonKey";
   final _courseTableSettingJsonKey = "CourseTableSettingJson";
+  final _coursesKey = "CoursesJson";
   final _firstRun = <String, bool>{};
 
   final _httpClientInterceptors = <Interceptor>[];
@@ -41,6 +43,57 @@ class LocalStorage {
   Map<String, String?> _courseTableSetting = {};
 
   bool? get autoCheckAppUpdate => _setting?.other?.autoCheckAppUpdate;
+
+  String getStudentNameFromCourse(String? studentId) {
+    if(studentId == null) return '';
+
+    if(studentId == getAccount()) return getUserInfo()?.givenName ?? '';
+
+    final result = courses
+      .where((course) => course.studentId == studentId)
+      .where((course) => course.studentName.isNotEmpty)
+      .map((course) => course.studentName)
+      .firstOrNull ?? '';
+    return result;
+  }
+
+  List<String> getStudentIdListFromCourse() {
+    final result = courses
+      .map((course) => course.studentId)
+      .where((studentId) => studentId.isNotEmpty)
+      .toSet()
+      .toList();
+    return result;
+  }
+
+  void addCourse(Course? course, { bool save = true}) {
+    if(course == null || course.isEmpty) return;
+
+    courses.removeWhere((ele) => ele.code == course.code && ele.snum == course.snum && ele.currCode == course.currCode);
+    courses.add(course);
+
+    if(save) _save(_coursesKey, courses);
+  }
+
+  void addAllCourse(List<Course>? courseList) {
+    if(courseList == null || courseList.isEmpty) return;
+    
+    for(final course in courseList) {
+      addCourse(course, save: false);
+    }
+
+    _save(_coursesKey, courses);
+  }
+
+  void _loadCourses() {
+    final readJson = _readStringList(_coursesKey);
+    if(readJson == null) return;
+
+    courses = readJson.map((e) => 
+      Course.fromJson(
+        json.decode(e)
+      )).toList();
+  }
 
   bool? getFirstUse(String key, {int? timeOut}) {
     if (timeOut != null) {
@@ -197,6 +250,7 @@ class LocalStorage {
     _loadSetting();
     _loadCourseScoreCredit();
     _loadSemesterJsonList();
+    _loadCourses();
   }
 
   Future<void> logout() async {
@@ -240,10 +294,21 @@ class LocalStorage {
   int? _readInt(String key) => _pref?.getInt(key);
 
   Future<void> _writeStringList(String key, List<String> value) async {
-    await _pref?.setStringList(key, value);
+    try {
+      await _pref?.setStringList(key, value);
+    } catch(err, stack) {
+      Log.eWithStack(err, stack);
+    }
   }
 
-  String? _readString(String key) => _pref?.getString(key);
+  String? _readString(String key) {
+    try {
+      return _pref?.getString(key);
+    } catch(err, stack) {
+      Log.eWithStack(err, stack);
+      return null;
+    }
+  }
 
   List<String>? _readStringList(String key) => _pref?.getStringList(key);
 }

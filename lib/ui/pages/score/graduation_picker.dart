@@ -236,7 +236,7 @@ class _GraduationPickerWidget extends State<GraduationPickerWidget> {
 
   Future<void> _getYearList() async {
     TaskFlow taskFlow = TaskFlow();
-    var task = CourseYearTask();
+    final task = CourseYearTask();
     taskFlow.addTask(task);
     if (await taskFlow.start()) {
       yearList = task.result!;

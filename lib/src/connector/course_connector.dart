@@ -5,10 +5,10 @@ import 'package:flutter_app/src/connector/ntut_connector.dart';
 import 'package:flutter_app/src/model/course/course_json.dart';
 import 'package:flutter_app/src/model/course/course_score_json.dart';
 import 'package:flutter_app/src/store/local_storage.dart';
-import 'package:flutter_app/src/util/language_util.dart';
+import 'package:flutter_app/src/task/iplus/iplus_course_classmate_list.dart';
+import 'package:flutter_app/src/task/task_flow.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
-import 'package:flutter_app/src/connector/ischool_plus_connector.dart';
 
 enum CourseConnectorStatus { loginSuccess, loginFail, unknownError }
 
@@ -110,28 +110,13 @@ class CourseConnector {
     }
   }
 
-  static String strQ2B(String input) {
-    List<int> newString = [];
-    for (int c in input.codeUnits) {
-      if (c == 12288) {
-        c = 32;
-        continue;
-      }
-      if (c > 65280 && c < 65375) {
-        c = (c - 65248);
-      }
-      newString.add(c);
-    }
-    return String.fromCharCodes(newString);
-  }
-
   static Future<List<Course>> getCourseList(String? year, String? sem) async {
     if(year == null || sem == null) return [];
 
     final studentId = LocalStorage.instance.getAccount();
+    final studentName = LocalStorage.instance.getUserInfo()?.givenName as String;
 
     try {
-      final lang = LanguageUtil.getLangIndex();
       List<Course> result = [];
 
       final parameter = ConnectorParameter(_postCourseCNUrl);
@@ -149,12 +134,19 @@ class CourseConnector {
       final courseElementList = courseTable.getElementsByTagName('tr');
 
       for(int i = 1 ; i < courseElementList.length-1 ; i++) {
-        final course = courseParser(courseElementList[i], studentId, year, sem);
-        if(course == null) continue;
+        final course = courseParser(
+          element: courseElementList[i],
+          studentId: studentId,
+          studentName: studentName,
+          year: year,
+          sem: sem
+        );
 
-        if(lang == LangEnum.en) await setENProfile(course);
+        if(course == null) continue;
         result.add(course);
       }
+
+      await Future.wait(result.map((course) => setENProfile(course)));
 
       return result;
     } catch(e, stack) {
@@ -163,7 +155,9 @@ class CourseConnector {
     }
   }
 
-  static Course? courseParser(Element element, String? studentId, String? year, String? sem) {
+  static Course? courseParser({ Element? element, String? studentId, String? studentName, String? year, String? sem }) {
+    if(element == null) return null;
+    
     final data = {};
     try {
       final tdList = element.getElementsByTagName('td');
@@ -242,6 +236,7 @@ class CourseConnector {
 
       return Course(
         studentId: studentId,
+        studentName: studentName,
         year: year,
         sem: sem,
         snum: data['snum'],
@@ -264,20 +259,6 @@ class CourseConnector {
     }
   }
 
-  static Course getWithOnlyName(Map data, List<Element> tdList, Element courseNameElement) {
-    final dayEnum = [ '日', '一', '二', '三', '四', '五', '六' ];
-    for(int i = 8 ; i < 15 ; i++) {
-      if(tdList[i].innerHtml.trim().isNotEmpty) {
-        data['time'][ dayEnum[i-8] ] = tdList[i].innerHtml.trim().split(' ');
-      }
-    }
-
-    return Course(
-      nameCN: courseNameElement.innerHtml.trim(),
-      time: data['time'],
-    );
-  }
-
   static Future<void> setENProfile(Course course) async {
     final parameter = ConnectorParameter(_coutseInfoENUrl);
     parameter.data = {
@@ -294,64 +275,6 @@ class CourseConnector {
     course.teacherEN = tdList[7].innerHtml.trim();
     course.openClassENList = tdList[8].innerHtml.trim().split('\n');
     course.classroomENList = tdList[8].innerHtml.trim().split('\n');
-  }
-
-  static Future<Map?> getGraduation(String year, String department) async {
-    ConnectorParameter parameter;
-    String result;
-    Document tagNode;
-    Element node;
-    List<Element> nodes;
-    RegExp exp;
-    RegExpMatch matches;
-    Map graduationMap = {};
-    try {
-      parameter = ConnectorParameter("https://aps.ntut.edu.tw/course/tw/Cprog.jsp");
-      parameter.data = {"format": "-3", "year": year, "matric": "7"};
-      result = await Connector.getDataByGet(parameter);
-      tagNode = parse(result);
-      node = tagNode.getElementsByTagName("tbody").first;
-      nodes = node.getElementsByTagName("tr");
-      String? href;
-      for (int i = 1; i < nodes.length; i++) {
-        node = nodes[i];
-        node = node.getElementsByTagName("a").first;
-        if (node.text.contains(department)) {
-          href = node.attributes["href"]!;
-          break;
-        }
-      }
-      href = "https://aps.ntut.edu.tw/course/tw/${href!}";
-      parameter = ConnectorParameter(href);
-      result = await Connector.getDataByGet(parameter);
-
-      exp = RegExp(r"最低畢業學分：?(\d+)學分");
-      matches = exp.firstMatch(result)!;
-      graduationMap["lowCredit"] = int.parse(matches.group(1)!);
-
-      exp = RegExp(r"共同必修：?(\d+)學分");
-      matches = exp.firstMatch(result)!;
-      graduationMap["△"] = int.parse(matches.group(1)!);
-
-      exp = RegExp(r"專業必修：?(\d+)學分");
-      matches = exp.firstMatch(result)!;
-      graduationMap["▲"] = int.parse(matches.group(1)!);
-
-      exp = RegExp(r"專業選修：?(\d+)學分");
-      matches = exp.firstMatch(result)!;
-      graduationMap["★"] = int.parse(matches.group(1)!);
-
-      /*
-      exp = RegExp("通識博雅課程應修滿(\d+)學分");
-      matches = exp.firstMatch(result);
-      exp = RegExp("跨系所專業選修(\d+)學分為畢業學分");
-      matches = exp.firstMatch(result);
-      */
-      return graduationMap;
-    } catch (e, stack) {
-      Log.eWithStack(e.toString(), stack);
-      return null;
-    }
   }
 
   static Future<List<String>?> getYearList() async {
@@ -536,7 +459,12 @@ class CourseConnector {
       final classmateNum = courseNodes[9].innerHtml.trim();
       final leaveNum = courseNodes[10].innerHtml.trim();
 
-      final classmateList = await ISchoolPlusConnector.getCourseClasmateList(course.snum);
+      final classmateListTask = IPlusCourseClassmateListTask(course.snum);
+      final taskFlow = TaskFlow();
+      taskFlow.addTask(classmateListTask);
+      
+      await taskFlow.start();
+      final classmateList = classmateListTask.result;
 
       course.setExtra(
         category: category,

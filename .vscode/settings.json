@@ -9,5 +9,9 @@
     "editor.wordWrapColumn": 120,
     "editor.rulers": [120]
   },
-  "java.configuration.updateBuildConfiguration": "automatic"
+  "java.configuration.updateBuildConfiguration": "automatic",
+  "cSpell.words": [
+    "curr",
+    "snum"
+  ]
 }

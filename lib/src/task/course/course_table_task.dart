@@ -3,6 +3,7 @@
 import 'package:flutter_app/src/connector/course_connector.dart';
 import 'package:flutter_app/src/model/course/course_json.dart';
 import 'package:flutter_app/src/r.dart';
+import 'package:flutter_app/src/store/local_storage.dart';
 import 'package:flutter_app/src/task/task.dart';
 import 'package:flutter_app/src/task/course/course_system_task.dart';
 
@@ -20,6 +21,7 @@ class CourseTableTask extends CourseSystemTask<List<Course>?> {
       result = await CourseConnector.getCourseList(year, sem);
       super.onEnd();
       if (result != null) {
+        LocalStorage.instance.addAllCourse(result);
         return TaskStatus.success;
       } else {
         return super.onError(R.current.getCourseError);
