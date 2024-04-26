@@ -26,9 +26,9 @@ class DioConnector {
   Alice getAlice({required GlobalKey<NavigatorState> navigatorKey}) => _alice..setNavigatorKey(navigatorKey);
 
   static final dioOptions = BaseOptions(
-    connectTimeout: 5000,
+    connectTimeout: 10000,
     receiveTimeout: 60000,
-    sendTimeout: 5000,
+    sendTimeout: 10000,
     headers: _headers,
     responseType: ResponseType.json,
     contentType: "application/x-www-form-urlencoded",

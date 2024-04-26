@@ -60,6 +60,7 @@ class CourseConnector {
 
       final loginParameter = ConnectorParameter(oauthDocument.getElementsByTagName("a").first.attributes["href"]);
       final loginResponse = await Connector.getDataByPostResponse(loginParameter);
+
       if(loginResponse.statusCode != 302) return CourseConnectorStatus.loginFail;
 
       return CourseConnectorStatus.loginSuccess;

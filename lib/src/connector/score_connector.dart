@@ -13,39 +13,46 @@ import 'core/connector_parameter.dart';
 enum ScoreConnectorStatus { loginSuccess, loginFail, unknownError }
 
 class ScoreConnector {
-  static const String _scoreHost = "https://aps-course.ntut.edu.tw/";
-  static const _ssoLoginUrl = "${NTUTConnector.host}ssoIndex.do";
+  static const String _scoreHost = "https://aps-stu.ntut.edu.tw/";
+  static const String _ssoLoginUrl = "${NTUTConnector.host}ssoIndex.do";
   static const String _scoreRankUrl = "${_scoreHost}StuQuery/QryRank.jsp";
   static const String _scoreAllScoreUrl = "${_scoreHost}StuQuery/QryScore.jsp";
   static const String _generalLessonAllScoreUrl = "${_scoreHost}StuQuery/QryLAECourse.jsp";
 
   static Future<ScoreConnectorStatus> login() async {
-    String result;
     try {
-      ConnectorParameter parameter;
-      Document tagNode;
-      List<Element> nodes;
-      Map<String, String> data = {
-        "apUrl": "https://aps-course.ntut.edu.tw/StuQuery/LoginSID.jsp",
-        "apOu": "aa_003_LB",
-        "sso": "big5",
+      final ssoParameter = ConnectorParameter(_ssoLoginUrl);
+      ssoParameter.data = {
+        "apOu": "sa_003_oauth",
         "datetime1": DateTime.now().millisecondsSinceEpoch.toString()
       };
-      parameter = ConnectorParameter(_ssoLoginUrl);
-      parameter.data = data;
-      result = await Connector.getDataByGet(parameter);
-      tagNode = parse(result);
-      nodes = tagNode.getElementsByTagName("input");
-      data = {};
-      for (Element node in nodes) {
-        String name = node.attributes['name'];
-        String value = node.attributes['value'];
-        data[name] = value;
+
+      final ssoResult = await Connector.getDataByGet(ssoParameter);
+      final tagNode = parse(ssoResult);
+      final nodes = tagNode.getElementsByTagName("input");
+
+      final jumpUrl = tagNode.getElementsByTagName("form")[0].attributes["action"];
+      final oauthParameter = ConnectorParameter("${NTUTConnector.host}$jumpUrl");
+      oauthParameter.data = {};
+      for (final Element node in nodes) {
+        final name = node.attributes['name'];
+        final value = node.attributes['value'];
+        oauthParameter.data[name] = value;
       }
-      String jumpUrl = tagNode.getElementsByTagName("form")[0].attributes["action"];
-      parameter = ConnectorParameter(jumpUrl);
-      parameter.data = data;
-      await Connector.getDataByPostResponse(parameter);
+
+      final oauthResponse = await Connector.getDataByPostResponse(oauthParameter);
+      final oauthTag = parse(oauthResponse.data);
+
+      final loginUrl = Uri.parse(oauthTag.getElementsByTagName("a")[0].attributes["href"]);
+      final loginParameter = ConnectorParameter(oauthTag.getElementsByTagName("a").first.attributes["href"]);
+      final loginResponse = await Connector.getDataByPostResponse(loginParameter);
+      
+      if(loginResponse.statusCode != 302) return ScoreConnectorStatus.loginFail;
+
+      final loginResult = parse(loginResponse.data);
+      final testParameter = ConnectorParameter(loginResult.getElementsByTagName("a").first.attributes["href"]);
+      await Connector.getDataByPostResponse(testParameter);
+      
       return ScoreConnectorStatus.loginSuccess;
     } catch (e, stack) {
       Log.eWithStack(e.toString(), stack);
@@ -143,7 +150,7 @@ class ScoreConnector {
       try {
           parameter = ConnectorParameter(_scoreRankUrl);
           parameter.data = data;
-          parameter.charsetName = "big5";
+          parameter.charsetName = "utf8";
           result = await Connector.getDataByGet(parameter);
           tagNode = parse(result);
           final rankTBodys = tagNode
