@@ -1,5 +1,6 @@
 // TODO: remove sdk version selector after migrating to null-safety.
 // @dart=2.10
+import 'package:dio/dio.dart';
 import 'package:flutter_app/debug/log/log.dart';
 import 'package:flutter_app/src/connector/ntut_connector.dart';
 import 'package:flutter_app/src/model/course/course_class_json.dart';
@@ -13,7 +14,7 @@ import 'core/connector_parameter.dart';
 enum ScoreConnectorStatus { loginSuccess, loginFail, unknownError }
 
 class ScoreConnector {
-  static const String _scoreHost = "https://aps-course.ntut.edu.tw/";
+  static const String _scoreHost = "https://aps-stu.ntut.edu.tw/";
   static const _ssoLoginUrl = "${NTUTConnector.host}ssoIndex.do";
   static const String _scoreRankUrl = "${_scoreHost}StuQuery/QryRank.jsp";
   static const String _scoreAllScoreUrl = "${_scoreHost}StuQuery/QryScore.jsp";
@@ -23,12 +24,12 @@ class ScoreConnector {
     String result;
     try {
       ConnectorParameter parameter;
+      Response response;
       Document tagNode;
+      Uri url;
       List<Element> nodes;
       Map<String, String> data = {
-        "apUrl": "https://aps-course.ntut.edu.tw/StuQuery/LoginSID.jsp",
-        "apOu": "aa_003_LB",
-        "sso": "big5",
+        "apOu": "sa_003_oauth",
         "datetime1": DateTime.now().millisecondsSinceEpoch.toString()
       };
       parameter = ConnectorParameter(_ssoLoginUrl);
@@ -42,10 +43,19 @@ class ScoreConnector {
         String value = node.attributes['value'];
         data[name] = value;
       }
-      String jumpUrl = tagNode.getElementsByTagName("form")[0].attributes["action"];
+      String jumpUrl = "${NTUTConnector.host}${tagNode.getElementsByTagName("form")[0].attributes["action"]}";
       parameter = ConnectorParameter(jumpUrl);
       parameter.data = data;
-      await Connector.getDataByPostResponse(parameter);
+
+      response = await Connector.getDataByPostResponse(parameter);
+      tagNode = parse(response.data);
+
+      url = Uri.parse(tagNode.getElementsByTagName("a")[0].attributes["href"]);
+      parameter = ConnectorParameter(tagNode.getElementsByTagName("a").first.attributes["href"]);
+      response = await Connector.getDataByPostResponse(parameter);
+
+      if(response.statusCode != 302) return ScoreConnectorStatus.loginFail;
+
       return ScoreConnectorStatus.loginSuccess;
     } catch (e, stack) {
       Log.eWithStack(e.toString(), stack);
