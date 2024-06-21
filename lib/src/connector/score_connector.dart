@@ -1,5 +1,7 @@
 // TODO: remove sdk version selector after migrating to null-safety.
 // @dart=2.10
+import 'dart:developer';
+
 import 'package:flutter_app/debug/log/log.dart';
 import 'package:flutter_app/src/connector/ntut_connector.dart';
 import 'package:flutter_app/src/model/course/course_class_json.dart';
@@ -13,7 +15,7 @@ import 'core/connector_parameter.dart';
 enum ScoreConnectorStatus { loginSuccess, loginFail, unknownError }
 
 class ScoreConnector {
-  static const String _scoreHost = "https://aps-stu.ntut.edu.tw/";
+  static const String _scoreHost = "https://aps-course.ntut.edu.tw/";
   static const String _ssoLoginUrl = "${NTUTConnector.host}ssoIndex.do";
   static const String _scoreRankUrl = "${_scoreHost}StuQuery/QryRank.jsp";
   static const String _scoreAllScoreUrl = "${_scoreHost}StuQuery/QryScore.jsp";
@@ -21,39 +23,45 @@ class ScoreConnector {
 
   static Future<ScoreConnectorStatus> login() async {
     try {
-      final ssoParameter = ConnectorParameter(_ssoLoginUrl);
-      ssoParameter.data = {
-        "apOu": "sa_003_oauth",
+      final Map<String, String> ssoIndexData = {
+        "apOu": "aa_003_LB_oauth",
         "datetime1": DateTime.now().millisecondsSinceEpoch.toString()
       };
+      final ssoIndexParameter = ConnectorParameter(_ssoLoginUrl);
+      ssoIndexParameter.data = ssoIndexData;
 
-      final ssoResult = await Connector.getDataByGet(ssoParameter);
-      final tagNode = parse(ssoResult);
-      final nodes = tagNode.getElementsByTagName("input");
-
-      final jumpUrl = tagNode.getElementsByTagName("form")[0].attributes["action"];
-      final oauthParameter = ConnectorParameter("${NTUTConnector.host}$jumpUrl");
-      oauthParameter.data = {};
-      for (final Element node in nodes) {
+      final ssoIndexTagNode = parse(await Connector.getDataByGet(ssoIndexParameter));
+      final ssoIndexNodes = ssoIndexTagNode.getElementsByTagName("input");
+      final ssoIndexJumpUrl = ssoIndexTagNode.getElementsByTagName("form")[0].attributes["action"];
+      final Map<String, String> oauthData = {};
+      for (Element node in ssoIndexNodes) {
         final name = node.attributes['name'];
         final value = node.attributes['value'];
-        oauthParameter.data[name] = value;
+        oauthData[name] = value;
       }
 
-      final oauthResponse = await Connector.getDataByPostResponse(oauthParameter);
-      final oauthTag = parse(oauthResponse.data);
+      final jumpParameter = ConnectorParameter("${NTUTConnector.host}$ssoIndexJumpUrl");
+      jumpParameter.data = oauthData;
 
-      final loginUrl = Uri.parse(oauthTag.getElementsByTagName("a")[0].attributes["href"]);
-      final loginParameter = ConnectorParameter(oauthTag.getElementsByTagName("a").first.attributes["href"]);
-      final loginResponse = await Connector.getDataByPostResponse(loginParameter);
-      
-      if(loginResponse.statusCode != 302) return ScoreConnectorStatus.loginFail;
+      for (int retry = 0; retry < 3; retry++) {
+        final jumpResult = (await Connector.getDataByPostResponse(jumpParameter));
+        if (jumpResult.statusCode != 302) {
+          log("[TAT] score_connector.dart: failed to get redirection location from oauth2Server, retrying...");
+          await Future.delayed(const Duration(milliseconds: 100));
+          continue;
+        }
 
-      final loginResult = parse(loginResponse.data);
-      final testParameter = ConnectorParameter(loginResult.getElementsByTagName("a").first.attributes["href"]);
-      await Connector.getDataByPostResponse(testParameter);
-      
-      return ScoreConnectorStatus.loginSuccess;
+        final loginOAuthParameter = ConnectorParameter(jumpResult.headers['location'][0]);
+        final loginOAuthResult = (await Connector.getDataByPostResponse(loginOAuthParameter)).toString().trim();
+        if (loginOAuthResult.contains("中斷連線")) {
+          log("[TAT] score_connector.dart: connection lost during redirection, retrying...");
+          await Future.delayed(const Duration(milliseconds: 100));
+          continue;
+        } else {
+          return ScoreConnectorStatus.loginSuccess;
+        }
+      }
+      return ScoreConnectorStatus.loginFail;
     } catch (e, stack) {
       Log.eWithStack(e.toString(), stack);
       return ScoreConnectorStatus.loginFail;
