@@ -186,10 +186,8 @@ class _ScoreViewerPageState extends State<ScoreViewerPage> with TickerProviderSt
 
       total = taskFlow.length;
       int rate = 0;
-      bool done = false;
 
       taskFlow.callback = (task) async {
-        if(done) return;
         rate++;
         progressRateDialog.update(nowProgress: rate / total, progressString: sprintf("%d/%d", [rate, total]));
         final categoryInfo = task.result;
@@ -199,17 +197,19 @@ class _ScoreViewerPageState extends State<ScoreViewerPage> with TickerProviderSt
 
         if (rate == total) {
           await LocalStorage.instance.setSemesterCourseScore(courseScoreList);
-          progressRateDialog.hide();
-          
-          done = true;
+
+          if(progressRateDialog.isShowing()) {
+            progressRateDialog.hide();
+          }
+
           _buildTabBar();
           setState(() => _isLoading = false);
         }
       };
 
       taskFlow.start_withoutasync();
-      Future.delayed(const Duration(seconds: 5)).then((_) {
-        done = true;
+      Future.delayed(const Duration(seconds: 10)).then((_) {
+        progressRateDialog.hide();
         _buildTabBar();
         setState(() => _isLoading = false);
       });
