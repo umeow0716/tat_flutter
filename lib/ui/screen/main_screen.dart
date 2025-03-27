@@ -112,6 +112,7 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
   }
 
   void initFlutterDownloader() async {
+    if(MyDownloader.isInit) return;
     await MyDownloader.init();
   }
 
