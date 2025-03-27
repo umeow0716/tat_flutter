@@ -84,10 +84,23 @@ class TaskFlow {
     return success;
   }
 
-  Future<bool> startWithoutAsync() async {
+  Future<bool> startWithoutAsync({ int maxWorkingTask = 0 }) async {
+    int workingTaskNum = 0;
+
     while (_queue.isNotEmpty) {
       final task = _queue.first;
-      final status = task.execute().then((_) => callback?.call(task));
+
+      while(maxWorkingTask > 0 && workingTaskNum >= maxWorkingTask) {
+        await Future.delayed(const Duration(milliseconds: 50));
+      }
+      
+      workingTaskNum += 1;
+
+      final status = task.execute().then((_) {
+        workingTaskNum -= 1;
+        callback?.call(task);
+      });
+      
       _queue.removeAt(0);
     }
 
