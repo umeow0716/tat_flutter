@@ -23,7 +23,10 @@ Future<void> main() async {
   Log.init();
 
   final firebaseOptions = ScopedFirebaseOptions.getCurrentPlatformOn(Environment.beta());
-  await Firebase.initializeApp(options: firebaseOptions);
+  await Firebase.initializeApp(
+    name: "TAT APP",
+    options: firebaseOptions,
+  );
 
   await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(!kDebugMode);
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;

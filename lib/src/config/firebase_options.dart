@@ -52,11 +52,11 @@ class Environment {
 
   Environment.beta()
       : _androidOptions = const FirebaseOptions(
-          apiKey: 'AIzaSyCqHTNBb_JzZh9HIL_1yYcn81Ub8woAcHI',
-          appId: '1:866921004681:android:ea333c8e3e552591aad058',
-          messagingSenderId: '866921004681',
-          projectId: 'npc-tat-beta',
-          storageBucket: 'npc-tat-beta.appspot.com',
+          apiKey: 'AIzaSyDeWEfmzQjJJVVUdzpu2GntVusk1aSfBRw',
+          appId: '1:89830195407:android:fc58deaa71cb41159277ba',
+          messagingSenderId: '89830195407',
+          projectId: 'umeow-tat-project',
+          storageBucket: 'umeow-tat-project.appspot.com',
         ),
         _iosOptions = const FirebaseOptions(
           apiKey: 'AIzaSyDLwnggSSMu1i2aeIKKulu9_A0mwAFdV3Y',
