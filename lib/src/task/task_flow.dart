@@ -84,7 +84,7 @@ class TaskFlow {
     return success;
   }
 
-  Future<bool> start_withoutasync() async {
+  Future<bool> startWithoutAsync() async {
     while (_queue.isNotEmpty) {
       final task = _queue.first;
       final status = task.execute().then((_) => callback?.call(task));
