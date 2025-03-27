@@ -82,8 +82,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Check IPlus new"),
         "checkIdentity": MessageLookupByLibrary.simpleMessage("Check identity"),
         "checkLogin": MessageLookupByLibrary.simpleMessage("Check login..."),
-        "checkVersion":
-            MessageLookupByLibrary.simpleMessage("Check version"),
+        "checkVersion": MessageLookupByLibrary.simpleMessage("Check version"),
         "checkingVersion":
             MessageLookupByLibrary.simpleMessage("Checking version..."),
         "classVideo": MessageLookupByLibrary.simpleMessage("class video"),
@@ -224,6 +223,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Historical dimension"),
         "iPlusNoThisClass": MessageLookupByLibrary.simpleMessage(
             "This course does not support queries"),
+        "iSchoolPlus": MessageLookupByLibrary.simpleMessage("ISchool"),
         "identifyLinks": MessageLookupByLibrary.simpleMessage("Identify links"),
         "importCourseTable":
             MessageLookupByLibrary.simpleMessage("Import CourseTable"),
@@ -376,6 +376,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "scoreCalculationWarning": MessageLookupByLibrary.simpleMessage(
             "This calculation is for reference only. Actually, please focus on the school."),
         "scoreSearch": MessageLookupByLibrary.simpleMessage("Score query"),
+        "screenshot": MessageLookupByLibrary.simpleMessage("ScreenShot"),
         "search": MessageLookupByLibrary.simpleMessage("Search"),
         "searchCredit": MessageLookupByLibrary.simpleMessage("Search credit"),
         "searchCreditIsNullWarning": MessageLookupByLibrary.simpleMessage(

@@ -68,8 +68,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "checkIPlusNew": MessageLookupByLibrary.simpleMessage("檢查IPlus最新公告"),
         "checkIdentity": MessageLookupByLibrary.simpleMessage("確認身分"),
         "checkLogin": MessageLookupByLibrary.simpleMessage("檢查登入..."),
-        "checkVersion": 
-            MessageLookupByLibrary.simpleMessage("檢查新版本"),
+        "checkVersion": MessageLookupByLibrary.simpleMessage("檢查新版本"),
         "checkingVersion": MessageLookupByLibrary.simpleMessage("檢查中..."),
         "classVideo": MessageLookupByLibrary.simpleMessage("上課錄影"),
         "classroom": MessageLookupByLibrary.simpleMessage("教室"),
@@ -175,6 +174,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "graduationSetting": MessageLookupByLibrary.simpleMessage("畢業學分標準設定"),
         "historicalDimension": MessageLookupByLibrary.simpleMessage("歷史向度"),
         "iPlusNoThisClass": MessageLookupByLibrary.simpleMessage("此課程不支持查詢"),
+        "iSchoolPlus": MessageLookupByLibrary.simpleMessage("i 學園"),
         "identifyLinks": MessageLookupByLibrary.simpleMessage("辨識連結"),
         "importCourseTable": MessageLookupByLibrary.simpleMessage("匯入課表"),
         "importErrorSelf": MessageLookupByLibrary.simpleMessage("不能匯入自己的課表"),
@@ -347,6 +347,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "warning": MessageLookupByLibrary.simpleMessage("警告"),
         "willRestart": MessageLookupByLibrary.simpleMessage("將自動重啟並套用語言"),
         "zuvioAutoRollCallFeatureReleaseNotice":
-            MessageLookupByLibrary.simpleMessage("Zuvio (自動)點名提醒的功能即將上線\n敬請期待！"),
+            MessageLookupByLibrary.simpleMessage("Zuvio (自動)點名提醒的功能即將上線\n敬請期待！")
       };
 }

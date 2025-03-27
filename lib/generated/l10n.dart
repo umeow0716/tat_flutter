@@ -2769,6 +2769,16 @@ class S {
       args: [],
     );
   }
+
+  /// `ISchool`
+  String get iSchoolPlus {
+    return Intl.message(
+      'ISchool',
+      name: 'iSchoolPlus',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

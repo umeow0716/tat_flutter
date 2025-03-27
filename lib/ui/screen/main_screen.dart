@@ -18,7 +18,7 @@ import 'package:flutter_app/src/version/app_version.dart';
 import 'package:flutter_app/ui/other/my_toast.dart';
 import 'package:flutter_app/ui/pages/calendar/calendar_page.dart';
 import 'package:flutter_app/ui/pages/coursetable/course_table_page.dart';
-import 'package:flutter_app/ui/pages/notification/notification_page.dart';
+import 'package:flutter_app/ui/pages/i_school/i_school_page.dart';
 import 'package:flutter_app/ui/pages/other/other_page.dart';
 import 'package:flutter_app/ui/pages/score/score_page.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
@@ -99,7 +99,7 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
     setState(() {
       _pageList = [];
       _pageList.add(const CourseTablePage());
-      _pageList.add(const NotificationPage());
+      _pageList.add(const ISchoolPage());
       _pageList.add(const CalendarPage());
       _pageList.add(const ScoreViewerPage());
       _pageList.add(OtherPage(_pageController));
@@ -174,9 +174,9 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
           ),
           BottomNavigationBarItem(
             icon: const Icon(
-              EvaIcons.emailOutline,
+              EvaIcons.info,
             ),
-            label: R.current.titleNotification,
+            label: R.current.iSchoolPlus,
           ),
           BottomNavigationBarItem(
             icon: const Icon(
